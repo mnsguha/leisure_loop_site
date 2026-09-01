@@ -1,0 +1,27 @@
+import sys, io, time, re
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+
+with open('G:/Antigravity/leisure_loop_site/public/index.php', 'r', encoding='utf-8') as f:
+    content = f.read()
+
+# Update CSS cache buster
+content = re.sub(
+    r'href="css/home\.css\?v=\d+"',
+    f'href="css/home.css?v={int(time.time())}"',
+    content
+)
+
+# Update JS cache buster
+content = re.sub(
+    r'src="js/modules/home\.js\?v=\d+"',
+    f'src="js/modules/home.js?v={int(time.time())}"',
+    content
+)
+
+if 'src="js/modules/home.js"' in content:
+    content = content.replace('src="js/modules/home.js"', f'src="js/modules/home.js?v={int(time.time())}"')
+
+with open('G:/Antigravity/leisure_loop_site/public/index.php', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print('Updated cache busters in index.php.')

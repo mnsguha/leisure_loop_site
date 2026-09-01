@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# Unless directory, remove trailing slash
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+)/$ http://%{HTTP_HOST}/$1 [R=301,L]
+
+# Resolve .php file for extensionless urls
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]

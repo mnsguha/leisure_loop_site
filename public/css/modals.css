@@ -1,0 +1,471 @@
+/* ─── LEAD MODAL (BESPOKE PLANNER) ─── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 12, 24, 0.95);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(20px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.modal-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 5rem;
+    width: min(800px, 92%);
+    position: relative;
+    text-align: center;
+    transform: translateY(30px) scale(0.98);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.is-active .modal-glass {
+    transform: translateY(0) scale(1);
+}
+.modal-close, .enquiry-modal-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 2rem;
+    cursor: pointer;
+}
+.planner-steps .step {
+    display: none;
+}
+.planner-steps .step.active {
+    display: block;
+    animation: fadeIn 0.8s var(--ease-out);
+}
+.option-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+.option-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--glass-border);
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.option-card:hover {
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.05);
+}
+.option-card input {
+    display: none;
+}
+.option-card input:checked + span {
+    color: var(--gold);
+}
+.option-card:has(input:checked) {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px var(--amber-glow);
+}
+.planner-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    color: #fff;
+    outline: none;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+}
+.planner-footer {
+    margin-top: 4rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* ─── FLOATING CONCIERGE DOCK HUB ─── */
+.emt-floating-dock-hub {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9995 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+    pointer-events: none; /* Let clicks pass through empty spacing */
+}
+
+.emt-floating-dock-hub > * {
+    pointer-events: auto; /* Re-enable clicks on interactive widgets */
+}
+
+/* ─── ANIMATED PILL CAPSULE BASE ─── */
+.emt-dock-pill {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 256px; /* Explicit equal width for both pill cards */
+    max-width: 90vw;
+    box-sizing: border-box;
+    border-radius: 50px;
+    padding: 2.5px; /* Thickness for the spinning glowing border */
+    text-decoration: none;
+    background: transparent;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.22);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-radius 0.35s ease;
+    cursor: pointer;
+}
+
+.emt-dock-pill:hover {
+    transform: translateY(-4px) scale(1.02);
+}
+
+.emt-pill-orange {
+    background-color: rgba(255, 136, 0, 0.3);
+}
+
+.emt-pill-orange:hover {
+    box-shadow: 0 12px 32px rgba(255, 128, 0, 0.45);
+}
+
+.emt-pill-unified {
+    background-color: rgba(0, 140, 255, 0.25);
+    border-radius: 40px;
+}
+
+.emt-pill-unified:hover,
+.emt-pill-unified.dock-open {
+    box-shadow: 0 15px 38px rgba(11, 29, 51, 0.4), 0 0 25px rgba(37, 211, 102, 0.25);
+    border-radius: 28px;
+}
+
+/* ─── ROTATING CIRCULAR BORDER GLOW ANIMATIONS ─── */
+.emt-pill-border-glow,
+.emt-pill-border-glow-unified {
+    position: absolute;
+    top: -80%;
+    left: -80%;
+    width: 260%;
+    height: 260%;
+    background-repeat: no-repeat;
+    animation: emt-border-spin 3.5s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes emt-border-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.emt-pill-orange .emt-pill-border-glow {
+    background: conic-gradient(
+        transparent 0deg, 
+        transparent 90deg, 
+        #ff5e00 180deg, 
+        #ffb700 270deg, 
+        transparent 360deg
+    );
+}
+
+/* Dual-tone electric blue + emerald green cyber gradient for unified dock */
+.emt-pill-border-glow-unified {
+    background: conic-gradient(
+        transparent 0deg, 
+        transparent 60deg, 
+        #007bfb 150deg, 
+        #25d366 240deg, 
+        #00f2fe 300deg,
+        transparent 360deg
+    );
+    animation: emt-border-spin 4s linear infinite;
+}
+
+/* ─── INTERIOR CAPSULE CONTENT ─── */
+.emt-pill-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 11px;
+    background: #ffffff;
+    border-radius: 48px;
+    padding: 8px 14px 8px 10px;
+    box-sizing: border-box;
+    color: #0b1d33;
+    transition: background 0.3s ease, border-radius 0.35s ease;
+    width: 100%;
+}
+
+.emt-pill-orange:hover .emt-pill-content {
+    background: #fafcff;
+}
+
+.emt-pill-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+}
+
+.emt-dock-pill:hover .emt-pill-icon {
+    transform: scale(1.12) rotate(5deg);
+}
+
+.emt-pill-orange .emt-pill-icon {
+    background: rgba(255, 136, 0, 0.14);
+    color: #ff6a00;
+}
+
+.unified-dual-icon {
+    background: linear-gradient(135deg, rgba(0, 123, 251, 0.15) 0%, rgba(37, 211, 102, 0.2) 100%);
+    color: #007bfb;
+}
+
+.emt-pill-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.emt-pill-text-stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.18;
+    text-align: left;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.emt-pill-title {
+    font-size: 0.93rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: #0b1d33;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-primary, 'Inter', sans-serif);
+}
+
+.emt-pill-sub-hint {
+    font-size: 0.69rem;
+    font-weight: 700;
+    color: #586d8a;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.expand-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6a809f;
+    flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+
+.style-orange-arrow {
+    color: #8b9bb4;
+}
+
+.emt-pill-orange:hover .style-orange-arrow {
+    transform: translateX(3px);
+    color: #ff5e00;
+}
+
+/* ─── OPTION 3 UNIFIED DOCK EXPANDABLE ARCHITECTURE ─── */
+.unified-content-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    border-radius: 38px;
+    overflow: hidden;
+}
+
+.emt-pill-unified:hover .unified-content-container,
+.emt-pill-unified.dock-open .unified-content-container {
+    border-radius: 26px;
+    background: #ffffff;
+}
+
+.unified-trigger-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 8px 14px 8px 10px;
+    box-sizing: border-box;
+    width: 100%;
+    user-select: none;
+    transition: background-color 0.25s ease;
+}
+
+.unified-trigger-head:hover {
+    background-color: #f7fafe;
+}
+
+.emt-pill-unified:hover .unified-trigger-head .expand-chevron,
+.emt-pill-unified.dock-open .unified-trigger-head .expand-chevron {
+    transform: rotate(180deg);
+    color: #0b1d33;
+}
+
+/* Expandable Channels Panel */
+.unified-channels-panel {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, padding 0.35s ease;
+    padding: 0 12px;
+}
+
+.emt-pill-unified:hover .unified-channels-panel,
+.emt-pill-unified.dock-open .unified-channels-panel {
+    max-height: 220px;
+    opacity: 1;
+    padding: 0 12px 14px 12px;
+}
+
+.channels-divider-line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(11,29,51,0.12) 50%, rgba(0,0,0,0.03) 100%);
+    margin-bottom: 10px;
+}
+
+.unified-actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.channel-btn {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 8px 12px;
+    border-radius: 14px;
+    text-decoration: none;
+    background: #f8fbff;
+    border: 1px solid rgba(11, 29, 51, 0.06);
+    transition: all 0.25s ease;
+}
+
+.channel-btn:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.call-channel:hover {
+    background: #edf6ff;
+    border-color: rgba(0, 123, 251, 0.25);
+}
+
+.whatsapp-channel:hover {
+    background: #eefcf3;
+    border-color: rgba(37, 211, 102, 0.3);
+}
+
+.channel-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+}
+
+.channel-btn:hover .channel-icon {
+    transform: scale(1.1);
+}
+
+.badge-blue {
+    background: #007bfb;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 123, 251, 0.3);
+}
+
+.badge-green {
+    background: #25d366;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.35);
+}
+
+.channel-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    overflow: hidden;
+}
+
+.channel-label {
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: #647690;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.channel-num {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0b1d33;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .emt-floating-dock-hub {
+        bottom: 5.5rem;
+        right: 1rem;
+        gap: 10px;
+    }
+    .emt-dock-pill {
+        width: 240px;
+    }
+    .emt-pill-content,
+    .unified-trigger-head {
+        padding: 7px 12px 7px 8px;
+        gap: 9px;
+    }
+    .emt-pill-icon {
+        width: 30px;
+        height: 30px;
+    }
+    .emt-pill-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+    .emt-pill-title {
+        font-size: 0.85rem;
+    }
+    .emt-pill-sub-hint {
+        font-size: 0.64rem;
+    }
+}

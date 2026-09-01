@@ -1,0 +1,1786 @@
+/* Extracted from all-tours.php */
+/* Professional OTA Redesign Styles for Holiday Packages (inspired by EMT & MMT) */
+:root {
+    --gold: #C5A059;
+    --gold-glow: rgba(197, 160, 89, 0.4);
+    --dark-bg: #050a14;
+    --card-bg: rgba(15, 24, 42, 0.85);
+}
+
+/* 1. Hero Banner */
+.emt-pkg-hero {
+    position: relative;
+    min-height: 570px;
+    padding: 210px 20px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--dark-bg);
+}
+
+.emt-pkg-hero-img-box {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.emt-pkg-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.05);
+    transition: transform 0.4s ease-out;
+}
+
+.emt-pkg-hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(5, 10, 20, 0.88) 0%, rgba(5, 10, 20, 0.55) 50%, rgba(5, 10, 20, 0.95) 100%);
+    pointer-events: none;
+}
+
+.emt-pkg-hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 1150px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.luxury-accent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    background: rgba(5, 10, 20, 0.65);
+    border: 1px solid rgba(197, 160, 89, 0.4);
+    border-radius: 50px;
+    color: var(--gold);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    margin-bottom: 22px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.emt-pkg-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.15;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+}
+
+.emt-pkg-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 650px;
+    margin: 0 auto 38px;
+    line-height: 1.6;
+}
+
+/* 2. Interactive Multi-Input Search Dock (MMT + EMT Hybrid) */
+.mmt-search-dock {
+    background: rgba(255, 255, 255, 0.96);
+    border: 2px solid var(--gold, #c5a059);
+    border-radius: 60px;
+    max-width: 1050px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px 14px 10px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.65), 0 0 35px rgba(197, 160, 89, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mmt-search-dock:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75), 0 0 45px rgba(197, 160, 89, 0.4);
+}
+
+.search-dock-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+}
+
+.search-dock-divider {
+    width: 1px;
+    height: 42px;
+    background: rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+}
+
+.search-dock-icon {
+    font-size: 28px !important;
+    color: #0b1d33;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.search-dock-field:focus-within .search-dock-icon {
+    color: var(--gold, #C5A059);
+}
+
+.search-field-inner {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.search-lbl {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #0b1d33;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.search-input-control {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #111827;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.02rem;
+    font-weight: 600;
+    width: 100%;
+    padding: 0;
+    cursor: pointer;
+}
+
+.search-input-control::placeholder {
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.search-input-control option {
+    background: #ffffff;
+    color: #111827;
+}
+
+.btn-mmt-search {
+    background: linear-gradient(135deg, #c5a059 0%, #d97706 100%);
+    color: #ffffff;
+    padding: 14px 36px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 25px rgba(217, 119, 6, 0.4);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-mmt-search:hover {
+    transform: scale(1.04);
+    box-shadow: 0 12px 32px rgba(217, 119, 6, 0.65);
+    background: linear-gradient(135deg, #d1ad69 0%, #ea580c 100%);
+}
+
+/* 2.5. Top Trending Tours Showcase (EaseMyTrip + Luxury Hybrid) */
+.trending-tours-section {
+    background: #050b14;
+    padding: 65px 20px 50px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.trending-header-bar {
+    max-width: 1280px;
+    margin: 0 auto 38px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+
+.trending-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.trending-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+
+.trending-subtitle {
+    font-size: 0.98rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0;
+    font-weight: 400;
+}
+
+.trending-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.trending-pills-group {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px;
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.trending-pill {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 9px 22px;
+    border-radius: 30px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.trending-pill:hover {
+    color: #ffffff;
+}
+
+.trending-pill.active {
+    background: linear-gradient(135deg, #C5A059 0%, #D8B468 100%);
+    color: #050a14;
+    font-weight: 800;
+    box-shadow: 0 4px 18px rgba(197, 160, 89, 0.35);
+}
+
+.trending-track-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.trending-cards-track {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 20px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: default;
+    will-change: scroll-position;
+}
+
+.trending-cards-track.active-drag {
+    scroll-snap-type: none !important;
+    scroll-behavior: auto !important;
+}
+
+.trending-cards-track.active-drag .trending-tour-card {
+    transition: none !important;
+    transform: translateZ(0) !important;
+}
+
+.trending-cards-track::-webkit-scrollbar {
+    display: none;
+}
+
+.trending-tour-card {
+    flex: 0 0 290px;
+    height: 400px;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    text-decoration: none;
+    display: block;
+    -webkit-user-drag: none;
+    user-drag: none;
+    scroll-snap-align: start;
+    transform: translateZ(0);
+}
+
+.trending-tour-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 22px 45px rgba(0, 0, 0, 0.75), 0 0 28px rgba(197, 160, 89, 0.35);
+    border-color: var(--gold, #C5A059);
+}
+
+.trending-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trending-tour-card:hover .trending-card-img {
+    transform: scale(1.1);
+}
+
+.trending-top-badges {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.badge-trending-hot {
+    background: rgba(13, 22, 37, 0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(249, 115, 22, 0.65);
+    color: #fb923c;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 5px 13px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-trending-type {
+    background: rgba(255, 255, 255, 0.94);
+    color: #050a14;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.trending-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 75%;
+    background: linear-gradient(to top, rgba(5, 10, 20, 0.96) 20%, rgba(5, 10, 20, 0.75) 55%, rgba(5, 10, 20, 0) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px 22px 22px;
+    z-index: 2;
+    transition: background 0.3s ease;
+}
+
+.trending-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.32rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    margin: 0 0 6px 0;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+
+.trending-card-dest {
+    font-size: 0.82rem;
+    color: var(--gold, #C5A059);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.trending-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 14px;
+    margin-top: 4px;
+}
+
+.trending-price-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.trending-price-lbl {
+    font-size: 0.70rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.trending-price-val {
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.btn-trending-explore {
+    background: var(--gold, #c5a059);
+    color: #050a14;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 8px 18px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.25s ease;
+}
+
+.trending-tour-card:hover .btn-trending-explore {
+    background: #ffffff;
+    transform: translateX(3px);
+}
+
+/* 3. Interactive Theme Discovery Circle Strip (EaseMyTrip Style) */
+.theme-circle-section {
+    background: #080f1c;
+    padding: 40px 20px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.theme-strip-heading {
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+}
+
+.theme-circle-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.theme-circle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 95px;
+    transition: transform 0.25s ease;
+}
+
+.theme-circle-shell {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(25, 36, 58, 0.9), rgba(12, 19, 32, 0.95));
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+}
+
+.theme-circle-icon {
+    font-size: 2rem !important;
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.3s, transform 0.3s;
+}
+
+.theme-circle-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+    transition: color 0.3s;
+}
+
+.theme-circle-btn:hover .theme-circle-shell,
+.theme-circle-btn.active .theme-circle-shell {
+    border-color: var(--gold);
+    box-shadow: 0 0 25px rgba(197, 160, 89, 0.45);
+    transform: translateY(-3px);
+    background: linear-gradient(145deg, rgba(35, 48, 78, 0.95), rgba(12, 28, 48, 0.95));
+}
+
+.theme-circle-btn:hover .theme-circle-icon,
+.theme-circle-btn.active .theme-circle-icon {
+    color: var(--gold);
+    transform: scale(1.12);
+}
+
+.theme-circle-btn:hover .theme-circle-title,
+.theme-circle-btn.active .theme-circle-title {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+/* 4. Navigation Toggle Pill & Breadcrumb */
+.catalog-nav-bar {
+    max-width: 1380px;
+    margin: 25px auto 15px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-trending-type {
+    background: rgba(255, 255, 255, 0.94);
+    color: #050a14;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.trending-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 75%;
+    background: linear-gradient(to top, rgba(5, 10, 20, 0.96) 20%, rgba(5, 10, 20, 0.75) 55%, rgba(5, 10, 20, 0) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px 22px 22px;
+    z-index: 2;
+    transition: background 0.3s ease;
+}
+
+.trending-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.32rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    margin: 0 0 6px 0;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+
+.trending-card-dest {
+    font-size: 0.82rem;
+    color: var(--gold, #C5A059);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.trending-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 14px;
+    margin-top: 4px;
+}
+
+.trending-price-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.trending-price-lbl {
+    font-size: 0.70rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.trending-price-val {
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.btn-trending-explore {
+    background: var(--gold, #c5a059);
+    color: #050a14;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 8px 18px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.25s ease;
+}
+
+.trending-tour-card:hover .btn-trending-explore {
+    background: #ffffff;
+    transform: translateX(3px);
+}
+
+/* 3. Interactive Theme Discovery Circle Strip (EaseMyTrip Style) */
+.theme-circle-section {
+    background: #080f1c;
+    padding: 40px 20px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.theme-strip-heading {
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+}
+
+.theme-circle-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.theme-circle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 95px;
+    transition: transform 0.25s ease;
+}
+
+.theme-circle-shell {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(25, 36, 58, 0.9), rgba(12, 19, 32, 0.95));
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+}
+
+.theme-circle-icon {
+    font-size: 2rem !important;
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.3s, transform 0.3s;
+}
+
+.theme-circle-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+    transition: color 0.3s;
+}
+
+.theme-circle-btn:hover .theme-circle-shell,
+.theme-circle-btn.active .theme-circle-shell {
+    border-color: var(--gold);
+    box-shadow: 0 0 25px rgba(197, 160, 89, 0.45);
+    transform: translateY(-3px);
+    background: linear-gradient(145deg, rgba(35, 48, 78, 0.95), rgba(12, 28, 48, 0.95));
+}
+
+.theme-circle-btn:hover .theme-circle-icon,
+.theme-circle-btn.active .theme-circle-icon {
+    color: var(--gold);
+    transform: scale(1.12);
+}
+
+.theme-circle-btn:hover .theme-circle-title,
+.theme-circle-btn.active .theme-circle-title {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+/* 4. Navigation Toggle Pill & Breadcrumb */
+.catalog-nav-bar {
+    max-width: 1380px;
+    margin: 25px auto 15px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.catalog-nav-bar a {
+    color: var(--gold);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.catalog-nav-bar a:hover {
+    opacity: 0.8;
+}
+
+.results-count-pill {
+    background: rgba(197, 160, 89, 0.15);
+    border: 1px solid rgba(197, 160, 89, 0.45);
+    color: var(--gold);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.package-switcher-container {
+    text-align: center;
+    margin: 30px auto 45px;
+}
+
+.package-switcher-pill {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 99px;
+    padding: 6px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.package-switcher-tab {
+    padding: 11px 32px;
+    border-radius: 99px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.package-switcher-tab.active {
+    background: var(--gold);
+    color: #050a14;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+}
+
+.package-switcher-tab.inactive {
+    color: rgba(255, 255, 255, 0.75);
+    background: transparent;
+}
+
+.package-switcher-tab.inactive:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* 5. Main Catalog Layout: Full-Width Grid */
+.catalog-section {
+    padding: 1rem 0 5rem;
+}
+
+.packages-catalog-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 35px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 35px;
+    align-items: start;
+}
+
+/* Empty State Notification */
+.catalog-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+    background: rgba(15, 24, 42, 0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.catalog-empty-state svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.empty-state-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 10px;
+}
+
+.empty-state-sub {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 400px;
+    margin: 0 0 25px;
+    line-height: 1.5;
+}
+
+.empty-state-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-reset-empty {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-reset-empty:hover {
+    background: var(--gold);
+    color: #050a14;
+}
+
+/* ── Floating Filter & Sorting Pill (always visible, desktop + mobile) ── */
+.floating-filter-dock {
+    position: fixed;
+    left: 25px;
+    bottom: 25px;
+    z-index: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    background: rgba(13, 22, 38, 0.95);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid var(--gold);
+    border-radius: 50px;
+    padding: 11px 24px 11px 16px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), 0 0 20px rgba(197, 160, 89, 0.35);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+
+.floating-filter-dock:hover {
+    transform: translateY(-4px) scale(1.02);
+    background: linear-gradient(145deg, rgba(20, 32, 55, 0.98), rgba(10, 18, 32, 0.98));
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(197, 160, 89, 0.6);
+}
+
+.dock-icon-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C5A059 0%, #D8B468 100%);
+    color: #050a14;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dock-icon-circle .material-symbols-outlined {
+    font-size: 1.25rem !important;
+    font-weight: 700;
+}
+
+.dock-badge-counter {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 20px;
+    transition: all 0.25s ease;
+}
+
+.dock-badge-counter.active {
+    background: var(--gold);
+    color: #050a14;
+    border-color: var(--gold);
+}
+
+/* Slide-Out Glassmorphic Filter Drawer & Backdrop */
+.filter-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 7, 15, 0.75);
+    backdrop-filter: blur(6px);
+    z-index: 10010;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.filter-drawer-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.filter-side-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    max-height: 100vh;
+    width: 380px;
+    max-width: 90vw;
+    background: rgba(11, 18, 32, 0.98);
+    border-right: 1px solid rgba(197, 160, 89, 0.4);
+    box-shadow: 25px 0 60px rgba(0, 0, 0, 0.75);
+    z-index: 10011;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overscroll-behavior: contain;
+    transform: translateX(-100%);
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filter-side-drawer.open {
+    transform: translateX(0);
+}
+
+.drawer-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7, 12, 22, 0.8);
+    flex-shrink: 0;
+}
+
+.drawer-title-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.drawer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.drawer-subtitle {
+    font-size: 0.78rem;
+    color: var(--gold);
+    font-weight: 600;
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+}
+
+.drawer-close-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    width: 48px;  /* Rule #6: min touch target */
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.drawer-close-btn:hover {
+    background: var(--gold);
+    color: #050a14;
+    transform: rotate(90deg);
+}
+
+.drawer-body {
+    flex: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;  /* prevents scroll chain leaking to page */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    padding: 24px 28px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(197, 160, 89, 0.3) transparent;
+}
+
+.drawer-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.drawer-body::-webkit-scrollbar-thumb {
+    background: rgba(197, 160, 89, 0.35);
+    border-radius: 4px;
+}
+
+.drawer-footer {
+    padding: 20px 28px;
+    background: rgba(7, 12, 22, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.btn-drawer-reset {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-drawer-reset:hover {
+    color: var(--gold);
+}
+
+.btn-drawer-apply {
+    background: linear-gradient(135deg, #C5A059 0%, #D8B468 100%);
+    color: #050a14;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 26px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 0.88rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
+    transition: all 0.25s ease;
+}
+
+.btn-drawer-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(197, 160, 89, 0.65);
+}
+
+/* .filters-sidebar-panel inside the drawer body */
+.drawer-body .filter-group {
+    margin-bottom: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 22px;
+}
+
+.sidebar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.btn-clear-all {
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-clear-all:hover {
+    opacity: 0.75;
+}
+
+.filter-group {
+    margin-bottom: 28px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.filter-group-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.custom-checkbox-option, .custom-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.2s;
+    user-select: none;
+}
+
+.custom-checkbox-option:hover, .custom-radio-option:hover {
+    color: #ffffff;
+}
+
+.custom-checkbox-option input, .custom-radio-option input {
+    accent-color: var(--gold);
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+}
+
+/* 6. Package Tour Cards (MakeMyTrip + EaseMyTrip Style) */
+.packages-grid-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 30px;
+}
+
+.ota-package-card {
+    background: rgba(15, 24, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    position: relative;
+}
+
+.ota-package-card:hover {
+    transform: translateY(-7px);
+    border-color: rgba(197, 160, 89, 0.55);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+}
+
+.card-media-shell {
+    height: 235px;
+    position: relative;
+    overflow: hidden;
+    background: #0e1726;
+}
+
+.card-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ota-package-card:hover .card-cover-img {
+    transform: scale(1.08);
+}
+
+.card-badge-gold {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: linear-gradient(135deg, #C5A059 0%, #D8B468 100%);
+    color: #050a14;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    z-index: 2;
+}
+
+.card-badge-dark {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(5, 10, 20, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    z-index: 2;
+}
+
+.card-body-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.card-dest-label {
+    color: var(--gold);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.card-tour-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    color: #ffffff;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 16px;
+    transition: color 0.25s;
+}
+
+.ota-package-card:hover .card-tour-title {
+    color: var(--gold);
+}
+
+/* MMT Amenity Highlights Strip */
+.card-amenities-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+}
+
+.amenity-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.amenity-item i {
+    font-size: 1.15rem !important;
+    color: var(--gold);
+}
+
+.card-footer-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pricing-block .start-lbl {
+    display: block;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+}
+
+.pricing-block .amount {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+}
+
+.pricing-block .orig-price {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+    text-decoration: line-through;
+    margin-right: 6px;
+}
+
+.pricing-block .per-pax {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+}
+
+.btn-card-explore {
+    background: rgba(197, 160, 89, 0.15);
+    border: 1px solid rgba(197, 160, 89, 0.5);
+    color: var(--gold);
+    padding: 9px 18px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.25s ease;
+}
+
+.ota-package-card:hover .btn-card-explore {
+    background: var(--gold);
+    color: #050a14;
+    border-color: var(--gold);
+    transform: translateX(3px);
+}
+
+/* 7. Trust Guarantee Strip (Why Book With Us) */
+.trust-guarantee-section {
+    background: rgba(10, 16, 28, 0.95);
+    border-top: 1px solid rgba(197, 160, 89, 0.25);
+    padding: 70px 20px;
+    margin-top: 90px;
+}
+
+.trust-grid {
+    max-width: 1350px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 35px;
+}
+
+.trust-card {
+    text-align: center;
+    padding: 0 15px;
+}
+
+.trust-icon-circle {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: rgba(197, 160, 89, 0.12);
+    border: 1px solid rgba(197, 160, 89, 0.35);
+    color: var(--gold);
+    font-size: 2rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transition: transform 0.3s ease;
+}
+
+.trust-card:hover .trust-icon-circle {
+    transform: scale(1.1) rotate(6deg);
+    background: rgba(197, 160, 89, 0.22);
+}
+
+.trust-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 10px;
+}
+
+.trust-card-desc {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+}
+
+/* Empty State */
+.catalog-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.catalog-empty-state svg {
+    width: 54px;
+    height: 54px;
+    color: var(--gold);
+    margin-bottom: 20px;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1050px) {
+    .packages-catalog-layout {
+        grid-template-columns: 1fr;
+    }
+    .trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px 25px;
+    }
+}
+
+@media (max-width: 850px) {
+    .emt-pkg-hero {
+        padding: 160px 15px 50px;
+        min-height: auto;
+    }
+    .mmt-search-dock {
+        flex-direction: column;
+        border-radius: 26px;
+        padding: 22px 20px;
+        gap: 18px;
+    }
+    .search-dock-field {
+        width: 100%;
+    }
+    .search-dock-divider {
+        width: 100%;
+        height: 1px;
+    }
+    .btn-mmt-search {
+        width: 100%;
+        justify-content: center;
+    }
+    .catalog-nav-bar {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .trust-grid {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+    .theme-circle-container {
+        gap: 16px;
+    }
+    .theme-circle-btn {
+        width: 78px;
+    }
+    .theme-circle-shell {
+        width: 64px;
+        height: 64px;
+    }
+}
+
+/* Search Bar (Dark bar below nav) */
+.search-bar-container {
+    background: #0f172a;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1060;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    background: transparent;
+    width: 100%;
+    max-width: 1200px;
+    align-items: stretch;
+}
+
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 0 15px;
+    width: 100%;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.input-with-icon:hover,
+.input-with-icon:focus-within {
+    border-color: rgba(255,255,255,0.3);
+}
+
+.input-with-icon .material-symbols-outlined {
+    color: rgba(255,255,255,0.6);
+    font-size: 22px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.input-with-icon input,
+.input-with-icon select {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-weight: 600;
+    color: #fff;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 12px 0;
+    -webkit-text-fill-color: #fff;
+    box-sizing: border-box;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+.input-with-icon select {
+    padding-right: 30px;
+}
+
+.input-with-icon select option {
+    color: #000;
+    background: #fff;
+}
+
+.input-with-icon input::placeholder {
+    color: rgba(255,255,255,0.8);
+    -webkit-text-fill-color: rgba(255,255,255,0.8);
+    font-weight: 500;
+}
+
+.input-with-icon input:-webkit-autofill,
+.input-with-icon input:-webkit-autofill:hover,
+.input-with-icon input:-webkit-autofill:focus,
+.input-with-icon input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: #fff;
+}
+
+.btn-search {
+    background: #008cff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: filter 0.3s;
+    white-space: nowrap;
+}
+
+.btn-search:hover {
+    filter: brightness(1.1);
+}
+
+@media (max-width: 850px) {
+    .search-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .search-bar-container {
+        padding: 15px 20px;
+    }
+}
+
+/* â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+/* Rule #5: Screen-reader-only labels */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Body scroll-lock is managed in all-tours.js via document.body.style.overflow per Rule #10 */
+
+/* Fieldset/legend reset for filter groups (Rule #5 semantic HTML) */
+fieldset.filter-group {
+    border: none;
+    padding: 0;
+    margin: 0 0 28px 0;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+}
+
+fieldset.filter-group:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+legend.filter-group-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0;
+}
+
+/* Empty State */
+.catalog-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.catalog-empty-state[hidden] {
+    display: none;
+}
+
+.catalog-empty-state svg {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 20px;
+}
+
+.empty-state-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 10px;
+}
+
+.empty-state-sub {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.65);
+    max-width: 480px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+}
+
+.empty-state-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-reset-empty {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #C5A059 0%, #D8B468 100%);
+    color: #050a14;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-reset-empty:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(197, 160, 89, 0.55);
+}
+

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 350" width="100%" height="100%">
+  <defs>
+    <!-- Robust Font Stack -->
+    <style>
+      .font-bold { 
+        font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+        font-weight: 900; 
+      }
+      .font-medium { 
+        font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+        font-weight: 700; 
+      }
+    </style>
+
+    <!-- Modern Gradients -->
+    <linearGradient id="grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3366" />
+      <stop offset="100%" stop-color="#cc0033" />
+    </linearGradient>
+    <linearGradient id="grad-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffcc00" />
+      <stop offset="100%" stop-color="#e69900" />
+    </linearGradient>
+    <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#33ccff" />
+      <stop offset="100%" stop-color="#0066ff" />
+    </linearGradient>
+    <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e676" />
+      <stop offset="100%" stop-color="#009933" />
+    </linearGradient>
+    <linearGradient id="grad-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd54f" />
+      <stop offset="100%" stop-color="#ff9900" />
+    </linearGradient>
+    <linearGradient id="grad-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a6096" />
+      <stop offset="100%" stop-color="#1b3664" />
+    </linearGradient>
+
+    <!-- Teardrop Leaf Base -->
+    <path id="leaf-fill" d="M 0 0 C 45 -15, 50 -85, 0 -90 C -50 -85, -45 -15, 0 0 Z" stroke="none" />
+    <path id="leaf-outline" d="M 0 0 C 45 -15, 50 -85, 0 -90 C -50 -85, -45 -15, 0 0 Z" fill="none" stroke="url(#grad-border)" stroke-width="12" stroke-linejoin="round" />
+
+    <!-- Material Design Icons -->
+    <g id="icon-suitcase" transform="translate(-18, -18) scale(1.5)" fill="#ffffff">
+      <path d="M 7 4 V 2 H 17 V 4 H 20 A 2 2 0 0 1 22 6 V 19 A 2 2 0 0 1 20 21 H 4 A 2 2 0 0 1 2 19 V 6 A 2 2 0 0 1 4 4 H 7 M 9 4 H 15 V 2 H 9 V 4 M 8 18 H 10 V 7 H 8 V 18 M 14 18 H 16 V 7 H 14 V 18" />
+    </g>
+
+    <g id="icon-airplane" transform="translate(-18, -18) scale(1.5)" fill="#ffffff">
+      <path d="M 21 16 V 14 L 13 9 V 3.5 A 1.5 1.5 0 0 0 10 3.5 V 9 L 2 14 V 16 L 10 13.5 V 19 L 8 20.5 V 22 L 11.5 21 L 15 22 V 20.5 L 13 19 V 13.5 L 21 16 Z" />
+    </g>
+
+    <g id="icon-palm" transform="translate(-18, -18) scale(1.5)" fill="#ffffff">
+      <path d="M12 21 C12 16, 14 11, 14 11 C10 13, 7 15, 4 15 C6 12, 10 9, 14 9 C11 7, 7 5, 4 4 C8 5, 12 7, 15 9 C16 6, 17 3, 17 0 C18 4, 19 8, 17 10 C21 9, 25 7, 28 8 C25 10, 21 11, 18 11 C23 12, 26 14, 27 16 C23 15, 19 14, 16 13 C16 15, 15 18, 15 21 Z" />
+    </g>
+
+    <g id="icon-mountain" transform="translate(-18, -18) scale(1.5)" fill="#ffffff">
+      <path d="M 14 6 L 4 18 H 20 L 14 6 Z M 14 10 L 17 14 H 11 L 14 10 Z M 5 18 L 9 13 L 12 18 H 5 Z" />
+    </g>
+  </defs>
+
+  <rect width="1000" height="350" fill="#1b212b"/>
+
+  <g transform="translate(180, 175)">
+    <!-- Base Fill Shapes with SVG 1.1 compliant xlink:href -->
+    <use xlink:href="#leaf-fill" fill="url(#grad-red)" transform="rotate(0)" />
+    <use xlink:href="#leaf-fill" fill="url(#grad-yellow)" transform="rotate(270)" />
+    <use xlink:href="#leaf-fill" fill="url(#grad-blue)" transform="rotate(180)" />
+    <use xlink:href="#leaf-fill" fill="url(#grad-green)" transform="rotate(90)" />
+
+    <!-- Continuous Border -->
+    <use xlink:href="#leaf-outline" transform="rotate(0)" />
+    <use xlink:href="#leaf-outline" transform="rotate(270)" />
+    <use xlink:href="#leaf-outline" transform="rotate(180)" />
+    <use xlink:href="#leaf-outline" transform="rotate(90)" />
+
+    <!-- Center cap to hide the intersection of the strokes seamlessly -->
+    <circle cx="0" cy="0" r="10" fill="url(#grad-border)" />
+
+    <!-- Icons perfectly positioned in the center of their respective leaves -->
+    <use xlink:href="#icon-suitcase" x="0" y="-50" />
+    <use xlink:href="#icon-airplane" x="-50" y="0" />
+    <use xlink:href="#icon-palm" x="0" y="50" />
+    <use xlink:href="#icon-mountain" x="50" y="0" />
+  </g>
+
+  <!-- ELEGANT SEPARATOR -->
+  <line x1="360" y1="90" x2="360" y2="260" stroke="url(#grad-gold)" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- MODERN TYPOGRAPHY -->
+  <g transform="translate(410, 0)">
+    <!-- Line 1: LEISURE -->
+    <text x="0" y="145" class="font-bold" font-size="76" fill="url(#grad-red)" letter-spacing="3">LEISURE</text>
+    
+    <!-- Line 2: LOOP TRIP -->
+    <text x="0" y="225" class="font-bold" font-size="76" letter-spacing="3">
+      <tspan fill="#3a6096">LOOP</tspan> <tspan fill="url(#grad-gold)">TRIP</tspan>
+    </text>
+    
+    <!-- Tagline: EXPLORE MORE. EXPERIENCE MORE. -->
+    <text x="5" y="270" class="font-medium" font-size="16" fill="url(#grad-gold)" letter-spacing="5">EXPLORE MORE. EXPERIENCE MORE.</text>
+  </g>
+
+</svg>

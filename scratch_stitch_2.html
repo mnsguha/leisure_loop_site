@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SIKKIM | Elite Travel Experiences</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Inter:wght@400;500&amp;family=Montserrat:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #131314;
+            color: #e5e2e2;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .glass-card {
+            background: rgba(10, 10, 10, 0.65);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .parallax-layer {
+            will-change: transform;
+            transition: transform 0.1s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        /* Refined Hover Interactions for Tour Cards */
+        .tour-card-hover {
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
+        }
+        .tour-card-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(233, 193, 118, 0.25);
+        }
+
+        /* Sophisticated Scroll Reveal System */
+        .reveal-hidden {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.4s cubic-bezier(0.215, 0.61, 0.355, 1), 
+                        transform 1.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        
+        .reveal-scale-hidden {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            transition: opacity 1.6s cubic-bezier(0.215, 0.61, 0.355, 1), 
+                        transform 1.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        .reveal-visible {
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-hidden, .reveal-scale-hidden {
+                transition: none;
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.25s; }
+        .stagger-3 { transition-delay: 0.4s; }
+        .stagger-4 { transition-delay: 0.55s; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        @keyframes pulse-gold {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pulse-dot {
+            animation: pulse-gold 2s infinite ease-in-out;
+        }
+        
+        .hero-fog {
+            background: linear-gradient(to bottom, transparent, rgba(19, 19, 20, 0.4), rgba(19, 19, 20, 0.8));
+            pointer-events: none;
+        }
+
+        /* Layout Tweaks for Image 16 Matching */
+        .nav-link {
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#261900",
+                        "surface-container-high": "#2a2a2b",
+                        "on-surface-variant": "#c5c6cc",
+                        "surface-container-low": "#1b1b1c",
+                        "on-secondary": "#ffffff",
+                        "surface": "#131314",
+                        "secondary-container": "#604403",
+                        "surface-bright": "#39393a",
+                        "error": "#ffb4ab",
+                        "surface-dim": "#131314",
+                        "on-tertiary-fixed": "#27180e",
+                        "on-error": "#690005",
+                        "secondary-fixed": "#ffdea5",
+                        "inverse-surface": "#e5e2e2",
+                        "outline-variant": "#45474b",
+                        "on-tertiary": "#3e2d22",
+                        "surface-container-highest": "#353535",
+                        "surface-tint": "#c0c7d4",
+                        "inverse-primary": "#585f6a",
+                        "on-primary-container": "#727985",
+                        "secondary": "#e9c176",
+                        "secondary-fixed-dim": "#e9c176",
+                        "surface-variant": "#353535",
+                        "sky-light": "#E0F0FF",
+                        "primary-fixed-dim": "#c0c7d4",
+                        "glass-border": "rgba(255, 255, 255, 0.15)",
+                        "tertiary-fixed": "#faddcc",
+                        "background": "#131314",
+                        "on-primary-fixed-variant": "#404752",
+                        "on-surface": "#e5e2e2",
+                        "surface-container": "#201f20",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0e0e0f",
+                        "on-primary-fixed": "#151c26",
+                        "primary-container": "#030811",
+                        "on-secondary-fixed-variant": "#5d4201",
+                        "primary": "#c0c7d4",
+                        "outline": "#8f9096",
+                        "tertiary-fixed-dim": "#ddc1b1",
+                        "on-tertiary-fixed-variant": "#564337",
+                        "primary-fixed": "#dce3f1",
+                        "inverse-on-surface": "#303031",
+                        "on-primary": "#2a313b",
+                        "tertiary-container": "#100501",
+                        "glass-dark": "rgba(10, 10, 10, 0.6)",
+                        "on-tertiary-container": "#8b7466",
+                        "on-background": "#e5e2e2",
+                        "on-error-container": "#ffdad6",
+                        "brand-red": "#e62e2e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "32px",
+                        "margin-tablet": "40px",
+                        "margin-desktop": "80px",
+                        "margin-mobile": "24px",
+                        "section-padding": "120px"
+                    },
+                    "fontFamily": {
+                        "hero-display": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "hero-display-mobile": ["Inter", "sans-serif"],
+                        "headline-lg": ["Playfair Display", "serif"],
+                        "label-caps": ["Montserrat", "sans-serif"],
+                        "headline-accent": ["Playfair Display", "serif"]
+                    },
+                    "fontSize": {
+                        "hero-display": ["240px", {"lineHeight": "0.9", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "hero-display-mobile": ["100px", {"lineHeight": "0.9", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.3em", "fontWeight": "600"}],
+                        "headline-accent": ["24px", {"lineHeight": "1.4", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden bg-background">
+<!-- TopNavBar Shell (Modified to match Image 16) -->
+<nav class="fixed top-0 w-full z-[100] bg-white/5 backdrop-blur-md border-b border-white/10 flex justify-between items-center px-10 py-4">
+<div class="flex items-center gap-12">
+<!-- Exact Logo Style from Image 16 -->
+<div class="flex items-center gap-2 cursor-pointer">
+<div class="flex flex-col leading-none">
+<span class="text-white font-black text-2xl tracking-tighter italic">leisure</span>
+<span class="text-white font-light text-xl tracking-widest ml-4">loop</span>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-brand-red flex items-center justify-center">
+<span class="material-symbols-outlined text-brand-red text-sm">near_me</span>
+</div>
+</div>
+<!-- Navigation Menu from Image 16 -->
+<div class="hidden lg:flex items-center gap-8">
+<a class="nav-link text-white hover:text-brand-red transition-colors flex items-center gap-1 uppercase" href="#">Tour Packages <span class="material-symbols-outlined text-xs">keyboard_arrow_down</span></a>
+<a class="nav-link text-white hover:text-brand-red transition-colors flex items-center gap-1 uppercase" href="#">Domestic Destinations <span class="material-symbols-outlined text-xs">keyboard_arrow_down</span></a>
+<a class="nav-link text-white hover:text-brand-red transition-colors flex items-center gap-1 uppercase" href="#">International Destinations <span class="material-symbols-outlined text-xs">keyboard_arrow_down</span></a>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="hidden md:flex flex-col items-end">
+<span class="text-[10px] text-white/60 font-label-caps tracking-widest uppercase">Contact Us</span>
+<span class="text-white font-semibold text-sm">+91 89189 21633</span>
+</div>
+<button class="bg-brand-red text-white px-8 py-3 rounded-full font-label-caps text-[11px] font-bold hover:bg-red-700 transition-all duration-300 uppercase tracking-widest">
+            Enquiry Now
+        </button>
+</div>
+</nav>
+<!-- Hero Section (Modified to match Image 16 exactly) -->
+<section class="relative h-screen flex flex-col items-center justify-center text-center overflow-hidden">
+<!-- Background from Image 16 -->
+<div class="absolute inset-0 z-0">
+<img alt="Sikkim Mountains" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiI_KM1n4rWy78Ov2YEeWvMhjXYxZfSl-BiI5FDdnaypA75mRj8DPYK0_c9e-AnmzJcQSGMJR-KqIEqGhyFQdVZLxMmwbgx4ZZwwjsv3HpgwJoWS8I-nfxz9Dp0mcrkjYIj51fBB6aReiHEt8DiKAZwisMAEWZvad35xqRM8UwWtAvk4KPv-4ZBzUjDABhVGOI43Q0p6looUds3QZf6fE3MfCaHPONT-WoF6cRLkfFPm5IyTcgUGJ2uCWCTCwnnB466I_jiiD56lou"/>
+<div class="absolute inset-0 bg-black/20"></div>
+</div>
+<!-- Integrated Metrics Box from Screen 25, styled for Hero 16 -->
+<div class="absolute top-28 w-full max-w-4xl px-margin-mobile z-40">
+<div class="bg-black/40 backdrop-blur-xl rounded-2xl p-4 flex justify-between items-center gap-4 border border-white/10 shadow-2xl">
+<div class="flex flex-1 items-center justify-center gap-3 border-r border-white/10 px-4 last:border-0">
+<span class="material-symbols-outlined text-white/70">mountain_flag</span>
+<div class="text-left">
+<span class="block font-label-caps text-[9px] text-white/50 uppercase tracking-widest">Altitude</span>
+<span class="font-body-md text-white font-medium text-sm">3500m+</span>
+</div>
+</div>
+<div class="flex flex-1 items-center justify-center gap-3 border-r border-white/10 px-4 last:border-0">
+<span class="material-symbols-outlined text-white/70">calendar_month</span>
+<div class="text-left">
+<span class="block font-label-caps text-[9px] text-white/50 uppercase tracking-widest">Best Time</span>
+<span class="font-body-md text-white font-medium text-sm">Oct-May</span>
+</div>
+</div>
+<div class="flex flex-1 items-center justify-center gap-3 px-4 last:border-0">
+<span class="material-symbols-outlined text-white/70">schedule</span>
+<div class="text-left">
+<span class="block font-label-caps text-[9px] text-white/50 uppercase tracking-widest">Duration</span>
+<span class="font-body-md text-white font-medium text-sm">7-10 Days</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Hero Content from Image 16 -->
+<div class="relative z-30 px-margin-mobile">
+<h2 class="font-label-caps text-white text-xs md:text-sm tracking-[0.6em] uppercase mb-4 opacity-90">Himalayan Majesty</h2>
+<h1 class="font-hero-display text-hero-display-mobile md:text-hero-display text-white mb-2 drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
+            Sikkim
+        </h1>
+</div>
+<!-- Scroll Indicator -->
+<div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2">
+<span class="font-label-caps text-[10px] tracking-[0.3em] text-white opacity-60">SCROLL TO EXPLORE</span>
+<div class="w-[1px] h-10 bg-gradient-to-b from-white to-transparent"></div>
+</div>
+<!-- WhatsApp Floating from Image 16 -->
+<a class="absolute bottom-8 right-8 z-50 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform" href="#">
+<svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
+</a>
+</section>
+<!-- The Narrative (Editorial Section - preserved from SCREEN 25) -->
+<section class="relative py-section-padding bg-background overflow-hidden" id="narrative">
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+<div class="md:col-span-5 relative order-2 md:order-1 mt-12 md:mt-0">
+<div class="relative aspect-[3/4] w-full">
+<div class="absolute top-0 left-0 w-4/5 h-4/5 z-20 reveal-scale-hidden stagger-2 overflow-hidden rounded-2xl border border-glass-border shadow-2xl">
+<img alt="Monastery" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVHZcF7q7lYSjThZRvfs8EETUm37jz_sfIS3gsiQUzWKG6FZJCaiUsBlKQcOZ9qbWURdnuYoBNbgodlemlu2fa_-keaOWTOpu8nKUuaMTXJPCEVswM78mzRmklTxX9KYfP2apf8h6X92LskwFpdt-J-i9AghMl85f3hGNzWo4VxqoL_9wItb4oGS0C3LT2lCjpmZtwMdtYrkN_T7kJude7aX5dc_Na2DGmg1jE0_rs9EAXo65v166wMF509Q4A8tVOvgvxsPT4QdhH"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3/4 h-3/4 z-10 reveal-scale-hidden stagger-4 overflow-hidden rounded-2xl border border-glass-border translate-y-8 -translate-x-4 shadow-2xl">
+<img alt="Tea Garden" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGkopckc5ImX4vuGPUdHL4oWhsch82pLlUDIiuCGIne2PVOoswS54OPbiiJysI1wgVid_iFHcoaE1P2OmpClQIfL-84Rjb3-5DoyYXcCfA4x-Km-aXaRywOVnKTq_YCEtf0_oX_XIr4x10Z60OIRTcYuE2uyGAE93IumWQEKs2jNGLRdpzwHsBohJmm_P9l3BoxIxASWyGv2VPGGQrfDcSpJfrS01PBC7HwwvW4miplaniADdYnpoSqD1cIMFDiPjPJAwqRVMPyuka"/>
+</div>
+</div>
+</div>
+<div class="md:col-span-7 md:pl-12 order-1 md:order-2">
+<span class="font-label-caps text-label-caps text-secondary mb-4 block reveal-hidden stagger-1 uppercase tracking-widest">Editorial</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-8 reveal-hidden stagger-2 italic uppercase">THE NARRATIVE</h2>
+<div class="space-y-6 text-on-surface-variant leading-relaxed text-lg reveal-hidden stagger-3">
+<p>
+                    Sikkim is a symphony of Himalayan culture and ethereal landscapes. It is a place where the air is thinner but the soul feels fuller. From the ancient Rumtek Monastery, where the echoes of chanting resonate through ornate halls, to the pristine valleys of Lachung, every footstep tells a story of mountain heritage.
+                </p>
+<p>
+                    In this enclave of serenity, luxury is not just about the amenities; it's about the <span class="italic text-secondary">exclusive access</span> to the hidden corners of the world. Imagine waking up to a private view of Kanchenjunga, followed by a curated tea tasting session.
+                </p>
+</div>
+<div class="mt-10 flex items-center gap-4 group cursor-pointer reveal-hidden stagger-4">
+<div class="w-12 h-px bg-secondary group-hover:w-24 transition-all duration-500"></div>
+<span class="font-label-caps text-label-caps text-secondary">EXPLORE THE STORY</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Signature Journeys (preserved from SCREEN 25) -->
+<section class="py-section-padding bg-surface-container-low" id="journeys">
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
+<div class="reveal-hidden stagger-1">
+<span class="font-label-caps text-label-caps text-secondary mb-2 block uppercase tracking-widest">Curated Collections</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface italic uppercase">SIGNATURE JOURNEYS</h2>
+</div>
+<p class="max-w-md text-on-surface-variant reveal-hidden stagger-2">Handpicked experiences designed for the discerning traveler seeking deep immersion and unparalleled comfort.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Tour Card 1 -->
+<div class="group relative overflow-hidden rounded-3xl glass-card tour-card-hover border-none shadow-xl reveal-hidden stagger-1">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img alt="North Sikkim" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDq2qMuJNYpRE-hBmZ-aLJd9nXUguno2EgSo3z0zHKn0UGlTOk-LZbyOOZ-USHJMfeT0E6t-XKpOX5kkQfplJvWbV30igYMp8B7gVJ3wnQV_RQgiY0j0Ajz3RfNO0rk6WHxJbbaJTyeR1YThtSU-QufkrZVGavsgcl0R9wqD1_syQoMat1zo9g07p-ANKVr2inljDkP3h3kgMFuZUQHE1kqY5KiLiI8u8Q7Dn_XGGhrQkt25RmoCZEJP4hkTMD7ckV_paDq0aZvUwSm"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+</div>
+<div class="absolute bottom-0 p-8 w-full">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline-accent text-headline-accent text-on-surface leading-tight italic">North Sikkim Frozen Lake</h3>
+<span class="text-secondary font-bold">₹12,999</span>
+</div>
+<div class="flex items-center gap-6 mb-8 text-on-surface-variant text-sm">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">schedule</span> 8 Days</span>
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">group</span> Private</span>
+</div>
+<button class="w-full bg-secondary text-on-secondary py-4 rounded-xl font-label-caps text-label-caps hover:bg-opacity-90 transition-all uppercase tracking-widest">
+                        Plan This Journey
+                    </button>
+</div>
+</div>
+<!-- Tour Card 2 -->
+<div class="group relative overflow-hidden rounded-3xl glass-card tour-card-hover border-none shadow-xl reveal-hidden stagger-2">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img alt="Gangtok Retreat" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY4-XyKuBK3v_V3Am_ejOznf_wRtFX_e7fHMQc2qe87GST461EmhZI-Lzp1ak8VcsT1MIEPdXhlVUbfnPGXQNL1AtWflhPOorllp2h6KEEvdmVtcmJPhfu30k2tTEhqn7QqJIIGBopZL8FT7Ua_eRDdGVsolbi9InQsmf9gGWZaDkLSyfgFNzNBLitO1H9PIua3E7Li-vFB-8A3k33k5vy-JChBvJh2P-4UCi7zY7sFZJkrIHFkUlXwZP5z8EwfA3GvntgpwG-95FQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+</div>
+<div class="absolute bottom-0 p-8 w-full">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline-accent text-headline-accent text-on-surface leading-tight italic">Gangtok &amp; Darjeeling Retreat</h3>
+<span class="text-secondary font-bold">₹15,499</span>
+</div>
+<div class="flex items-center gap-6 mb-8 text-on-surface-variant text-sm">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">schedule</span> 6 Days</span>
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">spa</span> Wellness</span>
+</div>
+<button class="w-full bg-secondary text-on-secondary py-4 rounded-xl font-label-caps text-label-caps hover:bg-opacity-90 transition-all uppercase tracking-widest">
+                        Plan This Journey
+                    </button>
+</div>
+</div>
+<!-- Tour Card 3 -->
+<div class="group relative overflow-hidden rounded-3xl glass-card tour-card-hover border-none shadow-xl reveal-hidden stagger-3">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img alt="West Sikkim" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPTjtRKZ0bOM_-yAdhfzRCAIexNnlv3aptxtKhd6_HNIvO_H08UPJfmhwjvUe-cdOSVV6uGhZo2aeiZZRwH2YVJLXL7UDk4zOstqMChDYikub9WyYCrhSiYhVjKJ8dSf0nvAux-iPNGrLkNSL6fNzAd1HpQD4HHOxLVJT68LJmGf4LSGcy186K-CqVRMj9mF_ydiP1trD2DxLIZePu9HV5uxf6hyZEmF7paUpX8RaW5nZ6QFCFwcEJX5Xnk-mfneIZqJoYYSkyWsvR"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+</div>
+<div class="absolute bottom-0 p-8 w-full">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline-accent text-headline-accent text-on-surface leading-tight italic">West Sikkim Monastery Trail</h3>
+<span class="text-secondary font-bold">₹10,999</span>
+</div>
+<div class="flex items-center gap-6 mb-8 text-on-surface-variant text-sm">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">schedule</span> 10 Days</span>
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">history_edu</span> Cultural</span>
+</div>
+<button class="w-full bg-secondary text-on-secondary py-4 rounded-xl font-label-caps text-label-caps hover:bg-opacity-90 transition-all uppercase tracking-widest">
+                        Plan This Journey
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Local Experiences (preserved from SCREEN 25) -->
+<section class="py-section-padding bg-background overflow-hidden" id="local-experiences">
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16">
+<span class="font-label-caps text-label-caps text-secondary mb-4 block reveal-hidden stagger-1 uppercase tracking-[0.4em]">LOCAL EXPERIENCES</span>
+<h2 class="font-headline-lg text-on-surface italic uppercase reveal-hidden stagger-2">Immersive Encounters</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="glass-card p-10 rounded-[2rem] flex flex-col items-center text-center reveal-hidden stagger-1">
+<div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-secondary text-3xl">local_cafe</span>
+</div>
+<h3 class="font-headline-accent text-headline-accent text-on-surface mb-4 italic">Private Tea Tasting</h3>
+<p class="text-on-surface-variant leading-relaxed">Discover the heritage of Temi Tea Garden with a master sommelier.</p>
+</div>
+<div class="glass-card p-10 rounded-[2rem] flex flex-col items-center text-center reveal-hidden stagger-2">
+<div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-secondary text-3xl">self_improvement</span>
+</div>
+<h3 class="font-headline-accent text-headline-accent text-on-surface mb-4 italic">Monastic Meditation</h3>
+<p class="text-on-surface-variant leading-relaxed">Join a morning prayer session at Rumtek Monastery for spiritual clarity.</p>
+</div>
+<div class="glass-card p-10 rounded-[2rem] flex flex-col items-center text-center reveal-hidden stagger-3">
+<div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-secondary text-3xl">palette</span>
+</div>
+<h3 class="font-headline-accent text-headline-accent text-on-surface mb-4 italic">Artisan Workshops</h3>
+<p class="text-on-surface-variant leading-relaxed">Learn traditional Thangka painting from local masters in Gangtok.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Elite Enquiry Form (preserved from SCREEN 25) -->
+<section class="relative py-section-padding bg-background flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<div class="absolute top-1/4 left-1/4 w-96 h-96 bg-secondary blur-[150px] rounded-full animate-pulse"></div>
+<div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary blur-[150px] rounded-full animate-pulse" style="animation-delay: 2s"></div>
+</div>
+<div class="relative z-10 w-full max-w-2xl px-margin-mobile reveal-hidden stagger-1">
+<div class="glass-card p-12 rounded-[2.5rem] shadow-2xl border border-white/5">
+<div class="text-center mb-10">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-[0.4em] mb-4 block">Bespoke Travel</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface italic uppercase">Plan Your Elite Journey</h2>
+</div>
+<form class="space-y-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">person</span>
+<input class="w-full bg-surface-container-low/50 border border-glass-border rounded-xl py-4 pl-12 pr-4 text-on-surface focus:border-secondary focus:ring-0 transition-all outline-none" placeholder="Your Full Name" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">call</span>
+<input class="w-full bg-surface-container-low/50 border border-glass-border rounded-xl py-4 pl-12 pr-4 text-on-surface focus:border-secondary focus:ring-0 transition-all outline-none" placeholder="Phone Number" type="tel"/>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">mail</span>
+<input class="w-full bg-surface-container-low/50 border border-glass-border rounded-xl py-4 pl-12 pr-4 text-on-surface focus:border-secondary focus:ring-0 transition-all outline-none" placeholder="Email Address" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">calendar_today</span>
+<input class="w-full bg-surface-container-low/50 border border-glass-border rounded-xl py-4 pl-12 pr-4 text-on-surface focus:border-secondary focus:ring-0 transition-all outline-none" onfocus="(this.type='date')" placeholder="Travel Date" type="text"/>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">group</span>
+<select class="w-full bg-surface-container-low/50 border border-glass-border rounded-xl py-4 pl-12 pr-4 text-on-surface focus:border-secondary focus:ring-0 transition-all outline-none appearance-none">
+<option disabled="" selected="">Number of Guests</option>
+<option>1 Guest</option>
+<option>2 Guests</option>
+<option>3-5 Guests</option>
+<option>5+ Guests</option>
+</select>
+</div>
+</div>
+<button class="w-full bg-gradient-to-r from-secondary to-[#A3864A] text-on-secondary font-bold py-5 rounded-xl text-lg hover:shadow-[0_0_30px_rgba(233,193,118,0.4)] transition-all transform active:scale-[0.98] uppercase tracking-widest" type="submit">
+                    Submit Enquiry
+                </button>
+</form>
+<p class="text-center mt-6 text-on-surface-variant text-xs font-label-caps tracking-widest">A TRAVEL SPECIALIST WILL CONTACT YOU WITHIN 24 HOURS</p>
+</div>
+</div>
+</section>
+<!-- Footer Shell -->
+<footer class="w-full relative bg-surface-container-lowest text-secondary border-t border-white/5 grid grid-cols-1 md:grid-cols-12 gap-gutter px-margin-desktop py-section-padding">
+<div class="md:col-span-4 flex flex-col justify-between">
+<div>
+<h4 class="font-headline-lg text-headline-lg text-secondary mb-4 uppercase italic">SIKKIM</h4>
+<p class="text-on-surface-variant max-w-xs">Elevating Himalayan exploration through cinematic journeys and refined luxury hospitality.</p>
+</div>
+<div class="mt-12 text-on-surface-variant font-label-caps text-[10px] tracking-widest">
+            © 2024 SIKKIM LUXE TRAVEL. ALL RIGHTS RESERVED.
+        </div>
+</div>
+<div class="md:col-span-2">
+<h5 class="font-label-caps text-label-caps text-on-surface mb-8 uppercase tracking-widest">Destinations</h5>
+<ul class="space-y-4 text-on-surface-variant">
+<li><a class="hover:text-secondary transition-colors duration-300" href="#">Gangtok</a></li>
+<li><a class="hover:text-secondary transition-colors duration-300" href="#">Pelling</a></li>
+<li><a class="hover:text-secondary transition-colors duration-300" href="#">Lachung</a></li>
+</ul>
+</div>
+<div class="md:col-span-2">
+<h5 class="font-label-caps text-label-caps text-on-surface mb-8 uppercase tracking-widest">Experiences</h5>
+<ul class="space-y-4 text-on-surface-variant">
+<li><a class="hover:text-secondary transition-colors duration-300" href="#">Private Expeditions</a></li>
+<li><a class="hover:text-secondary transition-colors duration-300" href="#">Sustainability</a></li>
+<li><a class="hover:text-secondary transition-colors duration-300" href="#">Privacy</a></li>
+</ul>
+</div>
+<div class="md:col-span-4">
+<h5 class="font-label-caps text-label-caps text-on-surface mb-8 uppercase tracking-widest">Newsletter</h5>
+<div class="flex gap-2">
+<input class="flex-1 bg-surface-container border border-glass-border rounded-lg px-4 py-2 focus:border-secondary focus:ring-0 text-on-surface" placeholder="Your email" type="email"/>
+<button class="bg-secondary text-on-secondary px-6 py-2 rounded-lg font-label-caps text-label-caps uppercase">Join</button>
+</div>
+<div class="mt-8 flex gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-secondary">public</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-secondary">share</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-secondary">mail</span>
+</div>
+</div>
+</footer>
+<script>
+    // Sophisticated Scroll Reveal Animation Logic
+    const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    };
+
+    const revealObserver = new IntersectionObserver(revealCallback, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('.reveal-hidden, .reveal-scale-hidden').forEach(el => {
+        revealObserver.observe(el);
+    });
+</script>
+</body></html>

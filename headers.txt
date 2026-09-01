@@ -1,0 +1,190 @@
+--- public/admin\cab_class-form.php ---
+<div class="header" style="margin-bottom: 2rem;">
+                <h1><?php echo $id ? 'Edit' : 'Add New'; ?> <span class="accent">Cab Class</span></h1>
+            </div>
+
+            <form action="" method="POST" enctype="multipart/form-data" class="admin-form" style="max-width: 800px; background: rgba(255,255,255,0.02); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Class Name (e.g. Sedan Class)</label>
+                        <input type="text" name="name" value="<?php echo htmlspecialchars($class['name']); ?>" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label>Description (Short marketing text)</label>
+                        <textarea name="description" rows="3"><?php echo htmlspecialchars($class['description']); ?></textarea>
+                    </div>
+
+--- public/admin\destination-form.php ---
+<div class="header" style="margin-bottom: 2rem;">
+                <a href="destinations.php" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">&larr; Back to Destinations</a>
+                <h1 style="margin-top: 1rem;"><?php echo $id ? 'Edit' : 'Create'; ?> <span class="accent">Destination</span></h1>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="form-card">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Destination Name</label>
+                        <input type="text" name="name" value="<?php echo htmlspecialchars($dest['name']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Slug (URL Identifier)</label>
+                        <input type="text" name="slug" value="<?php echo htmlspecialchars($dest['slug']); ?>" placeholder="auto-generated if empty">
+                    </div>
+
+--- public/admin\fixed_departure-form.php ---
+<div class="header" style="margin-bottom: 2rem;">
+                <a href="fixed_departures.php" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">&larr; Back to Departures</a>
+                <h1 style="margin-top: 1rem;"><?php echo $id ? 'Edit' : 'Schedule'; ?> <span class="accent">Departure</span></h1>
+            </div>
+
+            <form method="POST" class="form-card">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Select Package</label>
+                        <select name="package_id" required>
+                            <option value="">-- Select a Package --</option>
+                            <?php foreach ($packages_list as $p): ?>
+                            <option value="<?php echo $p['id']; ?>" <?php echo ($dep['package_id'] == $p['id']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($p['title']); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if (empty($packages_list)): ?>
+                            <p style="color: #fca5a5; font-size: 0.85rem; margin-top: 0.5rem;">You don't have any packages marked as "Fixed Departure". Go to <a href="packages.php" style="color: #ef4444; text-decoration: underline;">Manage Packages</a> and change a package's type to "Fixed Departure" first.</p>
+                        <?php else: ?>
+                            <p style="color: var(--admin-text-muted); font-size: 0.8rem; margin-top: 0.5rem;">
+                                Note: This form only controls the Departure Date and Pricing. 
+                                <?php if ($id > 0 && !empty($dep['package_id'])): ?>
+                                    <a href="package-form.php?id=<?php echo $dep['package_id']; ?>" style="color: var(--accent); text-decoration: underline;">Click here to edit the Package's Itinerary, Hotel, and Meals.</a>
+                                <?php else: ?>
+                                    To edit Itinerary or Hotel details, use the "Manage Packages" menu.
+                                <?php endif; ?>
+                            </p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+--- public/admin\hotel-form.php ---
+<div class="header" style="margin-bottom: 2rem;">
+                <h1><?php echo $id ? 'Edit' : 'Add New'; ?> <span class="accent">Hotel</span></h1>
+            </div>
+
+            <div class="admin-card">
+                <form method="POST" style="display: grid; gap: 20px;">
+                    <div class="form-group">
+                        <label>Hotel Name</label>
+                        <input type="text" name="name" class="form-control" required value="<?php echo htmlspecialchars($hotel['name']); ?>">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>Place / Destination</label>
+                            <input type="text" name="place" class="form-control" required value="<?php echo htmlspecialchars($hotel['place']); ?>">
+                        </div>
+
+--- public/admin\hotel-room-form.php ---
+<div class="header" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Add <span class="accent">Room Category</span></h1>
+                    <p class="muted"><a href="hotel-rooms.php?hotel_id=<?php echo $hotel_id; ?>" style="color:var(--gold);">← Back to Rooms & Plans</a></p>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h3 style="margin-top:0;">Room Category Details for <?php echo htmlspecialchars($hotel['name']); ?></h3>
+                <form method="POST" enctype="multipart/form-data" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                    
+                    <div class="form-group">
+                        <label>Room Category Name</label>
+                        <input type="text" name="room_type_name" class="form-control" placeholder="e.g. Premium Room with Balcony" required>
+                    </div>
+
+--- public/admin\package-form.php ---
+<div class="header" style="margin-bottom: 2rem;">
+                <a href="packages.php" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">&larr; Back to Packages</a>
+                <h1 style="margin-top: 1rem;"><?php echo $id ? 'Edit' : 'Create'; ?> <span class="accent">Package</span></h1>
+            </div>
+
+            <form method="POST" class="form-card" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Package Title</label>
+                        <input type="text" name="title" value="<?php echo htmlspecialchars($pkg['title']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Slug (URL Identifier)</label>
+                        <input type="text" name="slug" value="<?php echo htmlspecialchars($pkg['slug']); ?>" placeholder="auto-generated if empty">
+                    </div>
+
+--- public/admin\theme-form.php ---
+<div class="header" style="margin-bottom: 2.5rem;">
+                <a href="themes.php" style="color: var(--gold); text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem;">
+                    <span>&larr;</span> Back to Themes
+                </a>
+                <h1><?php echo $id ? 'Edit' : 'Create'; ?> Curated <span class="accent">Theme</span></h1>
+            </div>
+
+            <?php if (!empty($error)): ?>
+                <div class="form-feedback feedback-error"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+
+            <?php if (!empty($success)): ?>
+                <div class="form-feedback feedback-success"><?php echo htmlspecialchars($success); ?></div>
+
+--- public/admin\vehicle-form.php ---
+<div class="header" style="margin-bottom: 2rem;">
+                <h1><?php echo $id ? 'Edit' : 'Add New'; ?> <span class="accent">Vehicle</span></h1>
+            </div>
+
+            <form action="" method="POST" enctype="multipart/form-data" class="admin-form" style="max-width: 800px; background: rgba(255,255,255,0.02); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div class="form-grid">
+                    
+                    <div class="form-group full-width">
+                        <label>Cab Class</label>
+                        <select name="cab_class_id" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px;">
+                            <option value="">Select Cab Class</option>
+                            <?php foreach ($cab_classes as $cc): ?>
+                                <option value="<?php echo $cc['id']; ?>" <?php echo $vehicle['cab_class_id'] == $cc['id'] ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($cc['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Vehicle Name (e.g. Maruti Swift)</label>
+                        <input type="text" name="name" value="<?php echo htmlspecialchars($vehicle['name']); ?>" required>
+                    </div>
+
+--- public/admin/hotel-gallery.php ---
+<div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+                <div>
+                    <h1>Manage <span class="accent">Gallery</span></h1>
+                    <p class="muted"><?php echo htmlspecialchars($hotel['name']); ?></p>
+                </div>
+                <a href="hotels.php" class="btn-primary" style="background: var(--dark-bg); border: 1px solid var(--gold); color: var(--gold);">Back to Hotels</a>
+            </div>
+
+            <div style="background: var(--dark-surface); padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 20px;">
+                <form action="" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 8px;">Upload Image Files</label>
+                        <input type="file" name="images[]" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;" multiple accept="image/*">
+                    </div>
+
+--- public/admin/hotel-inventory.php ---
+<div class="header">
+                <div>
+                    <h1>Manage <span>Inventory & Rates</span></h1>
+                    <p style="color: var(--text-muted); margin-top: 5px; font-size: 1.1rem;"><?php echo htmlspecialchars($hotel['name']); ?></p>
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <div style="position: relative;" id="bulkUpdateContainer">
+                        <button type="button" class="btn btn-outline" onclick="toggleBulkDropdown()"><i class="fas fa-bolt"></i> Bulk Update &#9662;</button>
+                        <div class="bulk-dropdown" id="bulkDropdown">
+                            <a href="#" onclick="openBulkModal('inventory')">Update Inventory</a>
+                            <a href="#" onclick="openBulkModal('rates')">Update Rates</a>
+                        </div>
+                    </div>
+

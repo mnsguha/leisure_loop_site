@@ -1,0 +1,56 @@
+.mobile-splash-view { display: none !important; }
+.mobile-splash-view.is-active { display: block !important; }
+.mobile-splash-view.is-active + #mobile-home-view { display: none; }
+
+.mobile-splash {
+    align-items: center;
+    background-color: #07101e;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+    display: flex;
+    font-family: 'Inter', sans-serif;
+    inset: 0;
+    justify-content: flex-end;
+    overflow: hidden;
+    padding: 2rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
+    position: fixed;
+    z-index: 99999;
+}
+
+.splash-background--1 { background-image: url('../assets/img/mobile_splash_bg_1.png'); }
+.splash-background--2 { background-image: url('../assets/img/mobile_splash_bg_2.png'); }
+.splash-background--3 { background-image: url('../assets/img/mobile_splash_bg_3.png'); }
+.mobile-splash__overlay { background: linear-gradient(to top, rgba(0, 0, 0, .9), rgba(0, 0, 0, .5) 50%, transparent); inset: auto 0 0; height: 60%; position: absolute; }
+.mobile-splash__intro, .mobile-splash__form-state { position: relative; width: 100%; z-index: 1; }
+.mobile-splash__intro { align-items: center; display: flex; flex-direction: column; text-align: center; }
+.mobile-splash__intro.is-hidden { display: none; }
+.mobile-splash__form-state { display: none; }
+.mobile-splash__form-state.is-active { display: block; }
+.splash-step-toggle { height: 1px; opacity: 0; position: absolute; width: 1px; }
+.mobile-splash:has(.splash-step-toggle:checked) .mobile-splash__intro { display: none; }
+.mobile-splash:has(.splash-step-toggle:checked) .mobile-splash__form-state { display: block; }
+.mobile-splash__logo { filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .5)); height: 90px; margin-bottom: 1.5rem; max-width: 100%; object-fit: contain; }
+.mobile-splash__eyebrow, .mobile-splash__title, .mobile-splash__form-title { font-family: 'Playfair Display', serif; }
+.mobile-splash__eyebrow { font-size: 1.1rem; font-weight: 600; letter-spacing: .5px; margin: 0 0 .2rem; }
+.mobile-splash__title { font-size: 2.8rem; font-weight: 700; line-height: 1.1; margin: 0 0 1rem; }
+.mobile-splash__description { color: rgba(255, 255, 255, .85); font-size: .85rem; line-height: 1.5; margin: 0 0 1.5rem; max-width: 280px; }
+.mobile-splash__dots { display: flex; gap: 6px; margin-bottom: 2rem; }
+.splash-dot { background: transparent; border: 0; border-radius: 50%; cursor: pointer; height: 48px; padding: 0; position: relative; width: 48px; }
+.splash-dot::after { background: rgba(255, 255, 255, .4); border-radius: 50%; content: ''; height: 6px; inset: 21px; position: absolute; width: 6px; }
+.splash-dot.is-active::after { background: #fff; border-radius: 4px; inset: 21px 16px; width: 16px; }
+.mobile-splash__primary-button, .mobile-splash__submit-button { border: 0; border-radius: 2rem; cursor: pointer; font: 600 1.1rem 'Inter', sans-serif; min-height: 52px; }
+.mobile-splash__primary-button { background: #fff; box-shadow: 0 4px 15px rgba(0, 0, 0, .2); color: #000; width: 240px; }
+.mobile-splash__primary-button { align-items: center; display: inline-flex; justify-content: center; }
+.mobile-splash__form-card { background: rgba(255, 255, 255, .1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, .2); border-radius: 1.5rem; box-shadow: 0 8px 32px rgba(0, 0, 0, .3); padding: 2rem 1.5rem; }
+.mobile-splash__form-title { font-size: 1.8rem; font-weight: 700; margin: 0 0 .5rem; text-align: center; }
+.mobile-splash__form-description { color: rgba(255, 255, 255, .8); font-size: .85rem; margin: 0 0 1.5rem; text-align: center; }
+.mobile-splash__input { background: rgba(255, 255, 255, .9); border: 0; border-radius: .75rem; box-sizing: border-box; font: .95rem 'Inter', sans-serif; margin-bottom: 1rem; min-height: 52px; padding: 1rem; width: 100%; }
+.mobile-splash__submit-button { background: var(--accent, #c5a059); box-shadow: 0 4px 15px rgba(197, 160, 89, .4); color: #fff; margin-bottom: 1rem; width: 100%; }
+.mobile-splash__skip-wrap { text-align: center; }
+.mobile-splash__skip-button { background: transparent; border: 0; color: rgba(255, 255, 255, .75); cursor: pointer; display: inline-flex; font: .8rem 'Inter', sans-serif; min-height: 48px; padding: .5rem 1rem; text-decoration: underline; }
+.mobile-splash button:active { transform: scale(.98); }
+.mobile-splash button:focus-visible, .mobile-splash__input:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+@media (min-width: 768px) { .mobile-splash-view { display: none !important; } }

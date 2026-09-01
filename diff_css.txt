@@ -1,0 +1,85 @@
+--- backup
++++ current
+@@ -4631,3 +4631,82 @@
+         flex: 0 0 280px;
+     }
+ }
++
++/* ─── HOTEL PARTNERS SECTION ─── */
++.hotel-partners-section {
++    padding: 6rem 0 8rem 0;
++    position: relative;
++    background: transparent;
++}
++
++.marquee-wrapper {
++    position: relative;
++    width: 100%;
++    overflow: hidden;
++    padding: 2rem 0;
++    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
++    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
++}
++
++.marquee-track {
++    display: flex;
++    gap: 2.5rem;
++    width: max-content;
++    animation: scrollMarquee 40s linear infinite;
++}
++
++.marquee-group {
++    display: flex;
++    gap: 2.5rem;
++}
++
++.marquee-wrapper:hover .marquee-track {
++    animation-play-state: paused;
++}
++
++.partner-card {
++    width: 260px;
++    height: 140px;
++    border-radius: 16px;
++    background: rgba(255, 255, 255, 0.02);
++    border: 1px solid rgba(255, 255, 255, 0.05);
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    padding: 2rem;
++    transition: all 0.4s var(--ease);
++    flex-shrink: 0;
++    position: relative;
++}
++
++.partner-logo {
++    max-width: 100%;
++    max-height: 100%;
++    object-fit: contain;
++    transition: all 0.4s var(--ease);
++    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
++}
++
++.partner-card:hover {
++    transform: translateY(-8px) scale(1.03);
++    background: rgba(255, 255, 255, 0.04);
++    border-color: rgba(197, 160, 89, 0.4);
++    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(197, 160, 89, 0.05);
++}
++
++.partner-card:hover .partner-logo {
++    filter: drop-shadow(0 5px 15px rgba(197, 160, 89, 0.3));
++}
++
++@keyframes scrollMarquee {
++    0% { transform: translateX(0); }
++    100% { transform: translateX(calc(-50% - 1.25rem)); }
++}
++
++@media (max-width: 768px) {
++    .partner-card {
++        width: 200px;
++        height: 110px;
++        padding: 1.5rem;
++    }
++}

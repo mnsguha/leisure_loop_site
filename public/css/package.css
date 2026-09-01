@@ -1,0 +1,26 @@
+/* Extracted from package.php */
+.material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gold-gradient-text {
+            background: linear-gradient(to right, #e9c176, #ffdea5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bottom-fade-overlay {
+            background: linear-gradient(to top, #131314 10%, transparent);
+        }
+        .mosaic-img {
+            transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        .mosaic-container:hover .mosaic-img {
+            transform: scale(1.06);
+        }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+

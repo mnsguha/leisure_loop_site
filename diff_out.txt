@@ -1,0 +1,752 @@
+--- backup
++++ current
+@@ -1,5 +1,64 @@
+ <?php 
+     require_once '../config/db.php';
++    
++    $hotel_partners = [];
++    if (isset($pdo)) {
++        try {
++            $hotel_partners = $pdo->query("SELECT * FROM hotel_partners WHERE is_active = 1 ORDER BY display_order ASC")->fetchAll();
++        } catch (PDOException $e) {}
++    }
++
++    $faqs = [
++        [
++            "question" => "What is the best time to travel in India?",
++            "answer" => "India is a year-round destination, but the ideal time depends on your chosen region. The Himalayas are perfect during summer, while Rajasthan and South India offer their best climate from October to March."
++        ],
++        [
++            "question" => "Do you provide customized tour packages?",
++            "answer" => "Absolutely. Every Leisure Loop journey is a bespoke creation, meticulously tailored to your preferences, pace, and individual travel aspirations."
++        ],
++        [
++            "question" => "How can I book my trip?",
++            "answer" => "You can begin by submitting an inquiry through our platform. Our dedicated travel curators will then personally contact you to design and confirm your itinerary."
++        ],
++        [
++            "question" => "Can I make partial payments for my booking?",
++            "answer" => "Yes, we offer flexible payment structures. Typically, a deposit secures your booking, with the balance due closer to your departure date."
++        ],
++        [
++            "question" => "What if I need to cancel my trip?",
++            "answer" => "We understand plans change. Our cancellation policies are clearly outlined during the booking process and are designed to offer as much flexibility as possible."
++        ],
++        [
++            "question" => "Do you arrange travel insurance?",
++            "answer" => "While we do not directly sell insurance, we highly recommend comprehensive travel coverage and can guide you toward trusted premium providers."
++        ],
++        [
++            "question" => "Do you handle flight and hotel bookings?",
++            "answer" => "Yes, our end-to-end service includes curating the finest luxury accommodations and arranging seamless air travel to ensure a stress-free journey."
++        ],
++        [
++            "question" => "Are meals and transfers included?",
++            "answer" => "Your bespoke itinerary will clearly detail inclusions. We typically include daily gourmet breakfasts, private luxury transfers, and select curated dining experiences."
++        ],
++        [
++            "question" => "Do you offer group discounts?",
++            "answer" => "For multi-generational families or exclusive private groups, we are pleased to offer tailored pricing arrangements reflecting the scale of your journey."
++        ],
++        [
++            "question" => "How can I contact your support team?",
++            "answer" => "Our concierge team is available 24/7 during your travels via a dedicated contact line provided upon booking confirmation."
++        ],
++        [
++            "question" => "Can I get visa and travel document help?",
++            "answer" => "Certainly. Our travel curators provide comprehensive guidance on visa requirements and assist with document preparation for a smooth arrival."
++        ],
++        [
++            "question" => "Why should I book with your company?",
++            "answer" => "We offer unparalleled access, exceptional personalized service, and a commitment to crafting transformative travel experiences that generic packages simply cannot replicate."
++        ]
++    ];
++
+     require_once '../config/recaptcha.php';
+     $page_title = "Leisure Loop Trip | The Art of Discovery";
+     $use_recaptcha = recaptchaIsConfigured();
+@@ -150,11 +209,12 @@
+                 <div class="hero-search-wrapper hero-reveal-up" style="animation-delay: 0.6s;">
+                     <div class="search-header" style="text-align: center; margin-bottom: 20px;">
+                         <span class="hero-card-label" style="margin: 0 auto 10px auto; display: inline-block;">Exclusive Offer</span>
+-                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #fff; margin-bottom: 5px;">Plan Your Perfect Journey</h3>
+-                        <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">Share your details and our travel curators will craft a bespoke itinerary for you.</p>
+-                    </div>
+-
+-                    <div class="hero-inline-form">
++                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #fff; margin-bottom: 5px; position: relative; z-index: 55;">Plan Your Perfect Journey</h3>
++                        <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0; position: relative; z-index: 55;">Share your details and our travel curators will craft a bespoke itinerary for you.</p>
++                        
++                    </div>
++
++                    <div class="hero-inline-form" style="position: relative; z-index: 55;">
+ 
+                         <!-- STEP 1: Search bar row -->
+                         <div class="hero-form-row--bar" id="heroStep1Row">
+@@ -280,9 +340,12 @@
+             $featured_packages = $pdo->query("SELECT * FROM packages WHERE is_active = 1 LIMIT 4")->fetchAll();
+         }
+     ?>
+-    <section class="packages-section" id="featured">
+-        <div class="watermark">Most Coveted</div>
+-        <div class="container">
++    <section class="packages-section" id="featured" style="position: relative; overflow: hidden;">
++        <!-- Minimalist Vector Mountains -->
++        <img src="images/parallax/vector_mountains.png" id="mountainBg" alt="Mountains" style="position: absolute; bottom: -5%; left: 0; width: 100%; height: auto; min-height: 40%; object-fit: cover; object-position: top; z-index: 0; pointer-events: none; opacity: 0.15; filter: grayscale(1) brightness(0.5);">
++        
++        <div class="watermark" style="position: absolute; z-index: 1;">Most Coveted</div>
++        <div class="container" style="position: relative; z-index: 2;">
+             <div class="packages-header">
+                 <div>
+                     <span class="section-label-gold">The Curated Collection</span>
+@@ -369,9 +432,37 @@
+     <?php endif; ?>
+ 
+     <!-- Signature Terrains -->
+-    <section class="destinations-section" id="destinations">
+-        <div class="container">
+-            <div class="destinations-header">
++    <section class="destinations-section" id="destinations" style="position: relative; overflow: hidden; background-color: #000;">
++        <!-- Animated Silk Contour Lines -->
++        <div id="silkContours" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.3; overflow: hidden;">
++            <style>
++                .silk-line {
++                    animation: wave-silk 14s infinite alternate ease-in-out;
++                    transform-origin: center;
++                }
++                .line1 { animation-delay: 0s; }
++                .line2 { animation-delay: -5s; }
++                .line3 { animation-delay: -9s; }
++                @keyframes wave-silk {
++                    0% { transform: translateY(-30px) scaleY(1); }
++                    100% { transform: translateY(30px) scaleY(1.15); }
++                }
++            </style>
++            <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" style="width: 100%; height: 100%;">
++                <defs>
++                    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
++                        <stop offset="0%" stop-color="#c5a059" stop-opacity="0" />
++                        <stop offset="50%" stop-color="#c5a059" stop-opacity="1" />
++                        <stop offset="100%" stop-color="#c5a059" stop-opacity="0" />
++                    </linearGradient>
++                </defs>
++                <path class="silk-line line1" d="M0,350 C300,250 700,550 1000,350" fill="none" stroke="url(#goldGradient)" stroke-width="1.5" />
++                <path class="silk-line line2" d="M0,450 C400,650 600,250 1000,450" fill="none" stroke="url(#goldGradient)" stroke-width="1" />
++                <path class="silk-line line3" d="M0,550 C200,450 800,750 1000,550" fill="none" stroke="url(#goldGradient)" stroke-width="0.5" />
++            </svg>
++        </div>
++        <div class="container" style="position: relative; z-index: 2;">
++            <div class="destinations-header" style="position: relative; z-index: 3;">
+                 <div class="header-left">
+                     <span class="section-label-gold">Curated Escapes</span>
+                     <h2 class="section-title">Signature <span class="serif" style="color: var(--gold); font-style: italic;">Terrains.</span></h2>
+@@ -529,8 +620,14 @@
+     </section>
+ 
+     <!-- The Art of Discovery (How We Work) -->
+-    <section class="how-we-work-section" style="padding: 6rem 0; background-color: var(--obsidian); border-top: 1px solid rgba(197, 160, 89, 0.1);">
+-        <div class="container">
++    <section class="how-we-work-section" style="position: relative; padding: 6rem 0; background-color: var(--obsidian); border-top: 1px solid rgba(197, 160, 89, 0.1); clip-path: inset(0);">
++        
++        <!-- CSS-only Video Parallax -->
++        <video autoplay loop muted playsinline style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 0; opacity: 0.25; pointer-events: none;">
++            <source src="assets/videos/Ocean.webm" type="video/webm">
++        </video>
++
++        <div class="container" style="position: relative; z-index: 1;">
+             <div style="text-align: center; margin-bottom: 4rem;">
+                 <span class="section-label-gold" style="letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.8rem; font-weight: 600;">The Process</span>
+                 <h2 class="section-title" style="margin-top: 1rem;">The Art of <span style="color: var(--gold); font-style: italic; font-family: 'Playfair Display', serif;">Discovery.</span></h2>
+@@ -681,8 +778,11 @@
+ 
+             if (!empty($theme_counts)):
+     ?>
+-    <section class="themes-curation-section" style="padding: 2rem 0 6rem 0; background: #050a14;">
+-        <div class="container">
++    <section class="themes-curation-section" style="padding: 2rem 0 6rem 0; background: #050a14; position: relative; overflow: hidden;">
++        <!-- Mandala Parallax Watermark -->
++        <img id="themeMandala" src="images/parallax/mandala.png" alt="Mandala" style="position: absolute; top: 50%; left: 50%; width: 90vw; max-width: 1200px; opacity: 0.08; z-index: 0; pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, black 50%, transparent 95%); mask-image: radial-gradient(closest-side, black 50%, transparent 95%);">
++        
++        <div class="container" style="position: relative; z-index: 2;">
+             <div style="margin-bottom: 4rem; text-align: center;">
+                 <span class="section-label-gold" style="letter-spacing: 0.25em;">CURATED THEMES</span>
+                 <h2 class="serif-accent" style="font-size: 2.8rem; margin: 0.5rem 0 0 0; font-weight: 500; font-family: 'Playfair Display', serif; color: white;">
+@@ -1038,7 +1138,8 @@
+         .distinction-grid {
+             display: grid;
+             grid-template-columns: repeat(2, 1fr);
+-            gap: 4.5rem 3.5rem;
++            gap: 6rem 3.5rem;
++            padding-bottom: 4rem;
+         }
+         
+         /* Frameless Sleek Pillar */
+@@ -1154,15 +1255,16 @@
+         }
+     </style>
+ 
+-    <section class="distinction-section">
+-        <div class="container">
++    <section class="distinction-section" style="background-color: #050a14;">
++        <div class="container" style="position: relative; z-index: 2;">
+             <div class="distinction-layout">
+                 
+                 <!-- Left Editorial Showcase Column -->
+-                <div class="distinction-brand-col">
++                <div class="distinction-brand-col" style="background-image: linear-gradient(rgba(5, 10, 20, 0.88), rgba(5, 10, 20, 0.95)), url('images/parallax/traveler_vector.png'); background-size: cover; background-position: right center; padding: 3.5rem; border-radius: 24px; border: 1px solid rgba(197, 160, 89, 0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+                     <span class="section-label-gold" style="letter-spacing: 0.25em;">THE LOOP DISTINCTION</span>
+                     <h2>Why Discerning Explorers Choose Us.</h2>
+                     <p>We do not organize tours; we choreograph high-altitude symphonies. Every detail of our private loops is tailored to deliver uncompromising luxury, profound local connection, and absolute operational excellence.</p>
++                    
+                     <a href="#contact" class="distinction-cta-link">
+                         Begin your bespoke story
+                         <svg viewBox="0 0 24 24">
+@@ -1625,17 +1727,339 @@
+     </section>
+     <?php endif; ?>
+ 
++    <!-- TESTIMONIALS - EXPLORER'S MARQUEE -->
++    <section class="testimonials-marquee-section" id="testimonials" style="position: relative; background: linear-gradient(to bottom, #000000 0%, #050a14 100%); padding: 6rem 0; overflow: hidden;">
++        <div style="text-align: center; margin-bottom: 5rem; position: relative; z-index: 2;">
++            <span class="section-label-gold" style="letter-spacing: 0.25em;">TRAVELER DIARIES</span>
++            <h2 class="serif-accent" style="font-size: 2.8rem; margin: 0.5rem 0 0 0; font-weight: 500; font-family: 'Playfair Display', serif; color: white;">
++                Echoes from the <span style="font-style: italic; color: var(--gold);">Horizon.</span>
++            </h2>
++        </div>
++
++        <style>
++            .marquee-wrapper {
++                display: flex;
++                width: 200%;
++                animation: scrollMarquee 40s linear infinite;
++            }
++            .marquee-wrapper:hover {
++                animation-play-state: paused;
++            }
++            .marquee-track {
++                display: flex;
++                width: 100%;
++                justify-content: space-around;
++            }
++            .marquee-item {
++                display: flex;
++                align-items: center;
++                gap: 3rem;
++                padding: 0 4rem;
++                white-space: normal;
++                width: 850px;
++                flex-shrink: 0;
++            }
++            .marquee-photo {
++                width: 240px;
++                height: 300px;
++                object-fit: cover;
++                border-radius: 4px;
++                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
++                border: 8px solid #fff; /* Polaroid white border */
++                border-bottom-width: 35px; /* Polaroid bottom space */
++                transform: rotate(-3deg);
++                transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
++                filter: sepia(0.2) contrast(1.1); /* Slight cinematic filter */
++            }
++            .marquee-item:hover .marquee-photo {
++                transform: rotate(0deg) scale(1.08) translateY(-10px);
++                z-index: 10;
++                box-shadow: 0 30px 60px rgba(0,0,0,0.8);
++            }
++            .marquee-quote {
++                flex: 1;
++            }
++            @keyframes scrollMarquee {
++                0% { transform: translateX(0); }
++                100% { transform: translateX(-50%); }
++            }
++        </style>
++
++        <div style="overflow: hidden; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; padding-bottom: 3rem;">
++            <?php
++            // Fetch active testimonials
++            $testimonials = [];
++            if ($pdo) {
++                $testimonials = $pdo->query("SELECT * FROM testimonials WHERE status = 'active' ORDER BY sort_order ASC, created_at DESC")->fetchAll();
++            }
++            if (!empty($testimonials)): 
++            ?>
++            <div class="marquee-wrapper">
++                <!-- Track 1 -->
++                <div class="marquee-track">
++                    <?php foreach ($testimonials as $t): ?>
++                    <div class="marquee-item">
++                        <img src="<?php echo htmlspecialchars($t['image_url']); ?>" alt="<?php echo htmlspecialchars($t['tour_name']); ?>" class="marquee-photo" style="transform: rotate(<?php echo (int)$t['rotation_angle']; ?>deg);">
++                        <div class="marquee-quote">
++                            <div style="color: var(--gold); font-size: 3rem; margin-bottom: 0.5rem; opacity: 0.4; line-height: 0.5; font-family: serif;">"</div>
++                            <p style="font-family: 'Playfair Display', serif; font-size: 1.45rem; color: #fff; line-height: 1.5; margin-bottom: 1.5rem; font-style: italic;">
++                                "<?php echo nl2br(htmlspecialchars($t['quote_text'])); ?>"
++                            </p>
++                            <div>
++                                <h4 style="color: var(--gold); margin: 0 0 0.4rem 0; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;"><?php echo htmlspecialchars($t['client_name']); ?></h4>
++                                <span style="color: rgba(255,255,255,0.5); font-size: 0.85rem; letter-spacing: 0.05em;"><?php echo htmlspecialchars($t['tour_name']); ?></span>
++                            </div>
++                        </div>
++                    </div>
++                    <?php endforeach; ?>
++                </div>
++                
++                <!-- Track 2 (Duplicate for seamless loop) -->
++                <div class="marquee-track">
++                    <?php foreach ($testimonials as $t): ?>
++                    <div class="marquee-item">
++                        <img src="<?php echo htmlspecialchars($t['image_url']); ?>" alt="<?php echo htmlspecialchars($t['tour_name']); ?>" class="marquee-photo" style="transform: rotate(<?php echo (int)$t['rotation_angle']; ?>deg);">
++                        <div class="marquee-quote">
++                            <div style="color: var(--gold); font-size: 3rem; margin-bottom: 0.5rem; opacity: 0.4; line-height: 0.5; font-family: serif;">"</div>
++                            <p style="font-family: 'Playfair Display', serif; font-size: 1.45rem; color: #fff; line-height: 1.5; margin-bottom: 1.5rem; font-style: italic;">
++                                "<?php echo nl2br(htmlspecialchars($t['quote_text'])); ?>"
++                            </p>
++                            <div>
++                                <h4 style="color: var(--gold); margin: 0 0 0.4rem 0; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;"><?php echo htmlspecialchars($t['client_name']); ?></h4>
++                                <span style="color: rgba(255,255,255,0.5); font-size: 0.85rem; letter-spacing: 0.05em;"><?php echo htmlspecialchars($t['tour_name']); ?></span>
++                            </div>
++                        </div>
++                    </div>
++                    <?php endforeach; ?>
++                </div>
++            </div>
++            <?php else: ?>
++            <p style="text-align: center; color: rgba(255,255,255,0.5);">No diaries entries found.</p>
++            <?php endif; ?>
++        </div>
++    </section>
++
++    <!-- OUR GROUP OF COMPANIES - THE GOLDEN DECK -->
++    <section class="companies-deck-section" id="companies" style="position: relative; padding: 6rem 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
++        
++        <!-- Ambient Aura Background -->
++        <div class="aura-container">
++            <div class="aura aura-gold"></div>
++            <div class="aura aura-amber"></div>
++        </div>
++
++        <div style="text-align: center; margin-bottom: 3rem; position: relative; z-index: 10;">
++            <span class="section-label-gold" style="letter-spacing: 0.25em;">COMPANIES</span>
++            <h2 class="serif-accent" style="font-size: 2.8rem; margin: 0.5rem 0 0 0; font-weight: 500; font-family: 'Playfair Display', serif; color: white;">
++                Our Group Of <span style="font-style: italic; color: var(--gold);">Companies.</span>
++            </h2>
++        </div>
++
++        <style>
++            .companies-deck-section {
++                /* Continuous gradient linking the deep blue bottom of the Testimonials section to the dark grey top of the FAQ section */
++                background: linear-gradient(to bottom, #050a14 0%, #050505 100%);
++            }
++            .aura-container {
++                position: absolute;
++                top: 0;
++                left: 0;
++                width: 100%;
++                height: 100%;
++                z-index: 1;
++                pointer-events: none;
++            }
++            .aura {
++                position: absolute;
++                border-radius: 50%;
++                mix-blend-mode: screen;
++                opacity: 0.15; /* Reverted to subtle elegant lighting */
++                filter: blur(90px);
++            }
++            .aura-gold {
++                width: 800px;
++                height: 800px;
++                background: radial-gradient(circle, rgba(212,175,55,1) 0%, rgba(212,175,55,0.15) 50%, rgba(212,175,55,0) 80%);
++                top: -10%;
++                left: -10%;
++                animation: floatAura1 25s infinite alternate ease-in-out;
++            }
++            .aura-amber {
++                width: 900px;
++                height: 900px;
++                background: radial-gradient(circle, rgba(205,115,35,1) 0%, rgba(205,115,35,0.15) 50%, rgba(205,115,35,0) 80%);
++                bottom: -20%;
++                right: -10%;
++                animation: floatAura2 30s infinite alternate ease-in-out;
++            }
++            
++            @keyframes floatAura1 {
++                0% { transform: translate(0, 0) scale(1); }
++                50% { transform: translate(100px, 50px) scale(1.1); }
++                100% { transform: translate(-50px, 150px) scale(0.9); }
++            }
++            @keyframes floatAura2 {
++                0% { transform: translate(0, 0) scale(1); }
++                50% { transform: translate(-150px, -100px) scale(1.2); }
++                100% { transform: translate(50px, -50px) scale(0.85); }
++            }
++            .companies-container {
++                position: relative;
++                width: 100%;
++                max-width: 650px;
++                height: 450px;
++                perspective: 1200px;
++                transform-style: preserve-3d;
++                z-index: 5;
++            }
++            .company-card {
++                position: absolute;
++                top: 0;
++                left: 0;
++                width: 100%;
++                height: 100%;
++                background: linear-gradient(145deg, #111827, #0f1423);
++                border: 1px solid rgba(212, 175, 55, 0.3);
++                border-radius: 20px;
++                box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 40px rgba(212,175,55,0.05);
++                padding: 4rem;
++                display: flex;
++                flex-direction: column;
++                justify-content: center;
++                align-items: center;
++                text-align: center;
++                transform-origin: bottom center;
++                will-change: transform, opacity;
++            }
++            .company-logo-placeholder {
++                width: 120px;
++                height: 120px;
++                background: rgba(255,255,255,0.03);
++                border: 1px solid var(--gold);
++                border-radius: 50%;
++                display: flex;
++                align-items: center;
++                justify-content: center;
++                margin-bottom: 2rem;
++                font-family: 'Playfair Display', serif;
++                font-size: 2.5rem;
++                color: var(--gold);
++                box-shadow: 0 10px 30px rgba(212,175,55,0.1);
++            }
++            .company-name {
++                font-family: 'Playfair Display', serif;
++                font-size: 2.2rem;
++                color: white;
++                margin-bottom: 1rem;
++            }
++            .company-desc {
++                color: #cbd5e1;
++                font-family: 'Inter', sans-serif;
++                font-size: 1.1rem;
++                line-height: 1.6;
++                margin-bottom: 2rem;
++            }
++            .company-link {
++                color: var(--gold);
++                text-transform: uppercase;
++                letter-spacing: 0.1em;
++                font-size: 0.85rem;
++                font-weight: 600;
++                text-decoration: none;
++                border-bottom: 1px solid transparent;
++                transition: border-color 0.3s;
++            }
++            .company-link:hover {
++                border-color: var(--gold);
++            }
++        </style>
++
++        <div class="companies-container">
++            <!-- Card 2 (Bottom) -->
++            <div class="company-card">
++                <div class="company-logo-placeholder" style="border: none; background: transparent; box-shadow: none;">
++                    <img src="images/tripoo-logo.jpg" alt="Tripoo Hotels Logo" style="width: 100%; height: 100%; object-fit: contain;">
++                </div>
++                <h3 class="company-name">Tripoo Hotels & Resorts LLP.</h3>
++                <p class="company-desc">Curating sanctuary-like retreats nestled within nature's most pristine landscapes. Experience luxury that honors the earth and elevates the spirit.</p>
++                <a href="#" class="company-link">Visit Tripoo Hotels &rarr;</a>
++            </div>
++            
++            <!-- Card 1 (Top) -->
++            <div class="company-card">
++                <div class="company-logo-placeholder" style="border: none; background: transparent; box-shadow: none;">
++                    <img src="images/manaya-logo.png" alt="Manaya Hotels Logo" style="width: 100%; height: 100%; object-fit: contain;">
++                </div>
++                <h3 class="company-name">Manaya Hotels</h3>
++                <p class="company-desc">Boutique heritage properties offering unmatched hospitality and architectural grandeur across the Himalayas. A legacy of impeccable service.</p>
++                <a href="#" class="company-link">Visit Manaya Hotels &rarr;</a>
++            </div>
++        </div>
++    </section>
++
++    <!-- HOTEL PARTNERS SECTION -->
++    <?php if (!empty($hotel_partners)): ?>
++    <section class="hotel-partners-section" id="partners">
++        <div class="container" style="text-align: center; margin-bottom: 4rem;">
++            <span class="section-label-gold" style="letter-spacing: 0.25em;">PRESTIGIOUS COLLABORATIONS</span>
++            <h2 class="serif-accent" style="font-size: 2.8rem; margin: 0.5rem 0 0 0; font-weight: 500; font-family: 'Playfair Display', serif; color: white;">
++                Our Hotel <span style="font-style: italic; color: var(--gold);">Partners.</span>
++            </h2>
++        </div>
++        
++        <div class="marquee-wrapper">
++            <div class="marquee-track">
++                <?php for($i=0; $i<2; $i++): ?>
++                <div class="marquee-group">
++                    <?php foreach ($hotel_partners as $partner): 
++                        $img_src = $partner['logo_url'];
++                        if (!str_starts_with($img_src, 'http')) {
++                            if (str_contains($img_src, '/')) {
++                                $img_src = $img_src; // If it contains path, leave it (e.g. if we store relative)
++                            } else {
++                                $img_src = 'assets/img/partners/' . $img_src;
++                            }
++                        }
++                    ?>
++                        <div class="partner-card">
++                            <img src="<?php echo htmlspecialchars($img_src); ?>" alt="<?php echo htmlspecialchars($partner['name']); ?>" class="partner-logo">
++                        </div>
++                    <?php endforeach; ?>
++                </div>
++                <?php endfor; ?>
++            </div>
++        </div>
++    </section>
++    <?php endif; ?>
++
+     <!-- FAQ -->
+     <section class="faq-section">
+         <div class="container">
+-            <span class="section-label">Knowledge Base</span>
+-            <h2 class="section-title">Common <span style="color: var(--gold); font-style: italic;">Curiosities.</span></h2>
++            <div style="text-align: center; margin-bottom: 2rem;">
++                <span class="section-label">Knowledge Base</span>
++                <h2 class="section-title">Common <span style="color: var(--gold); font-style: italic;">Curiosities.</span></h2>
++            </div>
+             <div class="faq-grid">
++                <?php
++                    $half = ceil(count($faqs) / 2);
++                    $left_col = array_slice($faqs, 0, $half);
++                    $right_col = array_slice($faqs, $half);
++                ?>
+                 <div class="faq-col">
++                    <?php foreach ($left_col as $faq): ?>
+                     <div class="faq-item">
+-                        <div class="faq-question"><h4>What defines a 'Bespoke' Leisure Loop journey?</h4><div class="faq-icon">&#10010;</div></div>
+-                        <div class="faq-answer"><p>Every journey is crafted from scratch based on your personal preferences, pace, and interests.</p></div>
+-                    </div>
++                        <div class="faq-question"><h4><?php echo htmlspecialchars($faq['question']); ?></h4><div class="faq-icon">&#10010;</div></div>
++                        <div class="faq-answer"><p><?php echo htmlspecialchars($faq['answer']); ?></p></div>
++                    </div>
++                    <?php endforeach; ?>
++                </div>
++                <div class="faq-col">
++                    <?php foreach ($right_col as $faq): ?>
++                    <div class="faq-item">
++                        <div class="faq-question"><h4><?php echo htmlspecialchars($faq['question']); ?></h4><div class="faq-icon">&#10010;</div></div>
++                        <div class="faq-answer"><p><?php echo htmlspecialchars($faq['answer']); ?></p></div>
++                    </div>
++                    <?php endforeach; ?>
+                 </div>
+             </div>
+         </div>
+@@ -1697,6 +2121,9 @@
+ 
+ <?php include '../includes/footer.php'; ?>
+ 
++<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
++<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
++
+ <script>
+     document.addEventListener('DOMContentLoaded', function() {
+         // Ensure first video plays
+@@ -1704,5 +2131,193 @@
+         if (firstVideo) {
+             firstVideo.play().catch(e => console.log("Autoplay blocked", e));
+         }
++
++        // Minimalist Vector Mountain Parallax
++        gsap.registerPlugin(ScrollTrigger);
++        
++        if (document.getElementById('mountainBg') && document.getElementById('featured')) {
++            // As the user scrolls into Most Coveted, the mountains rise up slightly from the bottom
++            gsap.to("#mountainBg", {
++                y: -80, // Move up by 80px
++                ease: "none",
++                scrollTrigger: {
++                    trigger: "#featured",
++                    start: "top bottom",
++                    end: "bottom top",
++                    scrub: 1
++                }
++            });
++        }
++
++        // Plan C: Horizontal Scroll Hijack for Signature Terrains
++        let destCarousel = document.querySelector('.destinations-carousel');
++        if (destCarousel && document.getElementById('destinations')) {
++            // Disable native overflow scrolling so GSAP can take over cleanly
++            destCarousel.style.overflowX = 'visible';
++            destCarousel.style.flexWrap = 'nowrap';
++            
++            // Calculate the total width to scroll. 
++            // If the cards don't overflow the screen, force a minimum scroll distance.
++            let getScrollDistance = () => {
++                let overflow = destCarousel.scrollWidth - window.innerWidth;
++                return Math.max(overflow, window.innerWidth * 0.5); // Scroll at least 50vw
++            };
++            
++            // Horizontal slide for the cards
++            const tweenCards = gsap.to(destCarousel, {
++                x: () => -getScrollDistance(),
++                ease: "none"
++            });
++
++            ScrollTrigger.create({
++                trigger: "#destinations",
++                start: "center center", // Pin when section is in the middle of the screen
++                end: () => `+=${getScrollDistance()}`, // Positive scroll duration
++                pin: true,
++                animation: tweenCards,
++                scrub: 1,
++                invalidateOnRefresh: true
++            });
++        }
++        
++        // Mandala Parallax for Bespoke Themes Section
++        let themeMandala = document.getElementById('themeMandala');
++        if (themeMandala) {
++            // Center the image precisely
++            gsap.set(themeMandala, { xPercent: -50, yPercent: -50 });
++            
++            gsap.to(themeMandala, {
++                rotation: 45, // Slow rotation
++                y: "30%", // Slight downward drift
++                ease: "none",
++                scrollTrigger: {
++                    trigger: ".themes-curation-section",
++                    start: "top bottom",
++                    end: "bottom top",
++                    scrub: 1
++                }
++            });
++        }
++        
++        // Staggered Editorial Reveal for Distinction Grid
++        const distinctionItems = gsap.utils.toArray('.distinction-item');
++        if (distinctionItems.length > 0) {
++            // Initial state
++            gsap.set(distinctionItems, { y: 60, opacity: 0 });
++            
++            ScrollTrigger.batch(distinctionItems, {
++                start: "top 85%",
++                onEnter: batch => gsap.to(batch, {
++                    opacity: 1,
++                    y: 0,
++                    duration: 0.9,
++                    stagger: 0.15,
++                    ease: "power2.out",
++                    overwrite: true
++                }),
++                onLeaveBack: batch => gsap.set(batch, { opacity: 0, y: 60, overwrite: true })
++            });
++        }
++        // Golden Deck for Companies
++        const companyDeckSection = document.querySelector('.companies-deck-section');
++        let companyCards = gsap.utils.toArray('.company-card').reverse(); // Reverse so DOM last child (Top Card) is first in array
++
++        if (companyDeckSection && companyCards.length > 0) {
++            // Interactive 3D tilt on hover for dynamic movement
++            companyCards.forEach(card => {
++                card.addEventListener('mousemove', (e) => {
++                    const rect = card.getBoundingClientRect();
++                    const x = e.clientX - rect.left;
++                    const y = e.clientY - rect.top;
++                    const centerX = rect.width / 2;
++                    const centerY = rect.height / 2;
++                    
++                    const rotateX = ((y - centerY) / centerY) * -5;
++                    const rotateY = ((x - centerX) / centerX) * 5;
++                    
++                    gsap.to(card, {
++                        rotateX: rotateX,
++                        rotateY: rotateY,
++                        duration: 0.4,
++                        ease: "power1.out",
++                        overwrite: "auto"
++                    });
++                });
++                
++                card.addEventListener('mouseleave', () => {
++                    gsap.to(card, {
++                        rotateX: 0,
++                        rotateY: 0,
++                        duration: 0.7,
++                        ease: "power2.out",
++                        overwrite: "auto"
++                    });
++                });
++            });
++
++            // Initial positioning: stagger them significantly so they peek out from top
++            gsap.set(companyCards, {
++                transformOrigin: "bottom center",
++                z: (i) => i * -80,
++                y: (i) => i * -80,
++                scale: (i) => 1 - (i * 0.06),
++                opacity: (i) => 1 - (i * 0.3)
++            });
++
++            // Create a timeline that pins the section and animates the cards
++            const companyDeckTl = gsap.timeline({
++                scrollTrigger: {
++                    trigger: companyDeckSection,
++                    start: "center center",
++                    end: "+=" + (companyCards.length * window.innerHeight * 0.8),
++                    pin: true,
++                    scrub: 1
++                }
++            });
++
++            // For each card (except the last one which stays at the bottom of the stack)
++            companyCards.forEach((card, i) => {
++                if (i < companyCards.length - 1) {
++                    // Top card flies up and fades out
++                    companyDeckTl.to(card, {
++                        yPercent: -150,
++                        opacity: 0,
++                        duration: 1,
++                        ease: "power2.inOut"
++                    }, i);
++
++                    // All cards below it move up and scale up
++                    for (let j = i + 1; j < companyCards.length; j++) {
++                        companyDeckTl.to(companyCards[j], {
++                            z: "+=80",
++                            y: "+=80",
++                            scale: "+=0.06",
++                            opacity: "+=0.3",
++                            duration: 1,
++                            ease: "power2.inOut"
++                        }, i);
++                    }
++                }
++            });
++        }
++
++        // FAQ Accordion
++        const faqQuestions = document.querySelectorAll('.faq-question');
++        faqQuestions.forEach(question => {
++            question.addEventListener('click', () => {
++                const item = question.closest('.faq-item');
++                const isActive = item.classList.contains('active');
++                
++                // Close all other FAQs
++                document.querySelectorAll('.faq-item').forEach(faq => {
++                    faq.classList.remove('active');
++                });
++                
++                // Open the clicked one if it wasn't active
++                if (!isActive) {
++                    item.classList.add('active');
++                }
++            });
++        });
+     });
+ </script>

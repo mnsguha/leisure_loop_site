@@ -1,0 +1,196 @@
+/* Extracted from cab-rates.php */
+.admin-layout { display: flex; min-height: 100vh; background-color: var(--admin-bg); color: var(--admin-text); font-family: 'Inter', sans-serif; }
+        .main-content { flex: 1; padding: 2rem; overflow-x: auto; }
+        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 500; }
+        .alert-success { background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; }
+        .alert-error { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #e74c3c; }
+        
+        .bulk-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 30px; }
+        .bulk-card h3 { margin-bottom: 15px; color: var(--admin-gold); font-family: 'Playfair Display', serif; }
+        .form-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .form-group { display: flex; flex-direction: column; flex: 1; min-width: 200px; }
+        .form-group label { margin-bottom: 5px; font-size: 0.85rem; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-control { padding: 10px 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff; font-family: inherit; box-sizing: border-box; }
+        .form-control:focus { outline: none; border-color: var(--admin-gold); }
+        .btn { padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; display: inline-block; transition: 0.3s; font-family: inherit; }
+        .btn-gold { background: var(--admin-gold); color: #000; }
+        .btn-gold:hover { filter: brightness(1.1); }
+        .btn-outline { background: transparent; border: 1px solid var(--admin-gold); color: var(--admin-gold); }
+        .btn-outline:hover { background: rgba(197,160,89,0.1); }
+        
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        /* Grid Table */
+        .inventory-table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.02); border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .inventory-table th, .inventory-table td { border: 1px solid rgba(255,255,255,0.05); padding: 12px 8px; text-align: center; }
+        .inventory-table th { background: rgba(0,0,0,0.4); font-weight: 600; color: var(--admin-gold); }
+        .inventory-table th.room-col { text-align: left; width: 15%; background: rgba(0,0,0,0.5); padding-left: 15px; }
+        .inventory-table td.room-col { text-align: left; font-weight: 600; background: rgba(0,0,0,0.3); padding-left: 15px; }
+        
+        .inv-input { 
+            width: 70px; 
+            padding: 8px; 
+            text-align: center; 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff; 
+            border-radius: 4px; 
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .inv-input:focus { outline: none; border-color: var(--admin-gold); background: rgba(255,255,255,0.1); }
+        
+        .date-header { display: flex; flex-direction: column; }
+        .date-header .day { font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase; }
+        .date-header .date { font-size: 0.95rem; }
+
+/* Extracted from cab_class-form.php */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: 1 / -1; }
+
+/* Extracted from hotel-gallery.php */
+.gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .delete-btn:hover {
+            background: #c82333;
+            color: white;
+        }
+
+/* Extracted from hotel-inventory.php */
+:root {
+            --primary-dark: #0f172a;
+            --secondary-dark: #1e293b;
+            --gold: #C5A059;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+
+        .admin-container { display: flex; min-height: 100vh; }
+        .sidebar { width: 250px; background: var(--secondary-dark); padding: 20px; border-right: 1px solid rgba(255,255,255,0.05); }
+        .main-content { flex: 1; padding: 40px; overflow-x: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        h1 { font-family: 'Playfair Display', serif; color: #fff; font-size: 2.5rem; }
+        h1 span { color: var(--gold); }
+        .btn { padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; display: inline-block; transition: 0.3s; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-gold:hover { filter: brightness(1.1); }
+        .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+        .btn-outline:hover { background: rgba(197,160,89,0.1); }
+        
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        /* PMS Inventory Table */
+        .inventory-table { width: 100%; border-collapse: collapse; background: var(--secondary-dark); border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .inventory-table th, .inventory-table td { border: 1px solid rgba(255,255,255,0.1); padding: 15px; text-align: center; }
+        .inventory-table th { background: rgba(0,0,0,0.2); font-weight: 600; color: var(--gold); }
+        .inventory-table th.room-col { text-align: left; width: 20%; background: rgba(0,0,0,0.3); }
+        .inventory-table td.room-col { text-align: left; font-weight: 600; background: rgba(0,0,0,0.2); }
+        
+        .inv-input { 
+            width: 60px; 
+            padding: 8px; 
+            text-align: center; 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff; 
+            border-radius: 4px; 
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .inv-input:focus { outline: none; border-color: var(--gold); background: rgba(255,255,255,0.1); }
+        
+        .date-header { display: flex; flex-direction: column; }
+        .date-header .day { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .date-header .date { font-size: 1.1rem; }
+        
+        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; }
+        .plan-row td { background: rgba(0,0,0,0.1); border-top: 1px solid rgba(255,255,255,0.05); }
+        .plan-name { font-weight: 600; color: #3498db; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .rate-details { display: none; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .rate-input-group { margin-bottom: 8px; text-align: left; }
+        .rate-input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+        .rate-input { width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 3px; font-size: 0.85rem; }
+        .rate-input:focus { outline: none; border-color: #3498db; }
+        
+        /* Bulk Dropdown */
+        .bulk-dropdown { position: absolute; top: 100%; right: 0; background: var(--secondary-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: none; z-index: 100; min-width: 150px; margin-top: 5px; }
+        .bulk-dropdown a { display: block; padding: 10px 15px; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .bulk-dropdown a:last-child { border-bottom: none; }
+        .bulk-dropdown a:hover { background: rgba(255,255,255,0.05); color: var(--gold); }
+
+/* Extracted from package-gallery.php */
+.gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .delete-btn:hover {
+            background: #c82333;
+            color: white;
+        }
+
+/* Extracted from vehicle-form.php */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: 1 / -1; }

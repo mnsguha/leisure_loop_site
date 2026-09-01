@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Glow filters for the neon effect -->
+    <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur1" />
+      <feGaussianBlur stdDeviation="12" result="blur2" />
+      <feGaussianBlur stdDeviation="24" result="blur3" />
+      <feMerge>
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-yellow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur1" />
+      <feGaussianBlur stdDeviation="12" result="blur2" />
+      <feGaussianBlur stdDeviation="24" result="blur3" />
+      <feMerge>
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-blue" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur1" />
+      <feGaussianBlur stdDeviation="12" result="blur2" />
+      <feGaussianBlur stdDeviation="24" result="blur3" />
+      <feMerge>
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur1" />
+      <feGaussianBlur stdDeviation="12" result="blur2" />
+      <feGaussianBlur stdDeviation="24" result="blur3" />
+      <feMerge>
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Map Pin Path with a gap to simulate the interlocking style from the image -->
+    <path id="pin" 
+          d="M 15 65 L 0 85 L -35.3 35.3 A 50 50 0 1 1 35.3 35.3 L 22 55"
+          fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Suitcase Icon (Red) -->
+    <g id="icon-suitcase" transform="scale(0.9) translate(-25, -25)" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="15" width="40" height="30" rx="4"/>
+      <path d="M 15 15 V 10 C 15 7.2 17.2 5 20 5 h 10 C 32.8 5 35 7.2 35 10 V 15"/>
+      <path d="M 15 25 V 35 M 25 25 V 35 M 35 25 V 35"/>
+    </g>
+
+    <!-- Airplane Icon (Yellow) -->
+    <g id="icon-airplane" transform="scale(0.9) translate(-25, -25)" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M25,5 C25,5 30,10 30,20 L45,35 L45,40 L30,35 L30,45 L35,50 L35,55 L25,52 L15,55 L15,50 L20,45 L20,35 L5,40 L5,35 L20,20 C20,10 25,5 25,5 Z" />
+    </g>
+
+    <!-- Island/Palm Tree Icon (Blue) -->
+    <g id="icon-island" transform="scale(0.9) translate(-25, -25)" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 5 45 Q 25 35 45 45"/>
+      <path d="M 25 45 Q 20 20 35 5"/>
+      <path d="M 35 5 Q 25 15 15 15"/>
+      <path d="M 35 5 Q 40 10 45 15"/>
+      <path d="M 35 5 Q 45 5 50 10"/>
+      <path d="M 35 5 Q 35 15 25 20"/>
+    </g>
+
+    <!-- Camera Icon (Green) -->
+    <g id="icon-camera" transform="scale(0.9) translate(-25, -25)" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="12" width="40" height="28" rx="4"/>
+      <circle cx="25" cy="26" r="8"/>
+      <path d="M 15 12 L 18 6 H 32 L 35 12"/>
+    </g>
+  </defs>
+
+  <!-- Dark Background -->
+  <rect width="500" height="500" fill="#0a0f18"/>
+
+  <!-- Top Pin: Red Suitcase -->
+  <!-- Pointing down-left -->
+  <g transform="translate(250, 130) rotate(135)">
+    <use href="#pin" stroke="#ff2a55" filter="url(#glow-red)"/>
+    <g transform="rotate(-135)">
+       <use href="#icon-suitcase" stroke="#ff2a55"/>
+    </g>
+  </g>
+
+  <!-- Right Pin: Green Camera -->
+  <!-- Pointing up-left -->
+  <g transform="translate(370, 250) rotate(225)">
+    <use href="#pin" stroke="#00e676" filter="url(#glow-green)"/>
+    <g transform="rotate(-225)">
+       <use href="#icon-camera" stroke="#00e676"/>
+    </g>
+  </g>
+
+  <!-- Bottom Pin: Blue Island -->
+  <!-- Pointing up-right -->
+  <g transform="translate(250, 370) rotate(315)">
+    <use href="#pin" stroke="#00b0ff" filter="url(#glow-blue)"/>
+    <g transform="rotate(-315)">
+       <use href="#icon-island" stroke="#00b0ff"/>
+    </g>
+  </g>
+
+  <!-- Left Pin: Yellow Airplane -->
+  <!-- Pointing down-right -->
+  <g transform="translate(130, 250) rotate(45)">
+    <use href="#pin" stroke="#ffb300" filter="url(#glow-yellow)"/>
+    <g transform="rotate(-45)">
+       <use href="#icon-airplane" stroke="#ffb300"/>
+    </g>
+  </g>
+
+</svg>

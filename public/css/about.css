@@ -1,0 +1,250 @@
+/* Premium About Us Styles */
+.about-hero {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.about-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1544885935-98dd03b09034?q=80&w=2000');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    filter: brightness(0.4) contrast(1.1) grayscale(20%);
+    z-index: -2;
+    transform: scale(1.05);
+    animation: subtleZoom 30s infinite alternate ease-in-out;
+}
+
+.about-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(5,5,5,0.2) 0%, rgba(5,5,5,1) 100%);
+    z-index: -1;
+}
+
+@keyframes subtleZoom {
+    0% { transform: scale(1.05); }
+    100% { transform: scale(1.15); }
+}
+
+.editorial-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+    position: relative;
+}
+
+.essay-dropcap::first-letter {
+    font-family: 'Playfair Display', serif;
+    float: left;
+    font-size: 5rem;
+    line-height: 0.8;
+    padding-right: 0.5rem;
+    padding-top: 0.2rem;
+    color: var(--gold);
+    font-style: italic;
+}
+
+.essay-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+}
+
+.essay-quote {
+    margin: 4rem 0;
+    padding: 3rem 0;
+    border-top: 1px solid rgba(197, 160, 89, 0.3);
+    border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+    text-align: center;
+}
+
+.essay-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-style: italic;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+}
+
+.essay-quote span {
+    display: block;
+    color: var(--gold);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+.founder-signature {
+    margin-top: 5rem;
+    text-align: right;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 2rem;
+}
+
+.founder-signature p {
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+.philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    padding: 5rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.philosophy-card {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(15, 15, 15, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.philosophy-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(197, 160, 89, 0.3);
+}
+
+.philosophy-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: var(--gold);
+    opacity: 0.2;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+}
+
+.philosophy-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 992px) {
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .essay-quote p { font-size: 1.8rem; }
+}
+
+.philosophy-section {
+    position: relative;
+    padding-top: 6rem;
+    padding-bottom: 8rem;
+    overflow: hidden;
+}
+
+.philosophy-bg-parallax {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/img/office-pic.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: 0;
+    filter: brightness(0.3) contrast(1.1);
+}
+
+.philosophy-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--obsidian, #050505) 0%, rgba(5,5,5,0.7) 30%, rgba(5,5,5,0.7) 70%, var(--obsidian, #050505) 100%);
+    z-index: 1;
+}
+
+/* Extracted inline styles */
+.about-hero-content {
+    animation: fadeUp 1.5s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+    position: relative;
+    z-index: 2;
+}
+
+.about-manifesto-label {
+    margin-bottom: 1.5rem;
+    display: inline-block;
+}
+
+.about-hero-title {
+    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    color: #fff;
+}
+
+.about-hero-highlight {
+    color: var(--gold);
+    font-style: italic;
+}
+
+.about-hero-desc {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.7);
+    max-width: 600px;
+    margin: 0 auto;
+    font-weight: 300;
+}
+
+.about-editorial-section {
+    background-color: var(--obsidian, #050505);
+}
+
+.founder-title {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.philosophy-container {
+    position: relative;
+    z-index: 2;
+}
+
+.philosophy-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.philosophy-main-title {
+    font-size: 3.5rem;
+    color: #fff;
+}
+
+.philosophy-desc {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
