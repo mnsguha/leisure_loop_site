@@ -1,0 +1,650 @@
+/* ==========================================================================
+   Responsive Viewport Branching & Mobile App Ergonomics (public/css/index.css)
+   ========================================================================== */
+
+/* --- Desktop vs Mobile Shell Visibility --- */
+@media (max-width: 768px) {
+    /* Hide Desktop Components on Mobile Viewport */
+    .desktop-only,
+    .glass-nav,
+    .main-footer,
+    .desktop-hero-section {
+        display: none !important;
+    }
+
+    body {
+        padding-top: 0 !important;
+        padding-bottom: 64px !important;
+        background-color: #050a14;
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior-y: contain;
+    }
+
+    .mobile-only {
+        display: block !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .mobile-only,
+    #splash-container,
+    .mobile-app-header,
+    .mobile-bottom-nav,
+    .mobile-search-sheet {
+        display: none !important;
+    }
+
+    .desktop-only {
+        display: block;
+    }
+}
+
+/* --- Mobile Onboarding Splash Screen --- */
+.mobile-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.5s ease-in-out, opacity 0.4s ease;
+    padding: 30px 20px;
+    box-sizing: border-box;
+}
+
+.splash-background--1 {
+    background-image: url('../assets/img/splash-1.jpg'), url('../assets/img/pkg.jpg');
+}
+.splash-background--2 {
+    background-image: url('../assets/img/splash-2.jpg'), url('../assets/img/pkg.jpg');
+}
+.splash-background--3 {
+    background-image: url('../assets/img/splash-3.jpg'), url('../assets/img/pkg.jpg');
+}
+
+.mobile-splash__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 10, 20, 0.25) 0%, rgba(5, 10, 20, 0.95) 80%);
+    z-index: 1;
+}
+
+.mobile-splash__intro,
+.mobile-splash__form-state {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.mobile-splash__intro.is-hidden {
+    display: none !important;
+}
+
+.mobile-splash__form-state {
+    display: none;
+}
+
+.mobile-splash__form-state.is-active {
+    display: block !important;
+}
+
+.mobile-splash__logo {
+    max-width: 140px;
+    height: auto;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.mobile-splash__eyebrow {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 4px;
+    font-weight: 500;
+}
+
+.mobile-splash__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    color: #ffffff;
+    margin: 0 0 12px;
+    line-height: 1.15;
+}
+
+.mobile-splash__description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+.mobile-splash__dots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.splash-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.splash-dot.is-active {
+    width: 28px;
+    border-radius: 20px;
+    background: var(--gold, #c5a059);
+}
+
+.mobile-splash__primary-button {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    color: #050a14;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mobile-splash__primary-button:hover {
+    background: var(--gold, #c5a059);
+    transform: translateY(-2px);
+}
+
+/* Splash Form Card */
+.mobile-splash__form-card {
+    background: rgba(13, 26, 41, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 24px 20px;
+    backdrop-filter: blur(16px);
+}
+
+.mobile-splash__form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin: 0 0 4px;
+}
+
+.mobile-splash__form-description {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0 0 16px;
+}
+
+.mobile-splash__input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 13px 15px;
+    color: #ffffff !important;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.mobile-splash__input:focus {
+    border-color: var(--gold, #c5a059);
+}
+
+.mobile-splash__submit-button {
+    width: 100%;
+    background: var(--gold, #c5a059);
+    color: #050a14;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 14px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+.mobile-splash__skip-wrap {
+    text-align: center;
+    margin-top: 14px;
+}
+
+.mobile-splash__skip-button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* --- Mobile Header (Flipkart-Style App Bar) --- */
+.mobile-app-header {
+    background: #050a14;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    padding: 12px 14px 8px;
+}
+
+.mobile-brand-container {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.mobile-brand-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+}
+
+.mobile-brand-icon {
+    height: 28px;
+    width: auto;
+}
+
+.mobile-brand-text {
+    height: 14px;
+    width: auto;
+}
+
+.mobile-location-trigger {
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 4px 0 8px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.location-current-text {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.78rem;
+}
+
+.location-action-text {
+    color: var(--gold, #c5a059);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.mobile-search-bar-wrap {
+    margin-bottom: 12px;
+}
+
+.mobile-search-btn {
+    width: 100%;
+    background: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.mobile-search-btn .material-symbols-outlined {
+    color: rgba(5, 10, 20, 0.6);
+    font-size: 1.25rem;
+}
+
+.search-placeholder-text {
+    color: rgba(5, 10, 20, 0.5);
+    font-size: 0.9rem;
+    font-weight: 500;
+    flex: 1;
+    text-align: left;
+}
+
+/* Category Tabs */
+.mobile-category-tabs {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+}
+
+.mobile-category-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    min-width: 58px;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding-bottom: 6px;
+    border-bottom: 2px solid transparent;
+}
+
+.mobile-tab-item.is-active {
+    color: #ffffff;
+    font-weight: 700;
+    border-bottom-color: var(--gold, #c5a059);
+}
+
+.tab-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-tab-item.is-active .tab-icon-box {
+    background: rgba(197, 160, 89, 0.15);
+    color: var(--gold, #c5a059);
+}
+
+/* --- Mobile Horizontal Tracks & Cards --- */
+.mobile-section-block {
+    padding: 24px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobile-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+}
+
+.mobile-kicker-gold {
+    font-size: 0.65rem;
+    color: var(--gold, #c5a059);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.mobile-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.15;
+}
+
+.mobile-section-title span {
+    color: var(--gold, #c5a059);
+    font-style: italic;
+}
+
+.mobile-see-all-link {
+    font-size: 0.78rem;
+    color: var(--gold, #c5a059);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.mobile-pkg-carousel {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 6px;
+}
+
+.mobile-pkg-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.app-pkg-card {
+    flex: 0 0 240px;
+    height: 310px;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    scroll-snap-align: start;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0d1a29;
+}
+
+.app-pkg-img {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px;
+    box-sizing: border-box;
+}
+
+.app-pkg-badge {
+    align-self: flex-start;
+    background: rgba(5, 10, 20, 0.85);
+    border: 1px solid rgba(197, 160, 89, 0.4);
+    color: var(--gold, #c5a059);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.app-pkg-content {
+    background: linear-gradient(to top, rgba(5, 10, 20, 0.95) 0%, rgba(5, 10, 20, 0.7) 70%, transparent 100%);
+    margin: -14px;
+    padding: 16px 14px 14px;
+}
+
+.app-pkg-dest {
+    font-size: 0.7rem;
+    color: var(--gold, #c5a059);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.app-pkg-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: #ffffff;
+    margin: 0 0 8px;
+    line-height: 1.25;
+}
+
+.app-pkg-price {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Fixed Departures Horizontal Track */
+.mobile-horizontal-track {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.fixed-dep-item-card {
+    flex: 0 0 135px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 6px;
+    text-decoration: none;
+    scroll-snap-align: start;
+}
+
+.fixed-dep-thumb {
+    height: 110px;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.fixed-dep-status {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 2px 0;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.fixed-dep-info {
+    padding-top: 6px;
+    text-align: center;
+}
+
+.fixed-dep-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fixed-dep-dates {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 2px 0;
+}
+
+.fixed-dep-price {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--gold, #c5a059);
+}
+
+/* --- Fixed Bottom 5-Tab Bar (Mobile) --- */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(9, 19, 34, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1050;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.mobile-bottom-nav__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.mobile-bottom-nav__item.is-active {
+    color: var(--gold, #c5a059);
+}
+
+.mobile-bottom-nav__item .material-symbols-outlined {
+    font-size: 1.35rem;
+}
+
+/* --- Mobile Bottom Sheets (Search & Location) --- */
+.mobile-search-sheet {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 8, 17, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: none;
+    align-items: flex-end;
+}
+
+.mobile-search-sheet.is-active {
+    display: flex !important;
+}
+
+.mobile-search-sheet__panel {
+    background: #0d1a29;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid rgba(197, 160, 89, 0.3);
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.mobile-search-sheet__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 12px;
+}
+
+.mobile-search-sheet__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+.mobile-search-sheet__close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.6rem;
+    cursor: pointer;
+}

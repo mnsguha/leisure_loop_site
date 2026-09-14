@@ -94,11 +94,11 @@ if (isset($_GET['delete'])) {
     </div>
 
     <!-- Hotel Select Modal -->
-    <div id="hotelSelectModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="hotelSelectModal" class="admin-modal">
         <div style="background: #0b0f19; width: 500px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 30px; border: 1px solid rgba(255,255,255,0.1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 style="font-family: 'Playfair Display', serif; color: #fff; margin: 0; font-size: 1.8rem;">Select <span style="color: var(--gold);">Hotel</span></h2>
-                <b aria-label="Close"utton type="button" data-action="close-hotel-modal" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                <button aria-label="Close" type="button" data-action="close-hotel-modal" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
             </div>
             
             <div style="margin-bottom: 20px; position: relative;">

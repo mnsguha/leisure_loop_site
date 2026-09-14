@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add 'scrolled' class once user scrolls past the top bar (38px), moving nav to top:0
     const handleScroll = () => {
+        if (!nav) return;
         if (window.scrollY > 38) {
             nav.classList.add('scrolled');
         } else {
@@ -287,18 +288,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     leadForm.reset();
                     
                     // Revert Hero Form UI back to Step 1 (single row)
-                    const heroStep2 = document.getElementById('heroStep2');
-                    const btnStep1Next = document.getElementById('btnStep1Next');
+                    const heroStep2 = document.getElementById('desktop-heroStep2') || document.getElementById('heroStep2');
+                    const btnStep1Next = document.getElementById('desktop-btnStep1Next') || document.getElementById('btnStep1Next');
                     if (heroStep2 && btnStep1Next && leadForm.id === 'heroLeadForm') {
                         heroStep2.style.display = 'none';
                         btnStep1Next.style.display = 'block';
                         
                         // Reset detached popover values
-                        const adultsQty = document.getElementById('adultsQty');
-                        const childrenQty = document.getElementById('childrenQty');
+                        const adultsQty = document.getElementById('desktop-adultsQty') || document.getElementById('adultsQty');
+                        const childrenQty = document.getElementById('desktop-childrenQty') || document.getElementById('childrenQty');
                         if (adultsQty) adultsQty.value = 2;
                         if (childrenQty) childrenQty.value = 0;
-                        const travelerInputDisplay = document.getElementById('travelerInputDisplay');
+                        const travelerInputDisplay = document.getElementById('desktop-travelerInputDisplay') || document.getElementById('travelerInputDisplay');
                         if (travelerInputDisplay) travelerInputDisplay.value = '2 Adults';
                     }
 
@@ -433,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             if (plannerModal) {
                 plannerModal.style.display = 'flex';
-                document.body.style.overflow = 'hidden'; // Prevent background scroll
+                document.body.classList.add('scroll-lock');
             }
         }
     });
@@ -442,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.closePlanner = () => {
         if (plannerModal) {
             plannerModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            document.body.classList.remove('scroll-lock');
         }
     };
 
@@ -550,11 +551,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- HERO INLINE FORM: TRAVELER POPOVER LOGIC ---
     const travelerDropdownTrigger = document.getElementById('travelerDropdownTrigger');
-    const travelerInputDisplay    = document.getElementById('travelerInputDisplay');
-    const travelerPopover         = document.getElementById('travelerPopover');
-    const btnDoneTravelers        = document.getElementById('btnDoneTravelers');
-    const adultsQty               = document.getElementById('adultsQty');
-    const childrenQty             = document.getElementById('childrenQty');
+    const travelerInputDisplay    = document.getElementById('desktop-travelerInputDisplay') || document.getElementById('travelerInputDisplay');
+    const travelerPopover         = document.getElementById('desktop-travelerPopover') || document.getElementById('travelerPopover');
+    const btnDoneTravelers        = document.getElementById('desktop-btnDoneTravelers') || document.getElementById('btnDoneTravelers');
+    const adultsQty               = document.getElementById('desktop-adultsQty') || document.getElementById('adultsQty');
+    const childrenQty             = document.getElementById('desktop-childrenQty') || document.getElementById('childrenQty');
 
     function updateTravelerDisplay() {
         if (!travelerInputDisplay) return;
@@ -637,10 +638,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Step 1 -> Step 2 Reveal Logic
-    const btnStep1Next = document.getElementById('btnStep1Next');
-    const heroStep2 = document.getElementById('heroStep2');
-    const heroDestInput = document.getElementById('heroDestInput');
-    const heroDateInput = document.getElementById('heroDateInput');
+    const btnStep1Next = document.getElementById('desktop-btnStep1Next') || document.getElementById('btnStep1Next');
+    const heroStep2 = document.getElementById('desktop-heroStep2') || document.getElementById('heroStep2');
+    const heroDestInput = document.getElementById('desktop-heroDestInput') || document.getElementById('heroDestInput');
+    const heroDateInput = document.getElementById('desktop-heroDateInput') || document.getElementById('heroDateInput');
 
     if (btnStep1Next && heroStep2) {
         btnStep1Next.addEventListener('click', () => {
@@ -650,11 +651,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!dest) { alert('Please enter a destination.'); return; }
 
             // Sync all fields to the form
-            document.getElementById('hiddenDest').value = dest;
-            document.getElementById('hiddenDate').value = date;
+            (document.getElementById('desktop-hiddenDest') || document.getElementById('hiddenDest')).value = dest;
+            (document.getElementById('desktop-hiddenDate') || document.getElementById('hiddenDate')).value = date;
             
-            const hiddenAdults = document.getElementById('hiddenAdults');
-            const hiddenChildren = document.getElementById('hiddenChildren');
+            const hiddenAdults = document.getElementById('desktop-hiddenAdults') || document.getElementById('hiddenAdults');
+            const hiddenChildren = document.getElementById('desktop-hiddenChildren') || document.getElementById('hiddenChildren');
             if (hiddenAdults) hiddenAdults.value = adultsQty?.value || 0;
             if (hiddenChildren) hiddenChildren.value = childrenQty?.value || 0;
 
@@ -910,7 +911,7 @@ document.addEventListener('mouseout', (e) => {
             }, 10);
             
             // If body has lenis scroll, might want to stop it, but standard overflow hidden works
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('scroll-lock');
         }
     };
 
@@ -921,7 +922,7 @@ document.addEventListener('mouseout', (e) => {
                 enquiryModal.style.display = 'none';
             }, 400); // matches CSS transition duration
             
-            document.body.style.overflow = '';
+            document.body.classList.remove('scroll-lock');
         }
     };
 

@@ -1,9 +1,10 @@
+<?php $pfx = $modal_prefix ?? ''; ?>
 <!-- Bespoke Travel Planner Modal -->
-<div id="plannerModal" class="modal-overlay" style="display: none;">
+<div id="<?= $pfx ?>plannerModal" class="modal-overlay is-hidden" aria-hidden="true">
     <div class="modal-glass">
-        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <button class="modal-close" data-action="close-modal" aria-label="Close modal">&times;</button>
         
-        <form id="travelPlannerForm" action="/api/v1/leads" method="POST" class="js-lead-form">
+        <form id="<?= $pfx ?>travelPlannerForm" action="/api/v1/leads" method="POST" class="js-lead-form">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
             <input type="hidden" name="source" value="Bespoke Planner Modal">
             <div class="planner-steps">
@@ -84,18 +85,18 @@
                 <div class="step" data-step="4">
                     <span class="section-label">Final Step</span>
                     <h2 class="serif">How can our <br>curators reach you?</h2>
-                    <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
+                    <div class="planner-contact-fields">
                         <div>
-                            <label for="planner_name" style="display:block; font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Your Name</label>
-                            <input type="text" id="planner_name" name="name" placeholder=" " required class="planner-input" aria-required="true">
+                            <label for="<?= $pfx ?>planner_name" class="planner-field-label">Your Name</label>
+                            <input type="text" id="<?= $pfx ?>planner_name" name="name" placeholder=" " required class="planner-input" aria-required="true">
                         </div>
                         <div>
-                            <label for="planner_phone" style="display:block; font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Phone Number</label>
-                            <input type="tel" id="planner_phone" name="phone" placeholder=" " required class="planner-input" aria-required="true">
+                            <label for="<?= $pfx ?>planner_phone" class="planner-field-label">Phone Number</label>
+                            <input type="tel" id="<?= $pfx ?>planner_phone" name="phone" placeholder=" " required class="planner-input" aria-required="true">
                         </div>
                         <div>
-                            <label for="planner_email" style="display:block; font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Email Address</label>
-                            <input type="email" id="planner_email" name="email" placeholder=" " class="planner-input">
+                            <label for="<?= $pfx ?>planner_email" class="planner-field-label">Email Address</label>
+                            <input type="email" id="<?= $pfx ?>planner_email" name="email" placeholder=" " class="planner-input">
                         </div>
                     </div>
                 </div>
@@ -103,9 +104,9 @@
             </div>
 
             <div class="planner-footer">
-                <button type="button" id="prevBtn" class="btn-outline" style="display: none;">Back</button>
-                <button type="button" id="nextBtn" class="btn-gold">Next Step</button>
-                <button type="submit" id="submitBtn" class="btn-gold" style="display: none;">Request Consultation</button>
+                <button type="button" id="<?= $pfx ?>prevBtn" class="btn-outline is-hidden">Back</button>
+                <button type="button" id="<?= $pfx ?>nextBtn" class="btn-gold">Next Step</button>
+                <button type="submit" id="<?= $pfx ?>submitBtn" class="btn-gold is-hidden">Request Consultation</button>
             </div>
         </form>
     </div>

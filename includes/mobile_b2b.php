@@ -13,7 +13,7 @@ $recaptcha_site_key = recaptchaSiteKey();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?php echo htmlspecialchars($page_title); ?></title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
     
@@ -26,15 +26,14 @@ $recaptcha_site_key = recaptchaSiteKey();
 <body>
 
     <!-- Top App Bar -->
-    <header class="flex items-center justify-between p-4 fixed top-0 w-full z-50 bg-[#050a14]/80 backdrop-blur-md border-b border-white/5">
-        <a href="index.php" class="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-white !no-underline">
-            <span class="material-symbols-outlined text-lg">arrow_back</span>
+    <header class="mob-topbar">
+        <a href="index.php" class="mob-topbar__back" aria-label="Back">
+            <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
         </a>
-        <div class="font-serif text-lg font-semibold tracking-wide text-white">B2B Partner</div>
-        <div class="w-10"></div> <!-- Spacer for centering -->
+        <span class="mob-topbar__title">B2B Partner</span>
+        <div class="mob-topbar__spacer"></div>
     </header>
-
-    <div style="height: 72px;"></div> <!-- Spacer for fixed header -->
+    <div class="mob-topbar-offset"></div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -153,5 +152,6 @@ $recaptcha_site_key = recaptchaSiteKey();
     
 
     
+    <script src="js/modules/mobile-views.js?v=<?= time() ?>" defer></script>
 </body>
 </html>

@@ -140,6 +140,7 @@
         .plan-row td { background: rgba(0,0,0,0.1); border-top: 1px solid rgba(255,255,255,0.05); }
         .plan-name { font-weight: 600; color: #3498db; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
         .rate-details { display: none; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .rate-details.is-active { display: block; }
         .rate-input-group { margin-bottom: 8px; text-align: left; }
         .rate-input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
         .rate-input { width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 3px; font-size: 0.85rem; }

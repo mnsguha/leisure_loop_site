@@ -43,8 +43,16 @@ if ($pdo) {
 
         <main class="main-content">
             <div class="header" style="margin-bottom: 3rem;">
-                <h1>Customer <span class="accent">Inquiries</span></h1>
-                <p class="muted">Monitor and manage leads captured from your marketing site.</p>
+                <div class="header-actions">
+                    <div>
+                        <h1>Customer <span class="accent">Inquiries</span></h1>
+                        <p class="muted">Monitor and manage leads captured from your marketing site.</p>
+                    </div>
+                    <button type="button" id="btnSyncLeadCRM" class="btn-primary btn-sync">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-5.67"/></svg>
+                        Push to CRM
+                    </button>
+                </div>
             </div>
 
             <form method="POST" action="leads.php" id="bulkDeleteForm">
@@ -69,6 +77,7 @@ if ($pdo) {
                         <th>Date</th>
                         <th>Customer Details</th>
                         <th>Destination</th>
+                        <th>Status</th>
                         <th>CRM Sync</th>
                         <th>Message</th>
                     </tr>
@@ -105,6 +114,13 @@ if ($pdo) {
                             </span>
                         </td>
                         <td>
+                            <?php if (!empty($lead['crm_synced'])): ?>
+                                <span class="badge badge-synced">Synced</span>
+                            <?php else: ?>
+                                <span class="badge badge-pending">Pending</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
                             <div style="max-width: 300px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
                                 <?php echo nl2br(htmlspecialchars(firstFilledValue($lead, ['message', 'notes']))); ?>
                             </div>
@@ -113,7 +129,7 @@ if ($pdo) {
                     <?php endforeach; ?>
                     <?php if (empty($leads)): ?>
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                        <td colspan="7" style="text-align: center; padding: 4rem; color: var(--text-muted);">
                             No inquiries captured yet.
                         </td>
                     </tr>

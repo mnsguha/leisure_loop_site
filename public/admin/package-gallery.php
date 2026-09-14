@@ -94,46 +94,46 @@ $page_title = "Manage Gallery - " . htmlspecialchars($package['title']);
         <?php include 'sidebar.php'; ?>
         
         <main class="main-content">
-            <div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <a href="packages.php" style="color:var(--gold); font-size: 1.8rem; text-decoration: none; line-height: 1;" title="Back to Packages">←</a>
+            <div class="header admin-page-header-split">
+                <div class="header-title-wrapper">
+                    <a href="packages.php" class="back-arrow" title="Back to Packages">←</a>
                     <div>
-                        <h1 style="margin: 0;">Manage <span class="accent">Gallery</span></h1>
-                        <p class="muted" style="margin: 5px 0 0 0;"><?php echo htmlspecialchars($package['title']); ?></p>
+                        <h1 class="header-title">Manage <span class="accent">Gallery</span></h1>
+                        <p class="muted header-subtitle"><?php echo htmlspecialchars($package['title']); ?></p>
                     </div>
                 </div>
             </div>
 
-            <div style="background: var(--dark-surface); padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 20px;">
-                <form action="" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 20px;">
+            <div class="upload-panel">
+                <form action="" method="POST" enctype="multipart/form-data" class="upload-form-row">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
-                    <div style="flex: 1;">
-                        <label style="display: block; font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 8px;">Upload Image Files</label>
-                        <input type="file" name="images[]" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;" multiple accept="image/*">
+                    <div class="flex-1">
+                        <label class="upload-label">Upload Image Files</label>
+                        <input type="file" name="images[]" class="upload-input" multiple accept="image/*">
                     </div>
-                    <button type="submit" class="btn-primary" style="white-space: nowrap; margin-top: 25px;">Upload Files</button>
+                    <button type="submit" class="btn-primary btn-upload">Upload Files</button>
                 </form>
                 
-                <div style="text-align: center; color: rgba(255,255,255,0.5); font-size: 0.9rem;">— OR —</div>
+                <div class="upload-divider">— OR —</div>
 
-                <form action="" method="POST" style="display: flex; align-items: center; gap: 20px;">
+                <form action="" method="POST" class="upload-form-row">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
-                    <div style="flex: 1;">
-                        <label style="display: block; font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 8px;">Add Image URL</label>
+                    <div class="flex-1">
+                        <label class="upload-label">Add Image URL</label>
                         
 <label for="input_de9113bb" class="sr-only">https://...</label>
-<input id="input_de9113bb" type="url" name="image_url" placeholder="https://..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+<input id="input_de9113bb" type="url" name="image_url" placeholder="https://..." class="upload-input">
                     </div>
-                    <button type="submit" class="btn-primary" style="white-space: nowrap; margin-top: 25px;">Add URL</button>
+                    <button type="submit" class="btn-primary btn-upload">Add URL</button>
                 </form>
             </div>
 
-            <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #fff; margin-bottom: 20px;">Existing Images (<?php echo count($images); ?>)</h2>
+            <h2 class="gallery-title">Existing Images (<?php echo count($images); ?>)</h2>
             
             <?php if(empty($images)): ?>
-                <div style="padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px; color: rgba(255,255,255,0.7);">No images added to the gallery yet.</div>
+                <div class="empty-state">No images added to the gallery yet.</div>
             <?php else: ?>
                 <div class="gallery-grid">
                     <?php foreach($images as $img): 

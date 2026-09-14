@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="text" name="name" class="form-control" required value="<?php echo htmlspecialchars($hotel['name']); ?>">
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
                         <div class="form-group">
                             <label>Place / Destination</label>
                             <input type="text" name="place" class="form-control" required value="<?php echo htmlspecialchars($hotel['place']); ?>">

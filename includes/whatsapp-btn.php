@@ -1,5 +1,5 @@
 <!-- EaseMyTrip-Inspired Floating Concierge Dock Hub -->
-<div class="emt-floating-dock-hub hidden md:block">
+<div class="emt-floating-dock-hub">
     <!-- Top Pill: Plan Your Trip (Enquiry Modal Trigger) -->
     <a href="#inquiry-form" class="emt-dock-pill emt-pill-orange btn-enquiry-nav" aria-label="Plan Your Trip">
         <div class="emt-pill-border-glow"></div>
@@ -52,13 +52,13 @@
                 <div class="channels-divider-line"></div>
                 <div class="unified-actions-grid">
                     <!-- Action 1: Direct Voice Hotline -->
-                    <a href="tel:<?php echo htmlspecialchars($settings['contact_phone'] ?? '+918918921629'); ?>" class="channel-btn call-channel" title="Direct Telephone Hotline">
+                    <a href="tel:+918918921629" class="channel-btn call-channel" title="Direct Telephone Hotline">
                         <div class="channel-icon badge-blue">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                         </div>
                         <div class="channel-info">
                             <span class="channel-label">Call Curator</span>
-                            <span class="channel-num"><?php echo htmlspecialchars($settings['contact_phone'] ?? '+91 89189 21629'); ?></span>
+                            <span class="channel-num">+91 89189 21629</span>
                         </div>
                     </a>
 

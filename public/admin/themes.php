@@ -53,7 +53,7 @@ if (isset($_GET['delete'])) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/admin.css?v=2">
+    <link rel="stylesheet" href="../css/admin.css?v=3">
 </head>
 <body>
     <div class="admin-layout">
@@ -87,7 +87,13 @@ if (isset($_GET['delete'])) {
                     ?>
                     <tr>
                         <td style="width: 90px;">
-                            <div style="width: 70px; height: 75px; border-radius: 12px; background: url('<?php echo htmlspecialchars($t['image_url'] ?? 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=800'); ?>') center/cover; border: 1px solid rgba(255, 255, 255, 0.08);"></div>
+                            <?php
+                                $img_src = !empty($t['image_url']) ? $t['image_url'] : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=800';
+                                if (!preg_match('/^https?:\/\//', $img_src)) {
+                                    $img_src = '../' . ltrim($img_src, '/');
+                                }
+                            ?>
+                            <img src="<?php echo htmlspecialchars($img_src); ?>" alt="<?php echo htmlspecialchars($t['name']); ?>" class="theme-backdrop-thumb">
                         </td>
                         <td style="width: 60px;">
                             <div class="icon-preview-circle">

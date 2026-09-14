@@ -309,11 +309,59 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
 /* Extracted from package-detail.php */
+function updateModalSummaryDatesAndTravellers() {
+    const modal = document.getElementById('packageCheckoutModal');
+    if (!modal) return;
+    
+    const nights = parseInt(modal.dataset.nights) || 1;
+    const travelDateInput = document.getElementById('modal_travel_date_input');
+    const startDateEl = document.getElementById('modal_summary_start_date');
+    const endDateEl = document.getElementById('modal_summary_end_date');
+    const travellersEl = document.getElementById('modal_summary_travellers');
+    const guestsInput = document.getElementById('modal_adults_input');
+    
+    // 1. Sync Travellers Count
+    if (travellersEl && guestsInput) {
+        const count = parseInt(guestsInput.value) || 1;
+        travellersEl.innerText = count === 1 ? '1 Traveller' : `${count} Travellers`;
+    }
+    
+    // 2. Compute Auto-End Date from Start Date + Nights
+    if (travelDateInput && startDateEl && endDateEl && travelDateInput.value) {
+        const parts = travelDateInput.value.split('-');
+        if (parts.length === 3) {
+            const start = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            if (!isNaN(start.getTime())) {
+                const end = new Date(start);
+                end.setDate(start.getDate() + nights);
+                
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const formatEMT = (d) => `${String(d.getDate()).padStart(2, '0')} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+                
+                startDateEl.innerText = formatEMT(start);
+                endDateEl.innerText = formatEMT(end);
+            }
+        }
+    }
+}
+
 function openPackageCheckoutModal() {
     const modal = document.getElementById('packageCheckoutModal');
     if (!modal) return;
     
-    modal.style.display = 'flex';
+    modal.classList.add('is-active');
+    
+    // Synchronize travel date with search bar and block past dates
+    const travelDateInput = document.getElementById('modal_travel_date_input');
+    if (travelDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        travelDateInput.min = today;
+        if (searchState.dates.start && searchState.dates.start >= today) {
+            travelDateInput.value = searchState.dates.start;
+        } else if (!travelDateInput.value || travelDateInput.value < today) {
+            travelDateInput.value = today;
+        }
+    }
     
     // Update summary values from the sidebar on the main page
     const stayVal = document.getElementById('summary_stay_val');
@@ -331,17 +379,18 @@ function openPackageCheckoutModal() {
     }
     
     updateModalSummaryPrice();
+    updateModalSummaryDatesAndTravellers();
 }
 
 function closePackageCheckoutModal() {
     const modal = document.getElementById('packageCheckoutModal');
-    if (modal) modal.style.display = 'none';
+    if (modal) modal.classList.remove('is-active');
 }
 
 function updateModalSummaryPrice() {
     const guestsInput = document.getElementById('modal_adults_input');
     const guests = guestsInput ? (parseInt(guestsInput.value) || 1) : 1;
-    const priceEl = document.querySelector('.font-display-lg');
+    const priceEl = document.querySelector('.sidebar-price-main');
     const rawPriceText = priceEl ? priceEl.innerText.replace(/[^0-9]/g, '') : '0';
     const basePrice = parseFloat(rawPriceText) || 0;
     const total = basePrice * guests;
@@ -350,6 +399,27 @@ function updateModalSummaryPrice() {
         totalEl.innerText = '₹' + total.toLocaleString('en-IN');
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const adultsInput = document.getElementById('modal_adults_input');
+    const travelDateInput = document.getElementById('modal_travel_date_input');
+    
+    if (adultsInput) {
+        adultsInput.addEventListener('input', () => {
+            updateModalSummaryPrice();
+            updateModalSummaryDatesAndTravellers();
+        });
+        adultsInput.addEventListener('change', () => {
+            updateModalSummaryPrice();
+            updateModalSummaryDatesAndTravellers();
+        });
+    }
+    
+    if (travelDateInput) {
+        travelDateInput.addEventListener('change', updateModalSummaryDatesAndTravellers);
+        travelDateInput.addEventListener('input', updateModalSummaryDatesAndTravellers);
+    }
+});
 
 // --- Top Search Bar Logic ---
 
@@ -362,18 +432,23 @@ let searchState = {
 
 // Initialize Date Picker
 if(document.getElementById("displayDates")) {
-    flatpickr("#displayDates", {
-        mode: "range",
-        minDate: "today",
-        dateFormat: "M j, Y",
-        defaultDate: [searchState.dates.start, searchState.dates.end],
-        onClose: function(selectedDates, dateStr, instance) {
-            if (selectedDates.length === 2) {
-                searchState.dates.start = selectedDates[0].toISOString().split('T')[0];
-                searchState.dates.end = selectedDates[1].toISOString().split('T')[0];
+    if (typeof flatpickr !== 'undefined') {
+        flatpickr("#displayDates", {
+            mode: "range",
+            minDate: "today",
+            dateFormat: "M j, Y",
+            defaultDate: [searchState.dates.start, searchState.dates.end],
+            onClose: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 2) {
+                    searchState.dates.start = selectedDates[0].toISOString().split('T')[0];
+                    searchState.dates.end = selectedDates[1].toISOString().split('T')[0];
+                }
             }
-        }
-    });
+        });
+    } else {
+        // Fallback: Make input writable for native date inputs or manual entry
+        document.getElementById("displayDates").removeAttribute('readonly');
+    }
 }
 
 // Guests Dropdown Logic

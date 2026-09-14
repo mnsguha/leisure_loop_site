@@ -345,8 +345,8 @@
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(197, 160, 89, 0.4);
     color: #ffffff;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1346,200 +1346,6 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-
-.drawer-close-btn:hover {
-    background: var(--gold);
-    color: #050a14;
-    transform: rotate(90deg);
-}
-
-.drawer-
-
-.drawer-footer {
-    padding: 20px 28px;
-    background: rgba(7, 12, 22, 0.95);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-}
-
-.btn-drawer-reset {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.btn-drawer-reset:hover {
-    color: var(--gold);
-}
-
-.btn-drawer-apply {
-    background: linear-gradient(135deg, #C5A059 0%, #D8B468 100%);
-    color: #050a14;
-    border: none;
-    border-radius: 30px;
-    padding: 12px 26px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;
-    font-size: 0.88rem;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
-    transition: all 0.25s ease;
-}
-
-.btn-drawer-apply:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(197, 160, 89, 0.65);
-}
-
-.filters-sidebar-panel {
-    background: transparent;
-    padding: 0;
-    border: none;
-    box-shadow: none;
-}
-
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    margin-bottom: 22px;
-}
-
-.sidebar-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.btn-clear-all {
-    background: none;
-    border: none;
-    color: var(--gold);
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.btn-clear-all:hover {
-    opacity: 0.75;
-}
-
-.filter-group {
-    margin-bottom: 28px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.filter-group:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.filter-group-title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 16px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.custom-checkbox-option, .custom-radio-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
-    transition: color 0.2s;
-    user-select: none;
-}
-
-.custom-checkbox-option:hover, .custom-radio-option:hover {
-    color: #ffffff;
-}
-
-.custom-checkbox-option input, .custom-radio-option input {
-    accent-color: var(--gold);
-    width: 17px;
-    height: 17px;
-    cursor: pointer;
-}
-
-/* 6. Package Tour Cards (MakeMyTrip + EaseMyTrip Style) */
-.packages-grid-inner {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-    gap: 30px;
-}
-
-.ota-package-card {
-    background: rgba(15, 24, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 22px;
-    overflow: hidden;
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    position: relative;
-}
-
-.ota-package-card:hover {
-    transform: translateY(-7px);
-    border-color: rgba(197, 160, 89, 0.55);
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
-}
-
-.card-media-shell {
-    height: 235px;
-    position: relative;
-    overflow: hidden;
-    background: #0e1726;
-}
-
-.card-cover-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ota-package-card:hover .card-cover-img {
-    transform: scale(1.08);
-}
-
-.card-badge-gold {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background: linear-gradient(135deg, #C5A059 0%, #D8B468 100%);
-    color: #050a14;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 800;
     padding: 5px 14px;
     border-radius: 20px;
     letter-spacing: 0.08em;
@@ -1818,3 +1624,210 @@
     }
 }
 
+
+
+/* ─── Fixed Header Alignments (Prevents Jumping & Vertical Stacking) ─── */
+.sanctuaries-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+    flex-wrap: nowrap !important;
+    margin-bottom: 24px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 20px !important;
+}
+
+.sanctuaries-title-box {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.sanctuaries-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-shrink: 0 !important;
+}
+
+.trending-header-bar {
+    max-width: 1280px !important;
+    margin: 0 auto 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+    flex-wrap: nowrap !important;
+}
+
+.trending-title-group {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.trending-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-shrink: 0 !important;
+}
+
+.sanctuaries-nav-arrows,
+.trending-nav-arrows {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.sanctuaries-btn-nav {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(197, 160, 89, 0.4) !important;
+    color: #ffffff !important;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+}
+
+.sanctuaries-btn-nav:hover {
+    background: var(--gold, #C5A059) !important;
+    color: #050a14 !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.4) !important;
+}
+
+.trending-pills-group--flush {
+    margin-bottom: 0 !important;
+}
+
+.nav-arrow-icon { font-size: 1.6rem !important; }
+.nav-arrow-lg { font-size: 1.8rem !important; }
+.explore-arrow { font-size: 0.95rem !important; }
+.dest-pin-icon { font-size: 1rem !important; }
+.icon-fire { color: #fb923c !important; }
+.icon-gift { color: #10b981 !important; }
+
+/* ─── Complete Tour Inventory CTA Section ─── */
+.cta-portfolio-section {
+    padding: 5rem 1.5rem 6rem !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+}
+
+.cta-portfolio-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    border: 1px solid rgba(197, 160, 89, 0.3) !important;
+    border-radius: 28px !important;
+    padding: 4rem 2rem !important;
+    text-align: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(16px) !important;
+}
+
+.cta-portfolio-glow {
+    position: absolute !important;
+    top: -50% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 600px !important;
+    height: 300px !important;
+    background: radial-gradient(circle, rgba(197, 160, 89, 0.15) 0%, transparent 70%) !important;
+    pointer-events: none !important;
+}
+
+.cta-portfolio-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 18px !important;
+    background: rgba(197, 160, 89, 0.15) !important;
+    border: 1px solid rgba(197, 160, 89, 0.4) !important;
+    border-radius: 50px !important;
+    color: var(--gold, #C5A059) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.cta-portfolio-heading {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin-bottom: 1.2rem !important;
+    font-family: 'Playfair Display', serif !important;
+    line-height: 1.2 !important;
+}
+
+.gold-italic {
+    color: var(--gold, #C5A059) !important;
+    font-style: italic !important;
+}
+
+.cta-portfolio-desc {
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 1.05rem !important;
+    max-width: 700px !important;
+    margin: 0 auto 2.5rem !important;
+    line-height: 1.6 !important;
+}
+
+.cta-portfolio-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 16px 36px !important;
+    background: linear-gradient(135deg, #e5c158 0%, #b89130 100%) !important;
+    color: #050a14 !important;
+    font-weight: 800 !important;
+    font-size: 1.05rem !important;
+    border-radius: 50px !important;
+    text-decoration: none !important;
+    box-shadow: 0 10px 25px rgba(197, 160, 89, 0.4) !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.cta-portfolio-btn:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 30px rgba(197, 160, 89, 0.6) !important;
+}
+
+/* --- Trending & Offers Navigation Arrow Layout Fix --- */
+.trending-nav-arrows {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+.trending-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: nowrap !important;
+}
+
+/* --- Filter Hidden State --- */
+.is-hidden {
+    display: none !important;
+}
+
+/* --- Scroll-Snap Smooth Override for Programmatic Arrow Scrolling --- */
+.sanctuaries-cards-track.is-scrolling,
+.trending-cards-track.is-scrolling,
+.theme-carousel-track.is-scrolling {
+    scroll-snap-type: none !important;
+    scroll-behavior: smooth !important;
+}

@@ -102,11 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         $hero_text_main = $_POST['hero_text_main'];
         $hero_text_sub = $_POST['hero_text_sub'];
         $hero_text_desc = $_POST['hero_text_desc'] ?? '';
-        $crm_api_key = $_POST['crm_api_key'] ?? null;
-        $crm_url = $_POST['crm_url'] ?? null;
 
-        $stmt = $pdo->prepare("UPDATE settings SET hero_text_main=?, hero_text_sub=?, hero_text_desc=?, crm_api_key=?, crm_url=? WHERE id=1");
-        $stmt->execute([$hero_text_main, $hero_text_sub, $hero_text_desc, $crm_api_key, $crm_url]);
+        $stmt = $pdo->prepare("UPDATE settings SET hero_text_main=?, hero_text_sub=?, hero_text_desc=? WHERE id=1");
+        $stmt->execute([$hero_text_main, $hero_text_sub, $hero_text_desc]);
         $msg = "All settings updated successfully!";
     } elseif ($action === 'add_slide') {
         $type = $_POST['slide_type'];
@@ -206,18 +204,6 @@ if ($pdo) {
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 2rem 0;">
-                
-                <h3 style="margin-bottom: 1.5rem;">CRM Integration</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1rem;">
-                    <div class="form-group">
-                        <label>CRM API Key</label>
-                        <input type="password" name="crm_api_key" value="<?php echo htmlspecialchars($settings['crm_api_key'] ?? ''); ?>" placeholder="Paste key from CRM settings">
-                    </div>
-                    <div class="form-group">
-                        <label>CRM Endpoint URL</label>
-                        <input type="text" name="crm_url" value="<?php echo htmlspecialchars($settings['crm_url'] ?? 'https://crm.leisurelooptrip.in/api/leads/create/'); ?>">
-                    </div>
-                </div>
                 
                 <button type="submit" class="btn-gold" style="width: 100%; padding: 1rem; margin-top: 1rem;">Update All Settings</button>
             </form>

@@ -28,8 +28,16 @@ if ($pdo) {
 
         <main class="main-content">
             <div class="header" style="margin-bottom: 2rem;">
-                <h1>Hotel <span class="accent">Bookings</span> (Mini-PMS)</h1>
-                <p class="muted">Manage all hotel reservations and download vouchers.</p>
+                <div class="header-actions">
+                    <div>
+                        <h1>Hotel <span class="accent">Bookings</span> (Mini-PMS)</h1>
+                        <p class="muted">Manage all hotel reservations and download vouchers.</p>
+                    </div>
+                    <button type="button" id="btnSyncHotelCRM" class="btn-primary btn-sync">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-5.67"/></svg>
+                        Push to CRM
+                    </button>
+                </div>
             </div>
 
             <table class="data-table">
@@ -41,6 +49,7 @@ if ($pdo) {
                         <th>Dates</th>
                         <th>Amount</th>
                         <th>Status</th>
+                        <th>CRM Sync</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -69,6 +78,13 @@ if ($pdo) {
                             </span>
                         </td>
                         <td>
+                            <?php if (!empty($b['crm_synced'])): ?>
+                                <span class="badge badge-synced">Synced</span>
+                            <?php else: ?>
+                                <span class="badge badge-pending">Pending</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
                             <a href="../api/download-hotel-voucher.php?id=<?php echo urlencode($b['booking_id']); ?>" class="btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" target="_blank">PDF Voucher</a>
                         </td>
                     </tr>
@@ -76,12 +92,14 @@ if ($pdo) {
                     
                     <?php if(empty($bookings)): ?>
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">No bookings found.</td>
+                        <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">No bookings found.</td>
                     </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </main>
     </div>
+    
+    <script src="../js/modules/admin-scripts.js" defer></script>
 </body>
 </html>

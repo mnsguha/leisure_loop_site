@@ -331,3 +331,42 @@
         }
     });
 
+    // --- CRM Sync Logic ---
+    function syncCRM(type, btn) {
+        if (btn.disabled) return;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 12l-4-4-4 4"></path></svg> Syncing...`;
+        btn.disabled = true;
+
+        fetch('../api/sync-crm.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: type })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert(data.message || 'Sync failed.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(err => {
+            alert('Network error during sync.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
+
+    const btnSyncHotelCRM = document.getElementById('btnSyncHotelCRM');
+    if (btnSyncHotelCRM) {
+        btnSyncHotelCRM.addEventListener('click', () => syncCRM('hotel', btnSyncHotelCRM));
+    }
+
+    const btnSyncLeadCRM = document.getElementById('btnSyncLeadCRM');
+    if (btnSyncLeadCRM) {
+        btnSyncLeadCRM.addEventListener('click', () => syncCRM('lead', btnSyncLeadCRM));
+    }

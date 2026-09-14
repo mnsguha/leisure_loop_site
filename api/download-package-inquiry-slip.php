@@ -47,6 +47,24 @@ $selected_cab = $details['selected_cab'] ?? 'Not Specified';
 $travel_date = $details['travel_date'] ?? ($b['travel_date'] ?? 'TBA');
 $adults = $details['adults'] ?? ($b['adults'] ?? '2');
 
+$package_id = $details['package_id'] ?? ($b['package_id'] ?? null);
+$nights = 1;
+$days = 2;
+
+if ($package_id) {
+    $p_stmt = $pdo->prepare("SELECT nights, days FROM packages WHERE id = ?");
+    $p_stmt->execute([$package_id]);
+    $p_data = $p_stmt->fetch();
+    if ($p_data) {
+        $nights = !empty($p_data['nights']) ? (int)$p_data['nights'] : 1;
+        $days = !empty($p_data['days']) ? (int)$p_data['days'] : ($nights + 1);
+    }
+}
+
+$start_ts = !empty($travel_date) && $travel_date !== 'TBA' ? strtotime($travel_date) : time();
+$start_date_formatted = date('d M Y', $start_ts);
+$end_date_formatted = date('d M Y', strtotime("+{$nights} days", $start_ts));
+
 class PDF_AutoPrint extends FPDF {
     protected $javascript;
     protected $n_js;
@@ -164,57 +182,97 @@ $pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
 $pdf->Ln(5);
 
 // ---------------------------------------------------------
-// 4. DETAILS (List/Grid Style)
+// ---------------------------------------------------------
+// 4. DETAILS (Grid Style)
 // ---------------------------------------------------------
 
-function drawDetailRow($pdf, $title1, $val1, $sub1, $title2, $val2, $sub2) {
-    // Titles
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->SetTextColor(50, 50, 50);
-    $pdf->Cell(95, 6, $title1, 0, 0, 'L');
-    $pdf->Cell(95, 6, $title2, 0, 1, 'L');
-    
-    // Values
-    $pdf->SetFont('Arial', 'B', 11);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Cell(95, 6, $val1, 0, 0, 'L');
-    $pdf->Cell(95, 6, $val2, 0, 1, 'L');
-    
-    // Subtext
-    $pdf->SetFont('Arial', '', 9);
-    $pdf->SetTextColor(100, 100, 100);
-    $pdf->Cell(95, 5, $sub1, 0, 0, 'L');
-    $pdf->Cell(95, 5, $sub2, 0, 1, 'L');
-    
-    $pdf->Ln(3);
-    $pdf->SetDrawColor(230, 230, 230);
-    $pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
-    $pdf->Ln(3);
-}
+$pdf->Ln(2);
 
-// Row 1: Selections
-drawDetailRow(
-    $pdf, 
-    'Selected Hotel Tier', $selected_hotel, '',
-    'Selected Private Cab', $selected_cab, ''
-);
+// Row 1: Duration & No. of Travellers
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->SetTextColor(100, 116, 139); // Slate Text
+$pdf->Cell(95, 5, 'DURATION', 0, 0, 'L');
+$pdf->Cell(95, 5, 'NO. OF TRAVELLERS', 0, 1, 'R');
 
-// Row 2: Date & Guests
-$dateStr = $travel_date ? date('D, d M Y', strtotime($travel_date)) : 'TBD';
-drawDetailRow(
-    $pdf,
-    'Tentative Travel Date', $dateStr, '',
-    'Number of Guests', $adults, ''
-);
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetTextColor(15, 23, 42); // Primary Values
+$pdf->Cell(95, 6, "{$nights} Nights / {$days} Days", 0, 0, 'L');
+$pdf->Cell(95, 6, "{$adults} Travellers", 0, 1, 'R');
+$pdf->Ln(4);
 
-// Row 3: Guests
-drawDetailRow(
-    $pdf,
-    'Guest Name', $name, '',
-    'Contact Info', $phone, $email
-);
+// Row 2: Date Card Box
+$y = $pdf->GetY();
+$pdf->SetDrawColor(197, 160, 89); // Brand Gold
+$pdf->SetFillColor(248, 250, 252); // Light gray card fill
+$pdf->Rect(10, $y, 190, 22, 'DF'); // Using Rect for container
 
+// Start Date
+$pdf->SetXY(15, $y + 3);
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->SetTextColor(100, 116, 139);
+$pdf->Cell(40, 5, 'START DATE', 0, 1, 'L');
+$pdf->SetXY(15, $y + 9);
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->SetTextColor(15, 23, 42);
+$pdf->Cell(40, 6, $start_date_formatted, 0, 1, 'L');
+
+// Center Badge
+$pdf->SetDrawColor(197, 160, 89);
+$pdf->SetFillColor(255, 255, 255);
+$pdf->Rect(98, $y + 4, 14, 14, 'DF'); // Badge Box
+$pdf->SetXY(98, $y + 8);
+$pdf->SetFont('Arial', 'B', 9);
+$pdf->SetTextColor(197, 160, 89);
+$pdf->Cell(14, 6, "{$nights}N", 0, 0, 'C');
+
+// End Date
+$pdf->SetXY(155, $y + 3);
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->SetTextColor(100, 116, 139);
+$pdf->Cell(40, 5, 'END DATE', 0, 1, 'R');
+$pdf->SetXY(155, $y + 9);
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->SetTextColor(15, 23, 42);
+$pdf->Cell(40, 6, $end_date_formatted, 0, 1, 'R');
+
+// Manually reset cursor
+$pdf->SetY($y + 28);
+$pdf->SetDrawColor(230, 230, 230);
+$pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
 $pdf->Ln(5);
+
+// Row 3: Hotel & Fleet
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->SetTextColor(100, 116, 139);
+$pdf->Cell(95, 5, 'SELECTED HOTEL TIER', 0, 0, 'L');
+$pdf->Cell(95, 5, 'SELECTED PRIVATE CAB', 0, 1, 'R');
+
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetTextColor(15, 23, 42);
+$pdf->Cell(95, 6, $selected_hotel, 0, 0, 'L');
+$pdf->Cell(95, 6, $selected_cab, 0, 1, 'R');
+$pdf->Ln(4);
+$pdf->SetDrawColor(230, 230, 230);
+$pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
+$pdf->Ln(5);
+
+// Row 4: Guest & Contact
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->SetTextColor(100, 116, 139);
+$pdf->Cell(95, 5, 'GUEST NAME', 0, 0, 'L');
+$pdf->Cell(95, 5, 'CONTACT INFO', 0, 1, 'R');
+
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetTextColor(15, 23, 42);
+$pdf->Cell(95, 6, $name, 0, 0, 'L');
+$pdf->Cell(95, 6, $phone, 0, 1, 'R');
+
+$pdf->SetFont('Arial', '', 9);
+$pdf->SetTextColor(100, 116, 139);
+$pdf->Cell(95, 5, '', 0, 0, 'L');
+$pdf->Cell(95, 5, $email, 0, 1, 'R');
+
+$pdf->Ln(6);
 
 // ---------------------------------------------------------
 // 5. IMPORTANT INFORMATION

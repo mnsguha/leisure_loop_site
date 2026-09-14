@@ -193,6 +193,8 @@ if (!empty($plan_ids)) {
     <title>Manage Room Inventory - <?php echo htmlspecialchars($hotel['name']); ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css?v=2">
     <link rel="stylesheet" href="../css/admin-overrides.css">
 </head>
 <body>
@@ -215,7 +217,21 @@ if (!empty($plan_ids)) {
                     <a href="hotel-rooms.php?hotel_id=<?php echo $hotel_id; ?>" style="color:var(--gold); font-size: 1.8rem; text-decoration: none; line-height: 1;" title="Back to Rooms">←</a>
                     <div>
                         <h1>Manage <span>Inventory & Rates</span></h1>
-                        <p style="color: var(--text-muted); margin-top: 5px; font-size: 1.1rem;"><?php echo htmlspecialchars($hotel['name']); ?></p>
+                        <p style="color: var(--text-muted); margin-top: 5px; font-size: 1.1rem;">
+                            <?php echo htmlspecialchars($hotel['name']); ?> 
+                        </p>
+                        <div style="margin-top: 10px; display: inline-flex; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 8px; align-items: center;">
+                            <span style="color: var(--text-muted); font-size: 0.9rem; margin-right: 15px; margin-left: 5px;">Input Mode:</span>
+                            <label style="cursor: pointer; padding: 5px 15px; border-radius: 6px; font-size: 0.9rem; background: rgba(255,255,255,0.1); color: #fff;" class="gst-toggle-label">
+                                <input type="radio" name="ui_gst_toggle" value="net" checked style="display: none;"> Net Rate
+                            </label>
+                            <label style="cursor: pointer; padding: 5px 15px; border-radius: 6px; font-size: 0.9rem; color: #fff;" class="gst-toggle-label">
+                                <input type="radio" name="ui_gst_toggle" value="gst_inc" style="display: none;"> GST Inc. Rate
+                            </label>
+                        </div>
+                        <div id="gst-notice" style="display: none; margin-top: 10px; font-size: 0.85rem; color: #f1c40f; max-width: 600px; line-height: 1.4; background: rgba(241, 196, 15, 0.1); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #f1c40f;">
+                            <i class="fas fa-info-circle"></i> <strong>Note:</strong> The GST Inc. preview here estimates tax per individual component. Actual GST slabs will be dynamically calculated at checkout based on the <em>total daily room bill</em> (Base Room + Extra Mattress + CNB).
+                        </div>
                     </div>
                 </div>
                 <div style="display: flex; gap: 15px;">
@@ -245,8 +261,7 @@ if (!empty($plan_ids)) {
                     <a href="?hotel_id=<?php echo $hotel_id; ?>&start_date=<?php echo $prev_start; ?>" class="btn btn-outline"><i class="fas fa-chevron-left"></i> Previous 7 Days</a>
                     
                     <form method="GET" action="hotel-inventory.php" style="display: flex; align-items: center; gap: 10px;">
-<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <input type="hidden" name="hotel_id" value="<?php echo $hotel_id; ?>">
                         <input type="date" name="start_date" value="<?php echo $start_date_str; ?>" class="inv-input" style="width: auto; padding: 8px 12px; font-weight: normal;">
                         <button type="submit" class="btn btn-outline" style="padding: 8px 15px;">Go</button>
@@ -255,9 +270,8 @@ if (!empty($plan_ids)) {
                     <a href="?hotel_id=<?php echo $hotel_id; ?>&start_date=<?php echo $next_start; ?>" class="btn btn-outline">Next 7 Days <i class="fas fa-chevron-right"></i></a>
                 </div>
 
-                <form method="POST" action="hotel-inventory.php?hotel_id=<?php echo $hotel_id; ?>
-<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-&start_date=<?php echo $start_date_str; ?>">
+                <form method="POST" action="hotel-inventory.php?hotel_id=<?php echo $hotel_id; ?>&start_date=<?php echo $start_date_str; ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <input type="hidden" name="action" value="save_inventory">
                     
                     <table class="inventory-table">
@@ -353,15 +367,14 @@ if (!empty($plan_ids)) {
     </div>
 
         <!-- Bulk Update Inventory Modal -->
-    <div id="bulkInventoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="bulkInventoryModal" class="admin-modal">
         <div style="background: #0b0f19; width: 800px; max-height: 90vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
             <div style="padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-family: 'Playfair Display', serif; color: #fff; margin: 0;">Bulk Update <span style="color: var(--gold);">Inventory</span></h2>
-                <b aria-label="Close"utton type="button" data-action="close-modal" data-target="bulkInventoryModal" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                <button aria-label="Close" type="button" data-action="close-modal" data-target="bulkInventoryModal" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
             </div>
-            <form method="POST" action="hotel-inventory.php?hotel_id=<?php echo $hotel_id; ?>
-<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-&start_date=<?php echo $start_date_str; ?>">
+            <form method="POST" action="hotel-inventory.php?hotel_id=<?php echo $hotel_id; ?>&start_date=<?php echo $start_date_str; ?>">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="action" value="bulk_update_inventory">
                 <div style="padding: 30px;">
                     <div style="display: flex; gap: 20px; margin-bottom: 30px;">
@@ -406,15 +419,14 @@ if (!empty($plan_ids)) {
     </div>
 
     <!-- Bulk Update Rates Modal -->
-    <div id="bulkRatesModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="bulkRatesModal" class="admin-modal">
         <div style="background: #0b0f19; width: 800px; max-height: 90vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
             <div style="padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-family: 'Playfair Display', serif; color: #fff; margin: 0;">Bulk Update <span style="color: var(--gold);">Rates</span></h2>
-                <b aria-label="Close"utton type="button" data-action="close-modal" data-target="bulkRatesModal" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                <button aria-label="Close" type="button" data-action="close-modal" data-target="bulkRatesModal" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
             </div>
-            <form method="POST" action="hotel-inventory.php?hotel_id=<?php echo $hotel_id; ?>
-<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-&start_date=<?php echo $start_date_str; ?>">
+            <form method="POST" action="hotel-inventory.php?hotel_id=<?php echo $hotel_id; ?>&start_date=<?php echo $start_date_str; ?>">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="action" value="bulk_update_rates">
                 <div style="padding: 30px;">
                     <div style="display: flex; gap: 20px; margin-bottom: 30px;">
@@ -484,5 +496,59 @@ if (!empty($plan_ids)) {
     </div>
 
     <script src="../js/modules/admin-scripts.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleRadios = document.querySelectorAll('input[name="ui_gst_toggle"]');
+            const rateInputs = document.querySelectorAll('input[type="number"][name*="rate"]');
+            
+            function getGrossFromNet(net) {
+                if (!net || isNaN(net)) return '';
+                if (net <= 1000) return net;
+                if (net <= 7500) return Math.round(net * 1.05);
+                return Math.round(net * 1.18);
+            }
+            
+            function getNetFromGross(gross) {
+                if (!gross || isNaN(gross)) return '';
+                if (gross <= 1000) return gross;
+                if (gross <= 7875) return gross / 1.05; // 7500 * 1.05 = 7875
+                return gross / 1.18;
+            }
+            
+            toggleRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll('.gst-toggle-label').forEach(lbl => lbl.style.background = 'transparent');
+                    e.target.parentElement.style.background = 'rgba(255,255,255,0.1)';
+                    
+                    const isGstInc = e.target.value === 'gst_inc';
+                    document.getElementById('gst-notice').style.display = isGstInc ? 'block' : 'none';
+                    
+                    rateInputs.forEach(input => {
+                        const val = parseFloat(input.value);
+                        if (!isNaN(val)) {
+                            // Format cleanly to 2 decimals
+                            input.value = isGstInc ? getGrossFromNet(val) : getNetFromGross(val).toFixed(2);
+                        }
+                    });
+                });
+            });
+            
+            // On form submit (both forms: main inventory and bulk updates), reverse calc if gst_inc is selected
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    const isGstInc = document.querySelector('input[name="ui_gst_toggle"]:checked').value === 'gst_inc';
+                    if (isGstInc) {
+                        const formInputs = form.querySelectorAll('input[type="number"][name*="rate"]');
+                        formInputs.forEach(input => {
+                            const val = parseFloat(input.value);
+                            if (!isNaN(val)) {
+                                input.value = getNetFromGross(val).toFixed(2);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

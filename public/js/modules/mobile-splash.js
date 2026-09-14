@@ -1,83 +1,85 @@
 'use strict';
 
-(() => {
-    const splashView = document.getElementById('mobile-splash-view');
+document.addEventListener('DOMContentLoaded', () => {
+    const splashWrapper = document.getElementById('mobile-splash-view');
+    const splashContainer = document.getElementById('splash-container');
+    if (!splashWrapper || !splashContainer) return;
+
+    // Ensure it is always visible on every mobile load
+    splashWrapper.classList.remove('is-dismissed');
+    
+    // Hide mobile home view completely from interaction/visibility to prevent any Swiper dots from bleeding through
     const homeView = document.getElementById('mobile-home-view');
-    const splash = document.getElementById('splash-container');
-    const intro = document.getElementById('splash-state-1');
-    const formState = document.getElementById('splash-state-2');
-    const letsGoButton = document.getElementById('btn-lets-tour');
-    const skipButton = document.getElementById('splash_skip');
-    const form = document.getElementById('splash-signup-form');
-    const submitButton = document.getElementById('splash_submit_btn');
-    const dots = document.querySelectorAll('[data-splash-index]');
+    if (homeView) {
+        homeView.classList.add('is-hidden');
+    }
 
-    if (!splashView || !homeView || !splash || !intro || !formState || !letsGoButton) return;
-
-    let currentIndex = 1;
-    let carouselId;
-
-    const showHome = () => {
-        window.clearInterval(carouselId);
-        splashView.classList.remove('is-active');
-        homeView.removeAttribute('hidden');
-    };
-
-    const setBackground = (index) => {
-        currentIndex = index;
-        splash.classList.remove('splash-background--1', 'splash-background--2', 'splash-background--3');
-        splash.classList.add(`splash-background--${index}`);
-        dots.forEach((dot) => {
-            const active = Number(dot.dataset.splashIndex) === index;
-            dot.classList.toggle('is-active', active);
-            dot.setAttribute('aria-pressed', String(active));
-        });
-    };
-
-    const startCarousel = () => {
-        window.clearInterval(carouselId);
-        carouselId = window.setInterval(() => setBackground(currentIndex === 3 ? 1 : currentIndex + 1), 4000);
-    };
-
-    homeView.setAttribute('hidden', '');
-    splashView.classList.add('is-active');
-    setBackground(currentIndex);
-    startCarousel();
-
-    dots.forEach((dot) => {
-        dot.addEventListener('click', () => {
-            setBackground(Number(dot.dataset.splashIndex));
-            startCarousel();
-        });
-    });
-
-    letsGoButton.addEventListener('click', () => {
-        document.getElementById('splash-step-toggle')?.setAttribute('checked', 'checked');
-        intro.classList.add('is-hidden');
-        formState.classList.add('is-active');
-        formState.setAttribute('aria-hidden', 'false');
-        window.clearInterval(carouselId);
-        document.getElementById('splash_name')?.focus();
-    });
-
-    skipButton?.addEventListener('click', showHome);
-
-    form?.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        if (!form.reportValidity()) return;
-
-        submitButton.disabled = true;
-        submitButton.textContent = 'Saving…';
-        const formData = new FormData(form);
-        formData.set('source', 'Mobile App Onboarding');
-        formData.set('destination', 'App Onboarding Signup');
-
-        try {
-            await fetch('api-submit-lead.php', { method: 'POST', body: formData, credentials: 'same-origin' });
-        } catch (error) {
-            // Onboarding remains optional; network failures must never trap a visitor here.
+    // Force cleanup of any duplicate dots that might be injected by rogue scripts/caches
+    const dotGroups = splashContainer.querySelectorAll('.splash-dots');
+    if (dotGroups.length > 1) {
+        for (let i = 1; i < dotGroups.length; i++) {
+            dotGroups[i].remove();
         }
+    }
 
-        showHome();
+    const dots = splashContainer.querySelectorAll('.splash-dot');
+    const introState = document.getElementById('splash-state-1');
+    const formState = document.getElementById('splash-state-2');
+    const btnLetsGo = document.getElementById('btn-lets-tour');
+    const btnSkip = document.getElementById('splash_skip');
+    const signupForm = document.getElementById('splash-signup-form');
+
+    const splashBackgrounds = {
+        '1': 'url("assets/img/mobile_splash_bg_1.webp")',
+        '2': 'url("assets/img/mobile_splash_bg_2.webp")',
+        '3': 'url("assets/img/mobile_splash_bg_3.webp")'
+    };
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            e.preventDefault();
+            const idx = dot.getAttribute('data-splash-index');
+            dots.forEach(d => d.classList.remove('is-active'));
+            dot.classList.add('is-active');
+
+            if (splashBackgrounds[idx]) {
+                splashContainer.style.backgroundImage = splashBackgrounds[idx];
+            }
+        });
     });
-})();
+
+    if (btnLetsGo && introState && formState) {
+        btnLetsGo.addEventListener('click', (e) => {
+            e.preventDefault();
+            introState.classList.add('is-hidden');
+            formState.classList.remove('is-hidden');
+        });
+    }
+
+    function dismissSplash() {
+        splashWrapper.classList.add('is-dismissed');
+        if (homeView) {
+            homeView.classList.remove('is-hidden');
+        }
+    }
+
+    if (btnSkip) {
+        btnSkip.addEventListener('click', (e) => {
+            e.preventDefault();
+            dismissSplash();
+        });
+    }
+
+    if (signupForm) {
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(signupForm);
+            fetch('/api/v1/leads', {
+                method: 'POST',
+                body: formData
+            }).finally(() => {
+                dismissSplash();
+            });
+        });
+    }
+});

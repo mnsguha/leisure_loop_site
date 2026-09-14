@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Element references ────────────────────────────────────────────────────
     const pillBtn       = document.getElementById('floatingFilterDock');
+    const btnOpenFilter = document.getElementById('btnOpenFilter');
     const drawer        = document.getElementById('filterSideDrawer');
     const backdrop      = document.getElementById('filterDrawerBackdrop');
     const closeBtn      = document.getElementById('drawerCloseBtn');
@@ -73,9 +74,37 @@ document.addEventListener('DOMContentLoaded', function () {
         releaseFocusTrap();
     }
 
-    if (pillBtn)  pillBtn.addEventListener('click', openDrawer);
-    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
-    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+    // Desktop dock is a <button>. Mobile dock is a <div> containing Sort/Filter buttons.
+    // Bind pillBtn carefully to handle both views safely.
+    if (pillBtn) {
+        pillBtn.addEventListener('click', function(e) {
+            if (e.target.closest('#btnOpenSort')) return; // Prevent mobile Sort click from opening Filter
+            openDrawer();
+        });
+    }
+    if (btnOpenFilter) btnOpenFilter.addEventListener('click', openDrawer);
+    if (closeBtn)      closeBtn.addEventListener('click', closeDrawer);
+    if (backdrop)      backdrop.addEventListener('click', closeDrawer);
+
+    // ── Sort Drawer (Mobile) ─────────────────────────────────────────────────
+    const btnOpenSort    = document.getElementById('btnOpenSort');
+    const sortDrawer     = document.getElementById('sortSideDrawer');
+    const sortBackdrop   = document.getElementById('sortDrawerBackdrop');
+    const sortCloseBtn   = document.getElementById('sortCloseBtn');
+
+    function openSortDrawer() {
+        if (!sortDrawer) return;
+        sortDrawer.classList.add('open');
+        if (sortBackdrop) sortBackdrop.classList.add('open');
+    }
+    function closeSortDrawer() {
+        if (!sortDrawer) return;
+        sortDrawer.classList.remove('open');
+        if (sortBackdrop) sortBackdrop.classList.remove('open');
+    }
+    if (btnOpenSort)  btnOpenSort.addEventListener('click', openSortDrawer);
+    if (sortCloseBtn) sortCloseBtn.addEventListener('click', closeSortDrawer);
+    if (sortBackdrop) sortBackdrop.addEventListener('click', closeSortDrawer);
 
     if (drawer && drawerBody) {
         drawer.addEventListener('wheel', function (e) {
@@ -153,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const currentParams = new URLSearchParams(window.location.search);
         const params = new URLSearchParams();
 
-        ['package_type', 'type'].forEach(function (key) {
+        ['package_type', 'type', 'view'].forEach(function (key) {
             const value = currentParams.get(key);
             if (value) params.set(key, value);
         });
@@ -211,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const currentParams = new URLSearchParams(window.location.search);
         const params = new URLSearchParams();
 
-        ['package_type', 'type'].forEach(function (key) {
+        ['package_type', 'type', 'view'].forEach(function (key) {
             const value = currentParams.get(key);
             if (value) params.set(key, value);
         });
@@ -263,21 +292,37 @@ document.addEventListener('DOMContentLoaded', function () {
         if (durSel) durSel.value = '';
     }
 
-    // ── Active filter count for badge ─────────────────────────────────────────
+    // ── Active filter count for badges ────────────────────────────────────────
+    const dockSortBadge = document.getElementById('dockSortCount');
+
     function updateActiveFilterCount() {
-        let count = 0;
+        // Sort badge: catalog_sort (non-default) + budget_tier (non-all)
+        let sortCount = 0;
         const sortChecked = document.querySelector('input[name="catalog_sort"]:checked');
-        if (sortChecked && sortChecked.value !== 'default') count++;
-        count += document.querySelectorAll('.theme-checkbox:checked').length;
-        count += document.querySelectorAll('.dest-checkbox:checked').length;
-        count += document.querySelectorAll('.duration-checkbox:checked').length;
+        if (sortChecked && sortChecked.value !== 'default') sortCount++;
         const budgetChecked = document.querySelector('input[name="budget_tier"]:checked');
-        if (budgetChecked && budgetChecked.value !== 'all') count++;
+        if (budgetChecked && budgetChecked.value !== 'all') sortCount++;
+
+        if (dockSortBadge) {
+            dockSortBadge.textContent = sortCount > 0 ? sortCount : '';
+            dockSortBadge.setAttribute('aria-label', 'Active sort: ' + sortCount);
+            if (sortCount > 0) {
+                dockSortBadge.classList.add('active');
+            } else {
+                dockSortBadge.classList.remove('active');
+            }
+        }
+
+        // Filter badge: theme + destination + duration checkboxes only
+        let filterCount = 0;
+        filterCount += document.querySelectorAll('.theme-checkbox:checked').length;
+        filterCount += document.querySelectorAll('.dest-checkbox:checked').length;
+        filterCount += document.querySelectorAll('.duration-checkbox:checked').length;
 
         if (dockBadge) {
-            dockBadge.textContent = count > 0 ? count : 'All';
-            dockBadge.setAttribute('aria-label', 'Active filters: ' + (count > 0 ? count : 0));
-            if (count > 0) {
+            dockBadge.textContent = filterCount > 0 ? filterCount : '';
+            dockBadge.setAttribute('aria-label', 'Active filters: ' + filterCount);
+            if (filterCount > 0) {
                 dockBadge.classList.add('active');
             } else {
                 dockBadge.classList.remove('active');
@@ -330,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const currentParams = new URLSearchParams(window.location.search);
             const params = new URLSearchParams();
-            ['package_type', 'type'].forEach(function (key) {
+            ['package_type', 'type', 'view'].forEach(function (key) {
                 const value = currentParams.get(key);
                 if (value) params.set(key, value);
             });
@@ -340,5 +385,64 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ── Initialise ────────────────────────────────────────────────────────────
+    // Restore drawer selections from current URL params so that after
+    // "Apply Sort" / "Apply Filters" navigates to a new URL, the drawer
+    // still reflects what was applied — without PHP pre-checking anything.
+    function restoreStateFromURL() {
+        const params = new URLSearchParams(window.location.search);
+
+        // Sort radio
+        const sortVal = params.get('sort');
+        if (sortVal) {
+            const sortRadio = document.querySelector('input[name="catalog_sort"][value="' + sortVal + '"]');
+            if (sortRadio) sortRadio.checked = true;
+        }
+
+        // Budget tier — map price_min / price_max back to a tier radio
+        const priceMin = params.get('price_min');
+        const priceMax = params.get('price_max');
+        if (priceMin !== null || priceMax !== null) {
+            let tierVal = null;
+            if (!priceMin && priceMax === '25000')  tierVal = 'tier1';
+            if (priceMin === '25000' && priceMax === '50000') tierVal = 'tier2';
+            if (priceMin === '50000' && !priceMax)  tierVal = 'tier3';
+            if (tierVal) {
+                const tierRadio = document.querySelector('input[name="budget_tier"][value="' + tierVal + '"]');
+                if (tierRadio) tierRadio.checked = true;
+                // Sync hidden price inputs
+                if (priceMinInput && priceMin) priceMinInput.value = priceMin;
+                if (priceMaxInput && priceMax) priceMaxInput.value = priceMax;
+            }
+        }
+
+        // Theme checkboxes
+        const themesParam = params.get('themes');
+        if (themesParam) {
+            themesParam.split(',').forEach(function (val) {
+                const cb = document.querySelector('.theme-checkbox[value="' + val.trim() + '"]');
+                if (cb) cb.checked = true;
+            });
+        }
+
+        // Destination checkboxes
+        const destParam = params.get('dest');
+        if (destParam) {
+            destParam.split(',').forEach(function (val) {
+                const cb = document.querySelector('.dest-checkbox[value="' + val.trim() + '"]');
+                if (cb) cb.checked = true;
+            });
+        }
+
+        // Duration checkboxes
+        const durParam = params.get('durations');
+        if (durParam) {
+            durParam.split(',').forEach(function (val) {
+                const cb = document.querySelector('.duration-checkbox[value="' + val.trim() + '"]');
+                if (cb) cb.checked = true;
+            });
+        }
+    }
+
+    restoreStateFromURL();
     updateActiveFilterCount();
 });

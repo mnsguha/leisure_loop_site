@@ -1,56 +1,219 @@
-.mobile-splash-view { display: none !important; }
-.mobile-splash-view.is-active { display: block !important; }
-.mobile-splash-view.is-active + #mobile-home-view { display: none; }
+/* ==========================================================================
+   Mobile Onboarding Splash Component Styles
+   ========================================================================== */
 
-.mobile-splash {
-    align-items: center;
-    background-color: #07101e;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    color: #fff;
-    display: flex;
-    font-family: 'Inter', sans-serif;
-    inset: 0;
-    justify-content: flex-end;
-    overflow: hidden;
-    padding: 2rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
-    position: fixed;
-    z-index: 99999;
+#mobile-splash-view,
+.mobile-splash-view {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    overflow: hidden !important;
+    pointer-events: auto !important;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+    opacity: 1;
+    visibility: visible;
+    display: block !important;
 }
 
-.splash-background--1 { background-image: url('../assets/img/mobile_splash_bg_1.png'); }
-.splash-background--2 { background-image: url('../assets/img/mobile_splash_bg_2.png'); }
-.splash-background--3 { background-image: url('../assets/img/mobile_splash_bg_3.png'); }
-.mobile-splash__overlay { background: linear-gradient(to top, rgba(0, 0, 0, .9), rgba(0, 0, 0, .5) 50%, transparent); inset: auto 0 0; height: 60%; position: absolute; }
-.mobile-splash__intro, .mobile-splash__form-state { position: relative; width: 100%; z-index: 1; }
-.mobile-splash__intro { align-items: center; display: flex; flex-direction: column; text-align: center; }
-.mobile-splash__intro.is-hidden { display: none; }
-.mobile-splash__form-state { display: none; }
-.mobile-splash__form-state.is-active { display: block; }
-.splash-step-toggle { height: 1px; opacity: 0; position: absolute; width: 1px; }
-.mobile-splash:has(.splash-step-toggle:checked) .mobile-splash__intro { display: none; }
-.mobile-splash:has(.splash-step-toggle:checked) .mobile-splash__form-state { display: block; }
-.mobile-splash__logo { filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .5)); height: 90px; margin-bottom: 1.5rem; max-width: 100%; object-fit: contain; }
-.mobile-splash__eyebrow, .mobile-splash__title, .mobile-splash__form-title { font-family: 'Playfair Display', serif; }
-.mobile-splash__eyebrow { font-size: 1.1rem; font-weight: 600; letter-spacing: .5px; margin: 0 0 .2rem; }
-.mobile-splash__title { font-size: 2.8rem; font-weight: 700; line-height: 1.1; margin: 0 0 1rem; }
-.mobile-splash__description { color: rgba(255, 255, 255, .85); font-size: .85rem; line-height: 1.5; margin: 0 0 1.5rem; max-width: 280px; }
-.mobile-splash__dots { display: flex; gap: 6px; margin-bottom: 2rem; }
-.splash-dot { background: transparent; border: 0; border-radius: 50%; cursor: pointer; height: 48px; padding: 0; position: relative; width: 48px; }
-.splash-dot::after { background: rgba(255, 255, 255, .4); border-radius: 50%; content: ''; height: 6px; inset: 21px; position: absolute; width: 6px; }
-.splash-dot.is-active::after { background: #fff; border-radius: 4px; inset: 21px 16px; width: 16px; }
-.mobile-splash__primary-button, .mobile-splash__submit-button { border: 0; border-radius: 2rem; cursor: pointer; font: 600 1.1rem 'Inter', sans-serif; min-height: 52px; }
-.mobile-splash__primary-button { background: #fff; box-shadow: 0 4px 15px rgba(0, 0, 0, .2); color: #000; width: 240px; }
-.mobile-splash__primary-button { align-items: center; display: inline-flex; justify-content: center; }
-.mobile-splash__form-card { background: rgba(255, 255, 255, .1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, .2); border-radius: 1.5rem; box-shadow: 0 8px 32px rgba(0, 0, 0, .3); padding: 2rem 1.5rem; }
-.mobile-splash__form-title { font-size: 1.8rem; font-weight: 700; margin: 0 0 .5rem; text-align: center; }
-.mobile-splash__form-description { color: rgba(255, 255, 255, .8); font-size: .85rem; margin: 0 0 1.5rem; text-align: center; }
-.mobile-splash__input { background: rgba(255, 255, 255, .9); border: 0; border-radius: .75rem; box-sizing: border-box; font: .95rem 'Inter', sans-serif; margin-bottom: 1rem; min-height: 52px; padding: 1rem; width: 100%; }
-.mobile-splash__submit-button { background: var(--accent, #c5a059); box-shadow: 0 4px 15px rgba(197, 160, 89, .4); color: #fff; margin-bottom: 1rem; width: 100%; }
-.mobile-splash__skip-wrap { text-align: center; }
-.mobile-splash__skip-button { background: transparent; border: 0; color: rgba(255, 255, 255, .75); cursor: pointer; display: inline-flex; font: .8rem 'Inter', sans-serif; min-height: 48px; padding: .5rem 1rem; text-decoration: underline; }
-.mobile-splash button:active { transform: scale(.98); }
-.mobile-splash button:focus-visible, .mobile-splash__input:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+#mobile-splash-view.is-dismissed,
+.mobile-splash-view.is-dismissed {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
 
-@media (min-width: 768px) { .mobile-splash-view { display: none !important; } }
+.mobile-splash-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem 1.5rem 3.5rem;
+    box-sizing: border-box;
+    background-color: #050a14;
+    background-image: url('../assets/img/mobile_splash_bg_1.webp');
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.4s ease;
+}
+
+.splash-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 10, 20, 0.2) 0%, rgba(5, 10, 20, 0.8) 60%, #050a14 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.splash-state-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    text-align: center;
+    transition: opacity 0.3s ease;
+}
+
+.splash-logo-wrap {
+    margin-bottom: 1.5rem;
+}
+
+.splash-brand-logo {
+    max-height: 160px;
+    max-width: 95%;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.splash-kicker {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+.splash-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.6rem;
+    color: #ffffff;
+    margin: 0 0 0.8rem;
+    line-height: 1.15;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.splash-title-accent {
+    font-style: italic;
+    color: #c5a059;
+}
+
+.splash-description {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 auto 2rem;
+    max-width: 290px;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+.mobile-splash__dots,
+.splash-dots {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 2rem !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+.splash-dot {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.4) !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    transition: width 0.3s ease, background-color 0.3s ease !important;
+}
+
+.splash-dot::before,
+.splash-dot::after {
+    content: none !important;
+    display: none !important;
+}
+
+.splash-dot.is-active {
+    width: 24px !important;
+    background: #c5a059 !important;
+}
+
+.splash-btn-primary {
+    width: 100%;
+    padding: 1.1rem;
+    border-radius: 50px;
+    background: #ffffff;
+    color: #050a14;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.splash-form-card {
+    background: rgba(13, 26, 41, 0.96);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    border-radius: 20px;
+    padding: 1.8rem 1.4rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+}
+
+.splash-form-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin: 0 0 0.3rem;
+}
+
+.splash-form-subtitle {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85rem;
+    margin: 0 0 1.2rem;
+}
+
+.splash-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: #ffffff;
+    margin-bottom: 10px;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.splash-input:focus {
+    border-color: #c5a059;
+}
+
+.splash-btn-submit {
+    width: 100%;
+    padding: 12px;
+    border-radius: 50px;
+    background: #c5a059;
+    color: #050a14;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.splash-skip-wrap {
+    text-align: center;
+    margin-top: 12px;
+}
+
+.splash-btn-skip {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.is-hidden {
+    display: none !important;
+}

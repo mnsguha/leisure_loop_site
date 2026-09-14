@@ -13,7 +13,7 @@ if (in_array($currentPage, ['packages.php', 'fixed_departures.php', 'fixed_depar
     $activeCategory = 'leads';
 } elseif (in_array($currentPage, ['gallery.php', 'testimonials.php', 'testimonial-form.php', 'blogs.php', 'blog-form.php', 'process.php'])) {
     $activeCategory = 'content';
-} elseif (in_array($currentPage, ['settings.php', 'marquee.php', 'popup.php', 'advertisement.php', 'accreditations.php', 'hotel_partners.php'])) {
+} elseif (in_array($currentPage, ['settings.php', 'crm-settings.php', 'marquee.php', 'popup.php', 'advertisement.php', 'accreditations.php', 'hotel_partners.php'])) {
     $activeCategory = 'settings';
 }
 ?>
@@ -97,6 +97,7 @@ if (in_array($currentPage, ['packages.php', 'fixed_departures.php', 'fixed_depar
             </div>
             <ul class="submenu">
                 <li><a href="settings.php" class="<?php echo $currentPage == 'settings.php' ? 'active' : ''; ?>">Site Settings</a></li>
+                <li><a href="crm-settings.php" class="<?php echo $currentPage == 'crm-settings.php' ? 'active' : ''; ?>">CRM Webhook API</a></li>
                 <li><a href="marquee.php" class="<?php echo $currentPage == 'marquee.php' ? 'active' : ''; ?>">Film Strip Roll</a></li>
                 <li><a href="popup.php" class="<?php echo $currentPage == 'popup.php' ? 'active' : ''; ?>">Notice Popup</a></li>
                 <li><a href="advertisement.php" class="<?php echo $currentPage == 'advertisement.php' ? 'active' : ''; ?>">Advertisement</a></li>

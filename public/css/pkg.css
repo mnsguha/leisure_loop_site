@@ -1,3 +1,55 @@
+/* ─── Design-System Token Layer ───────────────────────────────────────────
+   Replaces Tailwind CDN custom theme for pkg.php (legacy catalog page).
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+    --ds-background:         #131313;
+    --ds-surface:            #0f0f0f;
+    --ds-secondary:          #f2ca50;
+    --ds-on-secondary:       #000000;
+    --ds-on-surface:         #ffffff;
+    --ds-on-surface-variant: rgba(255,255,255,0.6);
+    --ds-glass-border:       rgba(212,175,55,0.2);
+    --ds-primary:            #1a1a2e;
+    --ds-gutter:             1.5rem;
+    --ds-container-max:      80rem;
+}
+
+/* Colour utilities */
+.bg-background            { background-color: var(--ds-background) !important; }
+.bg-surface               { background-color: var(--ds-surface) !important; }
+.text-primary             { color: var(--ds-on-surface) !important; }
+.text-secondary           { color: var(--ds-secondary) !important; }
+.text-on-surface          { color: var(--ds-on-surface) !important; }
+.text-on-surface-variant  { color: var(--ds-on-surface-variant) !important; }
+.border-primary           { border-color: var(--ds-on-surface) !important; }
+.bg-glass-surface         { background: rgba(15,15,15,0.7); backdrop-filter: blur(20px); }
+.border-glass-border      { border-color: var(--ds-glass-border) !important; }
+
+/* Typography utilities */
+.font-body-md             { font-family: 'Manrope', 'Inter', sans-serif; font-size: 1rem; }
+.text-body-md             { font-size: 1rem; line-height: 1.7; }
+.font-display-xl          { font-family: 'Playfair Display', serif; font-weight: 700; }
+.text-headline-sm         { font-size: 1.25rem; line-height: 1.2; }
+.font-label-caps          { font-family: 'Manrope', sans-serif; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.7rem; }
+
+/* Spacing / layout utilities */
+.px-gutter                { padding-left: var(--ds-gutter); padding-right: var(--ds-gutter); }
+.py-gutter                { padding-top: var(--ds-gutter); padding-bottom: var(--ds-gutter); }
+.max-w-container-max      { max-width: var(--ds-container-max); }
+.mx-auto                  { margin-left: auto; margin-right: auto; }
+.gap-gutter               { gap: var(--ds-gutter); }
+.grid-cols-1              { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2              { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.col-span-full            { grid-column: 1 / -1; }
+
+@media (min-width: 768px) {
+    .md\\:flex              { display: flex !important; }
+    .md\\:grid-cols-2       { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\\:grid-cols-3       { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .hidden.md\\:flex       { display: flex !important; }
+}
+/* ─── End Design-System Token Layer ─────────────────────────────────────── */
+
 /* Extracted from pkg.php */
 
         .glass-morphism {

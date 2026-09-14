@@ -1,3 +1,64 @@
+/* ─── Design-System Token Layer ───────────────────────────────────────────
+   Replaces Tailwind CDN custom theme for package.php (static tour page).
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+    --ds-background:           #131314;
+    --ds-surface-container-low:#1a1a1c;
+    --ds-secondary:            #c5a059;
+    --ds-on-secondary:         #000000;
+    --ds-on-surface:           #ffffff;
+    --ds-on-surface-variant:   rgba(255,255,255,0.6);
+    --ds-glass-border:         rgba(255,255,255,0.08);
+    --ds-primary-container:    rgba(13,42,74,0.5);
+    --ds-gutter:               1.5rem;
+    --ds-container-max:        84rem;
+}
+
+/* Colour utilities */
+.bg-background            { background-color: var(--ds-background) !important; }
+.text-on-background       { color: var(--ds-on-surface) !important; }
+.text-secondary           { color: var(--ds-secondary) !important; }
+.text-on-surface          { color: var(--ds-on-surface) !important; }
+.text-on-surface-variant  { color: var(--ds-on-surface-variant) !important; }
+.text-on-secondary        { color: var(--ds-on-secondary) !important; }
+.border-secondary         { border-color: var(--ds-secondary) !important; }
+.border-glass-border      { border-color: var(--ds-glass-border) !important; }
+.bg-secondary             { background-color: var(--ds-secondary) !important; }
+
+/* Typography utilities */
+.font-body-md             { font-family: 'Inter', sans-serif; font-size: 1rem; }
+.font-body-lg             { font-family: 'Inter', sans-serif; font-size: 1.125rem; }
+.font-label-caps          { font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.7rem; }
+.font-hero-title          { font-family: 'Playfair Display', serif; font-weight: 700; font-style: italic; }
+.text-hero-title-mobile   { font-size: clamp(2.5rem, 7vw, 4.5rem); line-height: 1.05; }
+.font-headline-accent     { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; }
+.font-display-sm          { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 700; }
+
+/* Spacing utilities */
+.px-gutter                { padding-left: var(--ds-gutter); padding-right: var(--ds-gutter); }
+.max-w-container-max      { max-width: var(--ds-container-max); }
+.max-w-4xl                { max-width: 56rem; }
+.max-w-3xl                { max-width: 48rem; }
+.max-w-2xl                { max-width: 42rem; }
+.max-w-xl                 { max-width: 36rem; }
+.mx-auto                  { margin-left: auto; margin-right: auto; }
+.gap-gutter               { gap: var(--ds-gutter); }
+.grid-cols-1              { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2              { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3              { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.col-span-full            { grid-column: 1 / -1; }
+
+/* Fixed-height hero utility */
+.h-\[870px\]              { height: 870px; }
+
+@media (min-width: 768px) {
+    .md\\:text-hero-title  { font-size: 5rem; line-height: 1.0; }
+    .md\\:grid-cols-4      { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .md\\:grid-cols-2      { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\\:grid-cols-3      { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* ─── End Design-System Token Layer ─────────────────────────────────────── */
+
 /* Extracted from package.php */
 .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;

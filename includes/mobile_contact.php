@@ -13,7 +13,7 @@ $page_title = "Contact Our Curators | Leisure Loop Trip";
     <!-- CSS Dependencies -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <?php if ($use_recaptcha && $recaptcha_site_key): ?>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <?php endif; ?>
@@ -22,15 +22,14 @@ $page_title = "Contact Our Curators | Leisure Loop Trip";
 <body>
 
     <!-- Top App Bar -->
-    <header class="flex items-center justify-between p-4 fixed top-0 w-full z-50 bg-[#050a14]/80 backdrop-blur-md border-b border-white/5">
-        <a href="index.php" class="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-white !no-underline">
-            <span class="material-symbols-outlined text-lg">arrow_back</span>
+    <header class="mob-topbar">
+        <a href="index.php" class="mob-topbar__back" aria-label="Back">
+            <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
         </a>
-        <div class="font-serif text-lg font-semibold tracking-wide text-white">Contact Us</div>
-        <div class="w-10"></div> <!-- Spacer for centering -->
+        <span class="mob-topbar__title">Contact Us</span>
+        <div class="mob-topbar__spacer"></div>
     </header>
-
-    <div style="height: 72px;"></div> <!-- Spacer for fixed header -->
+    <div class="mob-topbar-offset"></div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -167,5 +166,6 @@ $page_title = "Contact Our Curators | Leisure Loop Trip";
     </div>
     
     
+    <script src="js/modules/mobile-views.js?v=<?= time() ?>" defer></script>
 </body>
 </html>

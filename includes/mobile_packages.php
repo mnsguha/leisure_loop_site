@@ -1,360 +1,503 @@
-<?php
-require_once '../config/db.php';
-$packages_mobile = [];
-if (isset($pdo)) {
-    $type_filter_val = isset($_GET['type']) ? strtolower(trim($_GET['type'])) : '';
-    $active_tab = isset($_GET['package_type']) && $_GET['package_type'] === 'fixed' ? 'fixed' : (isset($_GET['package_type']) && $_GET['package_type'] === 'curated' ? 'curated' : '');
-    $query = "SELECT * FROM packages WHERE is_active = 1";
-    if ($type_filter_val === 'domestic') {
-        $query .= " AND is_international = 0";
-    } elseif ($type_filter_val === 'international') {
-        $query .= " AND is_international = 1";
-    }
-    $query .= " ORDER BY created_at DESC";
-    $packages_mobile = $pdo->query($query)->fetchAll();
-}
-
-$all_themes = [];
-$all_destinations = [];
-$all_durations = [];
-$max_price_in_db = 0;
-$min_price_in_db = 999999;
-
-foreach ($packages_mobile as $pkg) {
-    if (!empty($pkg['tour_type'])) {
-        $types = explode(',', $pkg['tour_type']);
-        foreach ($types as $t) {
-            $t = trim($t);
-            if ($t !== '' && !in_array($t, $all_themes)) {
-                $all_themes[] = $t;
-            }
-        }
-    }
-    if (!empty($pkg['destination'])) {
-        $d = trim($pkg['destination']);
-        if (!in_array($d, $all_destinations)) {
-            $all_destinations[] = $d;
-        }
-    }
-    $days = (int)($pkg['days'] ?? 0);
-    $nights = (int)($pkg['nights'] ?? 0);
-    if ($days > 0 || $nights > 0) {
-        $dur_label = sprintf("%02d Nights / %02d Days", $nights, $days);
-        $key = $nights . '-' . $days;
-        if (!isset($all_durations[$key])) {
-            $all_durations[$key] = [
-                'label' => $dur_label,
-                'nights' => $nights,
-                'days' => $days
-            ];
-        }
-    }
-    $price = (float)$pkg['price'];
-    if ($price > $max_price_in_db) $max_price_in_db = $price;
-    if ($price > 0 && $price < $min_price_in_db) $min_price_in_db = $price;
-}
-if ($min_price_in_db == 999999) $min_price_in_db = 0;
-
-if (!empty($dest_filter)) {
-    $found = false;
-    foreach ($all_destinations as $d) {
-        if (strcasecmp($d, $dest_filter) === 0) { $found = true; break; }
-    }
-    if (!$found) $all_destinations[] = $dest_filter;
-}
-if (!empty($theme_filter)) {
-    $found_t = false;
-    foreach ($all_themes as $t) {
-        if (strcasecmp($t, $theme_filter) === 0) { $found_t = true; break; }
-    }
-    if (!$found_t) $all_themes[] = $theme_filter;
-}
-
-usort($all_themes, 'strcasecmp');
-usort($all_destinations, 'strcasecmp');
-ksort($all_durations);
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Explore Tours | Leisure Loop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="css/mobile-views.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title><?= htmlspecialchars($page_title ?? 'Curated Packages | Leisure Loop Trip') ?></title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="css/mobile-views.css?v=<?= time() ?>">
 </head>
-<body>
+<body class="m-page-body mob-pkg-body">
 
-    <div class="hero">
-        <!-- Background Image & Gradient Overlay -->
-        <div style="position: absolute; inset: 0; z-index: 0;">
-            <img style="width: 100%; height: 100%; object-fit: cover;" 
-                 src="assets/img/pkg.jpg" 
-                 alt="Explore Tours">
-            <!-- Fade into background color at the bottom -->
-            <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, #050a14 100%); pointer-events: none;"></div>
-            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.3); pointer-events: none;"></div>
-        </div>
-        
-        <div style="position: absolute; top: max(20px, env(safe-area-inset-top, 20px)); left: 16px; z-index: 20;">
-            <a aria-label="Link" href="index.php" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); cursor: pointer; text-decoration: none;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            </a>
-        </div>
+    <?php
+    $mobile_header_title = 'Tour Packages';
+    $mobile_active_nav   = 'packages';
+    $back_url            = 'index.php?view=mobile';
+    include __DIR__ . '/mobile_header.php';
+    ?>
 
-        <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; width: 100%;">
-            <h1>Explore Tours</h1>
-            <p style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin-top: 8px;">Find your perfect luxury escape.</p>
-        </div>
-    </div>
+    <main class="m-pkg-main">
 
-    <!-- Themes Pill Menu -->
-    <div style="margin: 24px 0 16px 0;">
-        <?php
-        $default_icon_mobile = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
-        $theme_counts_mobile = [];
-        $theme_meta_mobile = [];
-        if (isset($pdo)) {
-            try {
-                $all_pkgs_mobile = $pdo->query("SELECT tour_type FROM packages WHERE is_active = 1")->fetchAll();
-                foreach ($all_pkgs_mobile as $row) {
-                    if (!empty($row['tour_type'])) {
-                        $tags = array_map('trim', explode(',', $row['tour_type']));
-                        foreach ($tags as $tag) {
-                            $normalized = ucwords(strtolower($tag));
-                            $normalized = preg_replace('/\b(tours|tour)\b/i', '', $normalized);
-                            $normalized = trim($normalized);
-                            if ($normalized !== '') {
-                                if (!isset($theme_counts_mobile[$normalized])) $theme_counts_mobile[$normalized] = 0;
-                                $theme_counts_mobile[$normalized]++;
-                            }
-                        }
-                    }
-                }
-                
-                $db_categories_mobile = $pdo->query("SELECT * FROM tour_categories WHERE is_active = 1 ORDER BY display_order ASC, name ASC")->fetchAll();
-                foreach ($db_categories_mobile as $cat) {
-                    $theme_meta_mobile[$cat['name']] = [
-                        'icon' => !empty($cat['icon_svg']) ? $cat['icon_svg'] : $default_icon_mobile
-                    ];
-                }
-
-                $ordered_theme_counts_mobile = [];
-                foreach ($db_categories_mobile as $cat) {
-                    if (isset($theme_counts_mobile[$cat['name']])) {
-                        $ordered_theme_counts_mobile[$cat['name']] = $theme_counts_mobile[$cat['name']];
-                        unset($theme_counts_mobile[$cat['name']]);
-                    }
-                }
-                foreach ($theme_counts_mobile as $name => $count) {
-                    $ordered_theme_counts_mobile[$name] = $theme_counts_mobile[$name];
-                }
-                $theme_counts_mobile = $ordered_theme_counts_mobile;
-            } catch (Exception $e) {}
-        }
-        
-        $current_theme = isset($_GET['theme']) ? strtolower(trim($_GET['theme'])) : '';
-        ?>
-        <?php if (!empty($theme_counts_mobile)): ?>
-        <div style="overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 8px; scroll-snap-type: x mandatory;">
-            <div style="display: inline-flex; gap: 8px; padding-left: 16px; padding-right: 16px;">
-                <?php foreach ($theme_counts_mobile as $name => $count): 
-                    $meta = isset($theme_meta_mobile[$name]) ? $theme_meta_mobile[$name] : ['icon' => $default_icon_mobile];
-                    $is_active = (strtolower($name) === $current_theme);
+        <!-- 1. Auto-Scrolling Hero Section (matches desktop) -->
+        <?php if (!empty($hero_destinations)): ?>
+        <section class="m-pkg-hero" id="mobHeroSection" aria-label="Featured destinations carousel">
+            <div class="m-pkg-hero__track" id="mobHeroTrack">
+                <?php foreach ($hero_destinations as $idx => $h_dest): 
+                    $bg_img = !empty($h_dest['cover_image']) ? $h_dest['cover_image'] : (!empty($h_dest['card_image']) ? $h_dest['card_image'] : 'assets/img/pkg.jpg');
+                    $bg_img = preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $bg_img) ? $bg_img : 'images/dest/' . ltrim($bg_img, '/');
                 ?>
-                <a href="packages.php?theme=<?php echo urlencode($name); ?><?php echo isset($_GET['type']) ? '&type=' . urlencode($_GET['type']) : ''; ?>" 
-                   style="scroll-snap-align: start; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 6px 14px; text-decoration: none; flex-shrink: 0; transition: background 0.3s; <?php echo $is_active ? 'background: var(--gold); color: #000;' : 'background: rgba(255,255,255,0.05); color: #fff;'; ?>">
-                    <span style="width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; <?php echo $is_active ? 'color: #000;' : 'color: var(--gold);'; ?>">
-                        <?php echo $meta['icon']; ?>
-                    </span>
-                    <span style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03em;"><?php echo htmlspecialchars($name); ?></span>
-                    <span style="font-size: 0.65rem; font-weight: 400; margin-left: 2px; <?php echo $is_active ? 'color: rgba(0,0,0,0.6);' : 'color: rgba(255,255,255,0.5);'; ?>">(<?php echo $count; ?>)</span>
+                <div class="m-pkg-hero__slide <?= $idx === 0 ? 'active' : '' ?>" data-slide="<?= $idx ?>">
+                    <img src="<?= htmlspecialchars($bg_img) ?>" alt="<?= htmlspecialchars($h_dest['name']) ?> Tour Packages" class="m-pkg-hero__img" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                    <div class="m-pkg-hero__overlay"></div>
+                    <div class="m-pkg-hero__content">
+                        <span class="m-pkg-hero__badge-row">
+                            <span class="m-pkg-hero__badge-dot"></span> Curated Signature Holiday Packages
+                        </span>
+                        <h2 class="m-pkg-hero__title">
+                            <?= htmlspecialchars($h_dest['name']) ?> <span class="m-pkg-hero__title-sub">Tour Packages</span>
+                        </h2>
+                        <?php if (!empty($h_dest['tagline'])): ?>
+                            <p class="m-pkg-hero__tagline"><?= htmlspecialchars($h_dest['tagline']) ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($hero_destinations) > 1): ?>
+            <div class="m-hero-dots" role="tablist" aria-label="Slide navigation">
+                <?php foreach ($hero_destinations as $idx => $s): ?>
+                    <span class="m-hero-dot <?= $idx === 0 ? 'active' : '' ?>" data-dot="<?= $idx ?>" role="tab" aria-selected="<?= $idx === 0 ? 'true' : 'false' ?>" aria-label="Slide <?= $idx + 1 ?>"></span>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- 2. Search Dock -->
+        <div class="m-pkg-search-wrap">
+            <label for="mobSearchInput" class="sr-only">Search destinations or themes</label>
+            <div class="m-search-pill m-search-pill--pkg">
+                <span class="material-symbols-outlined m-search-icon" aria-hidden="true">search</span>
+                <input type="text" id="mobSearchInput" placeholder="Enter your dream destination or theme..." class="m-search-input m-search-input--pkg">
+                <button type="button" id="mobSearchClear" class="m-search-clear is-hidden" aria-label="Clear search">
+                    <span class="material-symbols-outlined m-search-icon--sm" aria-hidden="true">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Signature Destinations (matches desktop: portrait cards, horizontal scroll, arrows, NO Explore text) -->
+        <?php if (!empty($domestic_destinations) || !empty($international_destinations)): ?>
+        <section class="m-pkg-section" aria-label="Signature destinations">
+            <div class="m-pkg-carousel-header">
+                <h3 class="m-pkg-section__title" >Signature Destinations</h3>
+                <p class="m-pkg-section__subtitle">Immerse yourself in breathtaking mountain retreats, misty valley tea gardens, and timeless cultural realms across India.</p>
+                <div class="m-pkg-carousel-controls">
+                    <div class="m-pills-row" role="tablist" aria-label="Destination type filter">
+                        <button type="button" class="m-pill js-sig-tab m-pill--active" data-target="mob-sig-all" role="tab" aria-selected="true" aria-controls="mob-sig-all">
+                            <span class="material-symbols-outlined m-pill-icon">public</span> All Destinations
+                        </button>
+                        <button type="button" class="m-pill js-sig-tab m-pill--inactive" data-target="mob-sig-domestic" role="tab" aria-selected="false" aria-controls="mob-sig-domestic">
+                            <span class="material-symbols-outlined m-pill-icon">landscape</span> Domestic
+                        </button>
+                        <button type="button" class="m-pill js-sig-tab m-pill--inactive" data-target="mob-sig-international" role="tab" aria-selected="false" aria-controls="mob-sig-international">
+                            <span class="material-symbols-outlined m-pill-icon">flight_takeoff</span> International
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Destinations -->
+            <div class="m-pkg-carousel-track js-sig-track" id="mob-sig-all" role="tabpanel">
+                <?php 
+                $all_sig = array_merge(
+                    array_map(function($d) { $d['scope'] = 'domestic'; return $d; }, $domestic_destinations),
+                    array_map(function($d) { $d['scope'] = 'international'; return $d; }, $international_destinations)
+                );
+                foreach ($all_sig as $dest): 
+                    $img = !empty($dest['card_image']) ? $dest['card_image'] : 'assets/img/pkg.jpg';
+                    $img = preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $img) ? $img : 'images/dest/' . ltrim($img, '/');
+                    $dest_link = 'all-tours.php?destination=' . urlencode(trim($dest['name'])) . '&type=' . urlencode($dest['scope']) . '&view=mobile';
+                ?>
+                    <a href="<?= htmlspecialchars($dest_link) ?>" class="m-pkg-carousel-card m-sig-dest-card" data-scope="<?= htmlspecialchars($dest['scope']) ?>" aria-label="Explore <?= htmlspecialchars($dest['name']) ?>">
+                        <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($dest['name']) ?>" class="m-sig-dest-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <div class="m-sig-dest-card__overlay">
+                            <h4 class="m-sig-dest-card__name"><?= htmlspecialchars($dest['name']) ?></h4>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Domestic -->
+            <div class="m-pkg-carousel-track js-sig-track is-hidden" id="mob-sig-domestic" role="tabpanel" aria-hidden="true">
+                <?php foreach ($domestic_destinations as $dest): 
+                    $img = !empty($dest['card_image']) ? $dest['card_image'] : 'assets/img/pkg.jpg';
+                    $img = preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $img) ? $img : 'images/dest/' . ltrim($img, '/');
+                    $dest_link = 'all-tours.php?destination=' . urlencode(trim($dest['name'])) . '&type=domestic&view=mobile';
+                ?>
+                    <a href="<?= htmlspecialchars($dest_link) ?>" class="m-pkg-carousel-card m-sig-dest-card" data-scope="domestic" aria-label="Explore <?= htmlspecialchars($dest['name']) ?>">
+                        <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($dest['name']) ?>" class="m-sig-dest-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <div class="m-sig-dest-card__overlay">
+                            <h4 class="m-sig-dest-card__name"><?= htmlspecialchars($dest['name']) ?></h4>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- International -->
+            <div class="m-pkg-carousel-track js-sig-track is-hidden" id="mob-sig-international" role="tabpanel" aria-hidden="true">
+                <?php foreach ($international_destinations as $dest): 
+                    $img = !empty($dest['card_image']) ? $dest['card_image'] : 'assets/img/pkg.jpg';
+                    $img = preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $img) ? $img : 'images/dest/' . ltrim($img, '/');
+                    $dest_link = 'all-tours.php?destination=' . urlencode(trim($dest['name'])) . '&type=international&view=mobile';
+                ?>
+                    <a href="<?= htmlspecialchars($dest_link) ?>" class="m-pkg-carousel-card m-sig-dest-card" data-scope="international" aria-label="Explore <?= htmlspecialchars($dest['name']) ?>">
+                        <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($dest['name']) ?>" class="m-sig-dest-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <div class="m-sig-dest-card__overlay">
+                            <h4 class="m-sig-dest-card__name"><?= htmlspecialchars($dest['name']) ?></h4>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
+        <?php endif; ?>
+
+        <!-- 4. Top Trending Tours (matches desktop: portrait cards, horizontal scroll, arrows) -->
+        <?php 
+        $trending_mobile = array_filter($packages_mobile, fn($p) => !empty($p['is_trending']) || !empty($p['is_featured']));
+        if (!empty($trending_mobile)): 
+        ?>
+        <section class="m-pkg-section" aria-label="Top trending tours">
+            <div class="m-pkg-carousel-header">
+                <h3 class="m-pkg-section__title">
+                    Top Trending Tours
+                </h3>
+                <p class="m-pkg-section__subtitle">Explore our most sought-after holiday packages across India and around the globe.</p>
+                <div class="m-pkg-carousel-controls">
+                    <div class="m-pills-row" role="tablist" aria-label="Trending filter">
+                        <button type="button" class="m-pill js-trend-tab m-pill--active" data-target="mob-trend-all" role="tab" aria-selected="true" aria-controls="mob-trend-all">
+                            <span class="material-symbols-outlined m-pill-icon">star</span> All Trending
+                        </button>
+                        <button type="button" class="m-pill js-trend-tab m-pill--inactive" data-target="mob-trend-domestic" role="tab" aria-selected="false" aria-controls="mob-trend-domestic">
+                            <span class="material-symbols-outlined m-pill-icon">landscape</span> Domestic
+                        </button>
+                        <button type="button" class="m-pill js-trend-tab m-pill--inactive" data-target="mob-trend-international" role="tab" aria-selected="false" aria-controls="mob-trend-international">
+                            <span class="material-symbols-outlined m-pill-icon">flight_takeoff</span> International
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Trending -->
+            <div class="m-pkg-carousel-track js-trend-track" id="mob-trend-all" role="tabpanel">
+                <?php foreach ($trending_mobile as $pkg): 
+                    $t_img = !empty($pkg['image_url']) ? $pkg['image_url'] : 'assets/img/pkg.jpg';
+                    $pkgImg = preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $t_img) ? $t_img : 'images/dest/' . ltrim($t_img, '/');
+                    $days = (int)($pkg['days'] ?? 4);
+                    $nights = (int)($pkg['nights'] ?? ($days > 1 ? $days - 1 : 1));
+                    $price = (float)($pkg['price'] ?? 0);
+                    $is_intl = !empty($pkg['is_international']) ? 'international' : 'domestic';
+                    $type_badge = $is_intl === 'international' ? '✈️ International' : '🇮🇳 Domestic';
+                ?>
+                <a href="package-detail.php?slug=<?= urlencode($pkg['slug'] ?? '') ?>&view=mobile" class="m-pkg-carousel-card m-trend-card" data-scope="<?= $is_intl ?>" aria-label="<?= htmlspecialchars($pkg['title']) ?> - <?= $nights ?>N/<?= $days ?>D from ₹<?= number_format($price) ?>">
+                    <div class="m-trend-card__badges">
+                        <span class="m-trend-card__badge-hot">🔥 TRENDING</span>
+                        <span class="m-trend-card__badge-type"><?= $type_badge ?></span>
+                    </div>
+                    <img src="<?= htmlspecialchars($pkgImg) ?>" alt="<?= htmlspecialchars($pkg['title']) ?>" class="m-trend-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                    <div class="m-trend-card__overlay">
+                        <div class="m-trend-card__dest">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            <?= htmlspecialchars($pkg['destination'] ?? 'India') ?>
+                        </div>
+                        <h4 class="m-trend-card__title"><?= htmlspecialchars($pkg['title']) ?></h4>
+                        <div class="m-trend-card__duration">🕒 <?= $nights ?>N / <?= $days ?>D</div>
+                        <div class="m-trend-card__footer">
+                            <div class="m-trend-card__price-group">
+                                <span class="m-trend-card__price-lbl">Starting From</span>
+                                <span class="m-trend-card__price-val">₹<?= number_format($price) ?></span>
+                            </div>
+                            <span class="m-trend-card__explore">Explore <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></span>
+                        </div>
+                    </div>
                 </a>
                 <?php endforeach; ?>
             </div>
-        </div>
-        <?php endif; ?>
-    </div>
-
-    <!-- 2-Column Grid -->
-    <div class="grid-container" id="packagesGrid">
-        <?php foreach ($packages_mobile as $pkg): 
-            $nights = (int)($pkg['nights'] ?? 0);
-            $days = (int)($pkg['days'] ?? 0);
-            $price = (float)$pkg['price'];
-            $img = !empty($pkg['image_url']) ? $pkg['image_url'] : '';
-            $theme = explode(',', $pkg['tour_type'])[0] ?? 'Signature';
             
-            $pkg_themes = [];
-            if (!empty($pkg['tour_type'])) {
-                $types = explode(',', $pkg['tour_type']);
-                foreach ($types as $t) {
-                    $pkg_themes[] = strtolower(trim($t));
-                }
-            }
-            $themes_data = implode('|', $pkg_themes);
-            $duration_key = $nights . '-' . $days;
-        ?>
-        <a href="package-detail.php?slug=<?php echo htmlspecialchars($pkg['slug']); ?>" 
-           class="card js-card"
-           data-price="<?php echo $price; ?>"
-           data-destination="<?php echo htmlspecialchars(strtolower(trim($pkg['destination']))); ?>"
-           data-themes="<?php echo htmlspecialchars($themes_data); ?>"
-           data-duration="<?php echo $duration_key; ?>"
-           data-days="<?php echo $days; ?>"
-           data-package-type="<?php echo htmlspecialchars(strtolower(trim($pkg['package_type'] ?? 'curated'))); ?>">
-            <?php if (!empty($img)): ?>
-                <img src="<?php echo htmlspecialchars($img); ?>" class="card-img" alt="">
-            <?php else: ?>
-                <div class="card-img" style="background-color: #000;"></div>
-            <?php endif; ?>
-            <div class="card-body">
-                <span class="card-theme"><?php echo htmlspecialchars(trim($theme)); ?></span>
-                <h3 class="card-title"><?php echo htmlspecialchars($pkg['title']); ?></h3>
-                <div class="card-price">₹<?php echo number_format($pkg['price']); ?></div>
+            <!-- Domestic Trending -->
+            <div class="m-pkg-carousel-track js-trend-track is-hidden" id="mob-trend-domestic" role="tabpanel" aria-hidden="true">
+                <?php foreach ($trending_mobile as $pkg): 
+                    if (!empty($pkg['is_international'])) continue;
+                    $t_img = !empty($pkg['image_url']) ? $pkg['image_url'] : 'assets/img/pkg.jpg';
+                    $pkgImg = preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $t_img) ? $t_img : 'images/dest/' . ltrim($t_img, '/');
+                    $days = (int)($pkg['days'] ?? 4);
+                    $nights = (int)($pkg['nights'] ?? ($days > 1 ? $days - 1 : 1));
+                    $price = (float)($pkg['price'] ?? 0);
+                ?>
+                <a href="package-detail.php?slug=<?= urlencode($pkg['slug'] ?? '') ?>&view=mobile" class="m-pkg-carousel-card m-trend-card" data-scope="domestic" aria-label="<?= htmlspecialchars($pkg['title']) ?> - <?= $nights ?>N/<?= $days ?>D from ₹<?= number_format($price) ?>">
+                    <div class="m-trend-card__badges">
+                        <span class="m-trend-card__badge-hot">🔥 TRENDING</span>
+                        <span class="m-trend-card__badge-type">🇮🇳 Domestic</span>
+                    </div>
+                    <img src="<?= htmlspecialchars($pkgImg) ?>" alt="<?= htmlspecialchars($pkg['title']) ?>" class="m-trend-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                    <div class="m-trend-card__overlay">
+                        <div class="m-trend-card__dest">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            <?= htmlspecialchars($pkg['destination'] ?? 'India') ?>
+                        </div>
+                        <h4 class="m-trend-card__title"><?= htmlspecialchars($pkg['title']) ?></h4>
+                        <div class="m-trend-card__duration">🕒 <?= $nights ?>N / <?= $days ?>D</div>
+                        <div class="m-trend-card__footer">
+                            <div class="m-trend-card__price-group">
+                                <span class="m-trend-card__price-lbl">Starting From</span>
+                                <span class="m-trend-card__price-val">₹<?= number_format($price) ?></span>
+                            </div>
+                            <span class="m-trend-card__explore">Explore <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></span>
+                        </div>
+                    </div>
+                </a>
+                <?php endforeach; ?>
             </div>
-        </a>
-        <?php endforeach; ?>
-        
-        <div class="no-results" id="noResults" style="display: none; text-align: center; padding: 40px 16px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 56px; height: 56px; margin: 0 auto 16px auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
-            <h3 id="noResultsTitle" style="font-size: 1.15rem; font-weight: 600; color: #fff; margin-bottom: 8px;">No packages found</h3>
-            <p id="noResultsSub" style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 20px;">Try adjusting your filters or request a custom itinerary from our specialists.</p>
-            <div style="display: flex; gap: 12px; justify-content: center;">
-                <button data-action="clear-filters" style="padding: 10px 20px; font-size: 0.8rem; font-weight: 700; border: none; border-radius: 50px; background: var(--gold); color: #000;">Reset Filters</button>
-                <button data-href="contact.php" style="padding: 10px 20px; font-size: 0.8rem; font-weight: 700; border: 1px solid var(--gold); border-radius: 50px; background: transparent; color: var(--gold);">Plan Custom Trip</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Modals -->
-    <div class="modal-overlay" id="modalOverlay" data-action="close-all" role="button" aria-label="Close filter panel"></div>
-    
-    <!-- Bottom Sheet: Sort -->
-    <div class="bottom-sheet" id="sortSheet">
-        <h3 style="margin: 0 0 16px 0; font-size: 1.1rem; font-weight: 600;">Sort By</h3>
-        <label class="sort-option">
-            <span>Curated Selection</span>
-            <input type="radio" name="sort" value="default" checked data-change="apply-filters">
-        </label>
-        <label class="sort-option">
-            <span>Price: Low to High</span>
-            <input type="radio" name="sort" value="price_asc" data-change="apply-filters">
-        </label>
-        <label class="sort-option">
-            <span>Price: High to Low</span>
-            <input type="radio" name="sort" value="price_desc" data-change="apply-filters">
-        </label>
-        <label class="sort-option">
-            <span>Duration: Shortest First</span>
-            <input type="radio" name="sort" value="duration_asc" data-change="apply-filters">
-        </label>
-        <label class="sort-option">
-            <span>Duration: Longest First</span>
-            <input type="radio" name="sort" value="duration_desc" data-change="apply-filters">
-        </label>
-    </div>
-    
-    <!-- Side/Full Sheet: Filter -->
-    <div class="side-sheet" id="filterSheet">
-        <!-- Header -->
-        <div style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Filters</h3>
-            <button data-action="close-all" style="background: none; border: none; color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer;" aria-label="Close filter panel">Close</button>
-        </div>
-        
-        <!-- Dual Pane Body -->
-        <div class="filter-body">
-            <div class="filter-left">
-                <div class="filter-tab active" data-action="switch-filter" data-pane="pane-theme">Theme</div>
-                <div class="filter-tab" data-action="switch-filter" data-pane="pane-dest">Destination</div>
-                <div class="filter-tab" data-action="switch-filter" data-pane="pane-dur">Duration</div>
-                <div class="filter-tab" data-action="switch-filter" data-pane="pane-price">Price</div>
-                <div class="filter-tab" data-action="switch-filter" data-pane="pane-type">Package Type</div>
+            <!-- International Trending -->
+            <div class="m-pkg-carousel-track js-trend-track is-hidden" id="mob-trend-international" role="tabpanel" aria-hidden="true">
+                <?php foreach ($trending_mobile as $pkg): 
+                    if (empty($pkg['is_international'])) continue;
+                    $t_img = !empty($pkg['image_url']) ? $pkg['image_url'] : 'assets/img/pkg.jpg';
+                    $pkgImg = preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $t_img) ? $t_img : 'images/dest/' . ltrim($t_img, '/');
+                    $days = (int)($pkg['days'] ?? 4);
+                    $nights = (int)($pkg['nights'] ?? ($days > 1 ? $days - 1 : 1));
+                    $price = (float)($pkg['price'] ?? 0);
+                ?>
+                <a href="package-detail.php?slug=<?= urlencode($pkg['slug'] ?? '') ?>&view=mobile" class="m-pkg-carousel-card m-trend-card" data-scope="international" aria-label="<?= htmlspecialchars($pkg['title']) ?> - <?= $nights ?>N/<?= $days ?>D from ₹<?= number_format($price) ?>">
+                    <div class="m-trend-card__badges">
+                        <span class="m-trend-card__badge-hot">🔥 TRENDING</span>
+                        <span class="m-trend-card__badge-type">✈️ International</span>
+                    </div>
+                    <img src="<?= htmlspecialchars($pkgImg) ?>" alt="<?= htmlspecialchars($pkg['title']) ?>" class="m-trend-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                    <div class="m-trend-card__overlay">
+                        <div class="m-trend-card__dest">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            <?= htmlspecialchars($pkg['destination'] ?? 'India') ?>
+                        </div>
+                        <h4 class="m-trend-card__title"><?= htmlspecialchars($pkg['title']) ?></h4>
+                        <div class="m-trend-card__duration">🕒 <?= $nights ?>N / <?= $days ?>D</div>
+                        <div class="m-trend-card__footer">
+                            <div class="m-trend-card__price-group">
+                                <span class="m-trend-card__price-lbl">Starting From</span>
+                                <span class="m-trend-card__price-val">₹<?= number_format($price) ?></span>
+                            </div>
+                            <span class="m-trend-card__explore">Explore <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></span>
+                        </div>
+                    </div>
+                </a>
+                <?php endforeach; ?>
             </div>
-            <div class="filter-right">
-                <!-- Theme Pane -->
-                <div class="filter-pane active" id="pane-theme">
-                    <?php foreach ($all_themes as $t): 
-                        $is_t_chk = (isset($theme_filter) && strcasecmp($theme_filter, $t) === 0) ? 'checked' : '';
-                    ?>
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="filter-theme" value="<?php echo htmlspecialchars(strtolower(trim($t))); ?>" <?php echo $is_t_chk; ?>>
-                        <span><?php echo htmlspecialchars($t); ?></span>
-                    </label>
-                    <?php endforeach; ?>
-                </div>
-                
-                <!-- Destination Pane -->
-                <div class="filter-pane" id="pane-dest">
-                    <?php foreach ($all_destinations as $d): 
-                        $is_d_chk = (isset($dest_filter) && strcasecmp($dest_filter, $d) === 0) ? 'checked' : '';
-                    ?>
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="filter-dest" value="<?php echo htmlspecialchars(strtolower(trim($d))); ?>" <?php echo $is_d_chk; ?>>
-                        <span><?php echo htmlspecialchars($d); ?></span>
-                    </label>
-                    <?php endforeach; ?>
-                </div>
-                
-                <!-- Duration Pane -->
-                <div class="filter-pane" id="pane-dur">
-                    <?php foreach ($all_durations as $key => $dur): ?>
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="filter-dur" value="<?php echo htmlspecialchars($key); ?>">
-                        <span><?php echo htmlspecialchars($dur['label']); ?></span>
-                    </label>
-                    <?php endforeach; ?>
-                </div>
-                
-                <!-- Price Pane -->
-                <div class="filter-pane" id="pane-price">
-                    <p style="font-size: 0.9rem; margin: 0; color: rgba(255,255,255,0.8);">Enter Price Range (₹)</p>
-                    <div class="price-inputs">
-                        
-<label for="price_min" class="sr-only">Min</label>
-<input type="number" id="price_min" placeholder="Min" min="0">
-                        <span style="color: rgba(255,255,255,0.5);">-</span>
-                        
-<label for="price_max" class="sr-only">Max</label>
-<input type="number" id="price_max" placeholder="Max" min="0">
+        </section>
+        <?php endif; ?>
+
+        <!-- 5. Holiday Themes (matches desktop: circle cards, horizontal scroll, arrows) -->
+        <?php if (!empty($curated_pkg_themes)): ?>
+        <section class="m-pkg-section" aria-label="Holiday themes">
+            <div class="m-pkg-carousel-header">
+                <h3 class="m-pkg-section__title" >Explore Holiday Collections By Theme</h3>
+            </div>
+            <div class="m-pkg-carousel-track m-pkg-carousel-track--themes" id="mobThemeTrack">
+                <?php foreach ($curated_pkg_themes as $th): ?>
+                <a href="all-tours.php?theme=<?= urlencode($th['slug']) ?>&view=mobile" class="m-pkg-carousel-card m-theme-card" aria-label="<?= htmlspecialchars($th['title']) ?> tours">
+                    <div class="m-theme-card__img-wrap">
+                        <img src="<?= htmlspecialchars($th['img']) ?>" alt="<?= htmlspecialchars($th['title']) ?>" class="m-theme-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <div class="m-theme-card__overlay"></div>
+                    </div>
+                    <h4 class="m-theme-card__title"><?= htmlspecialchars($th['title']) ?></h4>
+                    <span class="m-theme-card__sub"><?= htmlspecialchars($th['sub']) ?></span>
+                </a>
+                <?php endforeach; ?>
+            </div>
+            <a href="all-tours.php?view=mobile" class="m-explore-all-btn" aria-label="Explore all tours">
+                <span class="material-symbols-outlined" aria-hidden="true">globe_asia</span>
+                Explore All Tours & Holiday Collections
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+            </a>
+        </section>
+        <?php endif; ?>
+
+        <!-- 6. Exclusive Offers (matches desktop: portrait cards, horizontal scroll, emerald theme, arrows) -->
+        <?php 
+        $offer_packages = array_filter($packages_mobile ?? [], fn($p) => !empty($p['original_price']) && floatval($p['original_price']) > floatval($p['price']));
+        if (empty($offer_packages)) $offer_packages = array_slice($packages_mobile ?? [], 0, 5);
+        if (!empty($offer_packages)):
+        ?>
+        <section class="m-pkg-section m-offers-section" aria-label="Exclusive holiday offers">
+            <div class="m-pkg-carousel-header">
+                <h3 class="m-pkg-section__title">
+                    Exclusive Holiday Offers
+                </h3>
+                <p class="m-pkg-section__subtitle">Unbeatable limited-time discounts and curated seasonal savings across domestic and international sanctuaries.</p>
+                <div class="m-pkg-carousel-controls">
+                    <div class="m-pills-row m-pills-row--emerald" role="tablist" aria-label="Offers filter">
+                        <button type="button" class="m-pill m-pill--emerald js-offer-tab m-pill--active" data-target="mob-offer-all" role="tab" aria-selected="true" aria-controls="mob-offer-all">
+                            <span class="material-symbols-outlined m-pill-icon">bolt</span> All Deals
+                        </button>
+                        <button type="button" class="m-pill m-pill--emerald js-offer-tab m-pill--inactive" data-target="mob-offer-domestic" role="tab" aria-selected="false" aria-controls="mob-offer-domestic">
+                            <span class="material-symbols-outlined m-pill-icon">landscape</span> Domestic
+                        </button>
+                        <button type="button" class="m-pill m-pill--emerald js-offer-tab m-pill--inactive" data-target="mob-offer-international" role="tab" aria-selected="false" aria-controls="mob-offer-international">
+                            <span class="material-symbols-outlined m-pill-icon">flight_takeoff</span> International
+                        </button>
                     </div>
                 </div>
-                
-                <!-- Package Type Pane -->
-                <div class="filter-pane" id="pane-type">
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="filter-type" value="curated" <?php echo ($active_tab === 'curated') ? 'checked' : ''; ?>>
-                        <span>Curated</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="filter-type" value="fixed" <?php echo ($active_tab === 'fixed') ? 'checked' : ''; ?>>
-                        <span>Fixed</span>
-                    </label>
+            </div>
+
+            <!-- All Offers -->
+            <div class="m-pkg-carousel-track js-offer-track" id="mob-offer-all" role="tabpanel">
+                <?php foreach ($offer_packages as $op): 
+                    $o_img = !empty($op['image_url']) ? $op['image_url'] : 'assets/img/pkg.jpg';
+                    if (!preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $o_img)) $o_img = 'images/dest/' . ltrim($o_img, '/');
+                    $o_price = floatval($op['price'] ?? 0);
+                    $o_orig = !empty($op['original_price']) ? floatval($op['original_price']) : floatval($o_price * 1.35);
+                    if ($o_orig <= $o_price) $o_orig = $o_price * 1.35;
+                    $discount = round((($o_orig - $o_price) / $o_orig) * 100);
+                    $days = (int)($op['days'] ?? 4);
+                    $nights = (int)($op['nights'] ?? ($days > 1 ? $days - 1 : 1));
+                    $o_scope = !empty($op['is_international']) ? 'international' : 'domestic';
+                    $o_badge = $o_scope === 'international' ? '✈️ International' : '🇮🇳 Domestic';
+                ?>
+                <a href="package-detail.php?slug=<?= urlencode($op['slug'] ?? '') ?>&view=mobile" class="m-pkg-carousel-card m-offer-card" data-scope="<?= $o_scope ?>" aria-label="<?= htmlspecialchars($op['title']) ?> - <?= $discount ?>% off">
+                    <div class="m-offer-card__badges">
+                        <span class="m-offer-card__badge-discount">⚡ <?= $discount ?>% OFF</span>
+                        <span class="m-offer-card__badge-type"><?= $o_badge ?></span>
+                    </div>
+                    <img src="<?= htmlspecialchars($o_img) ?>" alt="<?= htmlspecialchars($op['title']) ?>" class="m-offer-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                    <div class="m-offer-card__overlay">
+                        <div class="m-offer-card__dest">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            <?= htmlspecialchars($op['destination'] ?? 'India') ?>
+                        </div>
+                        <h4 class="m-offer-card__title"><?= htmlspecialchars($op['title']) ?></h4>
+                        <div class="m-offer-card__duration">🕒 <?= $nights ?>N / <?= $days ?>D</div>
+                        <div class="m-offer-card__footer">
+                            <div class="m-offer-card__pricing">
+                                <span class="m-offer-card__original">₹<?= number_format($o_orig) ?></span>
+                                <div class="m-offer-card__final-row">
+                                    <span class="m-offer-card__final">₹<?= number_format($o_price) ?></span>
+                                    <span class="m-offer-card__per-person">/person</span>
+                                </div>
+                            </div>
+                            <span class="m-offer-card__claim">View Deal <span class="material-symbols-outlined" aria-hidden="true">local_offer</span></span>
+                        </div>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Domestic Offers -->
+            <div class="m-pkg-carousel-track js-offer-track is-hidden" id="mob-offer-domestic" role="tabpanel" aria-hidden="true">
+                <?php foreach ($offer_packages as $op): 
+                    if (!empty($op['is_international'])) continue;
+                    $o_img = !empty($op['image_url']) ? $op['image_url'] : 'assets/img/pkg.jpg';
+                    if (!preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $o_img)) $o_img = 'images/dest/' . ltrim($o_img, '/');
+                    $o_price = floatval($op['price'] ?? 0);
+                    $o_orig = !empty($op['original_price']) ? floatval($op['original_price']) : floatval($o_price * 1.35);
+                    if ($o_orig <= $o_price) $o_orig = $o_price * 1.35;
+                    $discount = round((($o_orig - $o_price) / $o_orig) * 100);
+                    $days = (int)($op['days'] ?? 4);
+                    $nights = (int)($op['nights'] ?? ($days > 1 ? $days - 1 : 1));
+                ?>
+                <a href="package-detail.php?slug=<?= urlencode($op['slug'] ?? '') ?>&view=mobile" class="m-pkg-carousel-card m-offer-card" data-scope="domestic" aria-label="<?= htmlspecialchars($op['title']) ?> - <?= $discount ?>% off">
+                    <div class="m-offer-card__badges">
+                        <span class="m-offer-card__badge-discount">⚡ <?= $discount ?>% OFF</span>
+                        <span class="m-offer-card__badge-type">🇮🇳 Domestic</span>
+                    </div>
+                    <img src="<?= htmlspecialchars($o_img) ?>" alt="<?= htmlspecialchars($op['title']) ?>" class="m-offer-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                    <div class="m-offer-card__overlay">
+                        <div class="m-offer-card__dest">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            <?= htmlspecialchars($op['destination'] ?? 'India') ?>
+                        </div>
+                        <h4 class="m-offer-card__title"><?= htmlspecialchars($op['title']) ?></h4>
+                        <div class="m-offer-card__duration">🕒 <?= $nights ?>N / <?= $days ?>D</div>
+                        <div class="m-offer-card__footer">
+                            <div class="m-offer-card__pricing">
+                                <span class="m-offer-card__original">₹<?= number_format($o_orig) ?></span>
+                                <div class="m-offer-card__final-row">
+                                    <span class="m-offer-card__final">₹<?= number_format($o_price) ?></span>
+                                    <span class="m-offer-card__per-person">/person</span>
+                                </div>
+                            </div>
+                            <span class="m-offer-card__claim">View Deal <span class="material-symbols-outlined" aria-hidden="true">local_offer</span></span>
+                        </div>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- International Offers -->
+            <div class="m-pkg-carousel-track js-offer-track is-hidden" id="mob-offer-international" role="tabpanel" aria-hidden="true">
+                <?php foreach ($offer_packages as $op): 
+                    if (empty($op['is_international'])) continue;
+                    $o_img = !empty($op['image_url']) ? $op['image_url'] : 'assets/img/pkg.jpg';
+                    if (!preg_match('/^(http|\/|assets\/|uploads\/|images\/)/i', $o_img)) $o_img = 'images/dest/' . ltrim($o_img, '/');
+                    $o_price = floatval($op['price'] ?? 0);
+                    $o_orig = !empty($op['original_price']) ? floatval($op['original_price']) : floatval($o_price * 1.35);
+                    if ($o_orig <= $o_price) $o_orig = $o_price * 1.35;
+                    $discount = round((($o_orig - $o_price) / $o_orig) * 100);
+                    $days = (int)($op['days'] ?? 4);
+                    $nights = (int)($op['nights'] ?? ($days > 1 ? $days - 1 : 1));
+                ?>
+                <a href="package-detail.php?slug=<?= urlencode($op['slug'] ?? '') ?>&view=mobile" class="m-pkg-carousel-card m-offer-card" data-scope="international" aria-label="<?= htmlspecialchars($op['title']) ?> - <?= $discount ?>% off">
+                    <div class="m-offer-card__badges">
+                        <span class="m-offer-card__badge-discount">⚡ <?= $discount ?>% OFF</span>
+                        <span class="m-offer-card__badge-type">✈️ International</span>
+                    </div>
+                    <img src="<?= htmlspecialchars($o_img) ?>" alt="<?= htmlspecialchars($op['title']) ?>" class="m-offer-card__img" loading="lazy" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                    <div class="m-offer-card__overlay">
+                        <div class="m-offer-card__dest">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            <?= htmlspecialchars($op['destination'] ?? 'India') ?>
+                        </div>
+                        <h4 class="m-offer-card__title"><?= htmlspecialchars($op['title']) ?></h4>
+                        <div class="m-offer-card__duration">🕒 <?= $nights ?>N / <?= $days ?>D</div>
+                        <div class="m-offer-card__footer">
+                            <div class="m-offer-card__pricing">
+                                <span class="m-offer-card__original">₹<?= number_format($o_orig) ?></span>
+                                <div class="m-offer-card__final-row">
+                                    <span class="m-offer-card__final">₹<?= number_format($o_price) ?></span>
+                                    <span class="m-offer-card__per-person">/person</span>
+                                </div>
+                            </div>
+                            <span class="m-offer-card__claim">View Deal <span class="material-symbols-outlined" aria-hidden="true">local_offer</span></span>
+                        </div>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
+        <?php endif; ?>
+
+        <!-- 7. CTA Portfolio -->
+        <section class="m-pkg-section m-cta-portfolio" aria-label="Explore all tours">
+            <div class="m-cta-card">
+                <div class="m-cta-badge">
+                    <span class="material-symbols-outlined">explore</span> COMPLETE TOUR INVENTORY
+                </div>
+                <h3 class="m-cta-heading">
+                    Ready to Find Your <span class="m-cta-gold-italic">Dream Sanctuary?</span>
+                </h3>
+                <p class="m-cta-desc">
+                    Browse our complete catalog of curated luxury holidays, customized itineraries, and guaranteed fixed group departures with interactive budget and duration filters.
+                </p>
+                <a href="all-tours.php?view=mobile" class="m-cta-btn">
+                    ✨ Explore All Available Tours
+                    <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- 8. On-Trip Assistance -->
+        <section class="m-pkg-section m-assistance-section" aria-label="On-trip assistance">
+            <div class="m-assistance-card">
+                <h4 class="m-assistance-heading">Hassle Free. 24X7 on-trip assistance</h4>
+                <div class="m-assistance-links">
+                    <a href="tel:+918918921629" class="m-assistance-item" aria-label="Call for assistance">
+                        <span class="material-symbols-outlined m-assistance-icon" aria-hidden="true">call</span>
+                        <span class="m-assistance-text">+91 89189 21629</span>
+                    </a>
+                    <a href="mailto:curator@leisurelooptrip.in" class="m-assistance-item" aria-label="Email for assistance">
+                        <span class="material-symbols-outlined m-assistance-icon" aria-hidden="true">alternate_email</span>
+                        <span class="m-assistance-text">curator@leisurelooptrip.in</span>
+                    </a>
                 </div>
             </div>
-        </div>
-        
-        <!-- Footer Buttons -->
-        <div style="padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 12px; background: #0a0f1e;">
-            <button data-action="clear-filters" style="flex: 1; padding: 12px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 8px; font-weight: 600;">Clear Filters</button>
-            <button data-action="apply-filters-close" style="flex: 1; padding: 12px; background: var(--gold); border: none; color: #000; font-weight: 700; border-radius: 8px;" aria-label="Apply filters and close">Apply</button>
-        </div>
-    </div>
+        </section>
 
-    <div class="fixed-sort-filter" style="position: fixed; bottom: env(safe-area-inset-bottom, 16px); left: 16px; width: calc(100% - 32px); display: flex; gap: 12px; z-index: 90;">
-        <button class="btn-sort-filter" data-action="toggle-sort" style="background: rgba(10, 15, 25, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"/></svg>
-            Sort
-        </button>
-        <button class="btn-sort-filter" data-action="toggle-filter" style="background: rgba(10, 15, 25, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-            Filter
-        </button>
-    </div>
+    </main>
 
-    
+    <?php 
+    $modal_prefix = 'mob-';
+    $extra_scripts = '<script src="js/modules/mobile_packages.js?v=' . time() . '" defer></script>';
+    include __DIR__ . '/mobile_footer.php'; 
+    ?>
+
 </body>
 </html>

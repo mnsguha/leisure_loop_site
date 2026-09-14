@@ -2,29 +2,33 @@
 
 /**
  * Leisure Loop - Main Interactions Module
- * Encapsulated to prevent global scope pollution.
+ * Rule 10 State Hygiene & Rule 11 Component Query Guarding
  */
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ─── UTILITY: MODAL STATE MANAGEMENT ───
+    // ─── UTILITY: MODAL STATE MANAGEMENT (Rule 10 Compliant) ───
     const toggleModal = (modal, forceState) => {
         if (!modal) return;
-        const isOpen = forceState !== undefined ? forceState : !modal.classList.contains('is-active');
+        const isOpen = forceState !== undefined 
+            ? forceState 
+            : (modal.classList.contains('is-hidden') || !modal.classList.contains('is-active'));
         
         if (isOpen) {
-            modal.classList.add('is-active');
+            modal.classList.remove('is-hidden');
+            modal.classList.add('is-active', 'active');
             modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            document.body.classList.add('scroll-lock');
         } else {
-            modal.classList.remove('is-active');
+            modal.classList.add('is-hidden');
+            modal.classList.remove('is-active', 'active');
             modal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
+            document.body.classList.remove('scroll-lock');
         }
     };
 
-    // ─── UNIFIED DOCK (WHATSAPP/CALL) ───
+    // ─── UNIFIED DOCK (WHATSAPP/CALL) (Rule 11 Guarded) ───
     const dockTrigger = document.querySelector('.unified-trigger-head');
-    const dock = document.getElementById('unifiedConciergeDock');
+    const dock = document.getElementById('mob-unifiedConciergeDock') || document.getElementById('unifiedConciergeDock');
 
     if (dockTrigger && dock) {
         dockTrigger.addEventListener('click', () => {
@@ -32,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dockTrigger.setAttribute('aria-expanded', isExpanded);
         });
         
-        // Close when clicking outside
         document.addEventListener('click', (event) => {
             if (!dock.contains(event.target) && dock.classList.contains('dock-open')) {
                 dock.classList.remove('dock-open');
@@ -41,39 +44,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ─── ENQUIRY MODAL LOGIC ───
-    const enquiryModal = document.getElementById('enquiryModal');
+    // ─── ENQUIRY MODAL LOGIC (Rule 11 §60 Guarded Lookup) ───
+    const getEnquiryModal = () => document.getElementById('mob-enquiryModal') || document.getElementById('enquiryModal');
     
-    document.querySelectorAll('.btn-enquiry-nav, [data-target="#enquiryModal"]').forEach(btn => {
+    document.querySelectorAll('.btn-enquiry-nav, [data-target="#enquiryModal"], [data-target="#mob-enquiryModal"], [data-action="open-enquiry-modal"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            toggleModal(enquiryModal, true);
+            toggleModal(getEnquiryModal(), true);
         });
     });
 
     document.querySelectorAll('.enquiry-modal-close').forEach(btn => {
-        btn.addEventListener('click', () => toggleModal(enquiryModal, false));
-    });
-
-    // ─── PLANNER MODAL LOGIC ───
-    const plannerModal = document.getElementById('plannerModal');
-    
-    document.querySelectorAll('[data-target="#plannerModal"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            toggleModal(plannerModal, true);
+            toggleModal(getEnquiryModal(), false);
+        });
+    });
+
+    // ─── PLANNER MODAL LOGIC (Rule 11 §60 Guarded Lookup) ───
+    const getPlannerModal = () => document.getElementById('mob-plannerModal') || document.getElementById('plannerModal');
+    
+    document.querySelectorAll('[data-target="#plannerModal"], [data-target="#mob-plannerModal"], [data-action="open-planner-modal"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleModal(getPlannerModal(), true);
         });
     });
 
     document.querySelectorAll('.modal-close').forEach(btn => {
-        btn.addEventListener('click', () => toggleModal(plannerModal, false));
+        btn.addEventListener('click', (e) => {
+            const modal = btn.closest('.modal-overlay, .enquiry-modal-overlay');
+            if (modal) {
+                e.preventDefault();
+                toggleModal(modal, false);
+            }
+        });
     });
 
-    // Close modals on ESC key (Accessibility Best Practice)
+    // Close modals on ESC key (Rule 10)
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            toggleModal(enquiryModal, false);
-            toggleModal(plannerModal, false);
+            toggleModal(getEnquiryModal(), false);
+            toggleModal(getPlannerModal(), false);
+            const step2 = document.getElementById('desktop-step2Modal') || document.getElementById('step2Modal');
+            toggleModal(step2, false);
+            const notice = document.getElementById('noticePopup');
+            if (notice && (notice.classList.contains('is-active') || notice.classList.contains('active'))) {
+                notice.classList.remove('is-active', 'active');
+                notice.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
+            }
+        }
+    });
+
+    // ─── FOCUS TRAP (Rule 10) ───
+    const focusableSelector = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab') return;
+        const activeModal = document.querySelector('.modal-overlay.is-active, .enquiry-modal-overlay.is-active');
+        if (!activeModal) return;
+        const focusable = activeModal.querySelectorAll(focusableSelector);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
         }
     });
 
@@ -86,15 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ─── INITIALIZE GSAP DRAG ───
-    // Instead of assigning to window, initialize it locally based on data attributes
     const dragTracks = document.querySelectorAll('[data-gsap-drag="true"]');
     if (dragTracks.length > 0 && typeof gsap !== 'undefined') {
         dragTracks.forEach(track => initMomentumDrag(track));
     }
 });
 
-// ─── LOCAL GSAP MOMENTUM DRAG FUNCTION ───
-// Kept outside DOMContentLoaded for readability, but NOT attached to window.
 function initMomentumDrag(track, options = {}) {
     if (!track || track.dataset.dragInitialized) return;
     track.dataset.dragInitialized = 'true';
@@ -158,7 +194,6 @@ function initMomentumDrag(track, options = {}) {
         track.scrollLeft = scrollLeft - walk;
     });
 
-    // Prevent link clicking if the user was dragging
     track.querySelectorAll('a').forEach(el => {
         el.addEventListener('click', (e) => {
             if (didDrag) {

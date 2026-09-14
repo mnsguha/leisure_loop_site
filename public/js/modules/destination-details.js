@@ -179,7 +179,7 @@ function initPlannerSteps() {
 
 function bindDestinationEvents() {
     document.addEventListener('click', (e) => {
-        // Open Modal
+        // Open Modal (generic)
         const openBtn = e.target.closest('[data-action="open-modal"]');
         if (openBtn) {
             e.preventDefault();
@@ -187,6 +187,19 @@ function bindDestinationEvents() {
             if (targetSelector) {
                 const target = document.querySelector(targetSelector);
                 if (target) target.classList.add('is-active');
+            }
+            return;
+        }
+
+        // Open story-modal
+        const openStoryBtn = e.target.closest('[data-action="open-story-modal"]');
+        if (openStoryBtn) {
+            e.preventDefault();
+            const storyModal = document.getElementById('story-modal');
+            if (storyModal) {
+                storyModal.classList.add('is-active');
+                storyModal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('scroll-lock');
             }
             return;
         }
@@ -205,7 +218,11 @@ function bindDestinationEvents() {
         if (closeStoryBtn) {
             e.preventDefault();
             const storyModal = document.getElementById('story-modal');
-            if (storyModal) storyModal.classList.remove('is-active');
+            if (storyModal) {
+                storyModal.classList.remove('is-active');
+                storyModal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
+            }
         }
     });
 
@@ -220,6 +237,12 @@ function bindDestinationEvents() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.is-active').forEach(m => m.classList.remove('is-active'));
+            const storyModal = document.getElementById('story-modal');
+            if (storyModal && storyModal.classList.contains('is-active')) {
+                storyModal.classList.remove('is-active');
+                storyModal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
+            }
         }
     });
 
@@ -228,6 +251,25 @@ function bindDestinationEvents() {
     dateInputs.forEach(input => {
         input.addEventListener('focus', () => { input.type = 'date'; });
         input.addEventListener('blur', () => { if (!input.value) input.type = 'text'; });
+    });
+
+    // Focus Trap (Rule 10)
+    const focusableSelector = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab') return;
+        const storyModal = document.getElementById('story-modal');
+        if (!storyModal || !storyModal.classList.contains('is-active')) return;
+        const focusable = storyModal.querySelectorAll(focusableSelector);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
     });
 }
 

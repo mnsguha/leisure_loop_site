@@ -40,6 +40,11 @@
     color: var(--text-muted);
     font-size: 2rem;
     cursor: pointer;
+    min-width: 48px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .planner-steps .step {
     display: none;
@@ -440,8 +445,10 @@
     text-overflow: ellipsis;
 }
 
+/* Hide floating dock on mobile (replaces Tailwind hidden md:block) */
 @media (max-width: 768px) {
     .emt-floating-dock-hub {
+        display: none !important;
         bottom: 5.5rem;
         right: 1rem;
         gap: 10px;

@@ -14,7 +14,7 @@ function initHeroParallax() {
     if (firstVideo) firstVideo.play().catch(() => {});
 
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-    const mountainBg = document.getElementById('mountainBg');
+    const mountainBg = document.getElementById('desktop-mountainBg') || document.getElementById('mountainBg');
     const featured = document.getElementById('featured');
     if (!mountainBg || !featured) return;
 
@@ -165,7 +165,7 @@ function initCompanyDeck() {
 
 function initThemeCircleMarquees() {
     function setupDraggableMarquee(rowId, direction) {
-        const row = document.getElementById(rowId);
+        const row = document.getElementById('desktop-' + rowId) || document.getElementById(rowId);
         if (!row) return;
 
         let isDown = false;
@@ -315,7 +315,7 @@ function initNewsletterParallax() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
     const banner = document.querySelector('.inner-circle-banner');
-    const bg     = document.getElementById('inner-circle-bg');
+    const bg     = document.getElementById('desktop-inner-circle-bg') || document.getElementById('inner-circle-bg');
     if (!banner || !bg) return;
 
     // Start at normal scale, zoom in as user scrolls through
@@ -357,9 +357,9 @@ function initCompassParallax() {
     const compassSection = document.querySelector('.fixed-departures-section');
     if (!compassSection) return;
 
-    const ring1          = document.getElementById('compass-ring-1');
-    const ring2          = document.getElementById('compass-ring-2');
-    const ring3          = document.getElementById('compass-ring-3');
+    const ring1          = document.getElementById('desktop-compass-ring-1') || document.getElementById('compass-ring-1');
+    const ring2          = document.getElementById('desktop-compass-ring-2') || document.getElementById('compass-ring-2');
+    const ring3          = document.getElementById('desktop-compass-ring-3') || document.getElementById('compass-ring-3');
     const compassWrapper = document.querySelector('.fd-parallax-compass');
 
     const compassTl = gsap.timeline({
@@ -381,7 +381,7 @@ function initDifferenceParallax() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
     const section = document.querySelector('.leisure-difference-section');
-    const bg = document.getElementById('leisure-difference-bg');
+    const bg = document.getElementById('desktop-leisure-difference-bg') || document.getElementById('leisure-difference-bg');
     if (!section || !bg) return;
 
     gsap.fromTo(bg,
@@ -416,7 +416,7 @@ function initAnimations() {
     initCompanyDeck();
     initThemeCircleMarquees();
     
-    const themeMandala = document.getElementById('themeMandala');
+    const themeMandala = document.getElementById('desktop-themeMandala') || document.getElementById('themeMandala');
     if (themeMandala && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.set(themeMandala, { xPercent: -50, yPercent: -50, x: 0, y: 0 });
         gsap.to(themeMandala, {
@@ -451,6 +451,8 @@ function bindGlobalEvents() {
             const modal = document.querySelector(targetSelector);
             if (modal) {
                 modal.classList.add('is-active');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('scroll-lock');
             }
             return;
         }
@@ -462,6 +464,8 @@ function bindGlobalEvents() {
             const modal = closeModalBtn.closest('.modal-overlay, .modal');
             if (modal) {
                 modal.classList.remove('is-active');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
             }
             return;
         }
@@ -491,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindGlobalEvents();
     initAnimations();
     // Date input type toggle (text <-> date) for UX
-    const dateInput = document.getElementById('heroDateInput');
+    const dateInput = document.getElementById('desktop-heroDateInput') || document.getElementById('heroDateInput');
     if (dateInput) {
         dateInput.addEventListener('focus', () => { dateInput.type = 'date'; });
         dateInput.addEventListener('blur', () => { if (!dateInput.value) dateInput.type = 'text'; });

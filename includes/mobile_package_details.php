@@ -17,30 +17,55 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
     <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <?php endif; ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <link rel="stylesheet" href="css/mobile-views.css">
+    <link rel="stylesheet" href="css/vendor/leaflet.css" />
+    <script src="js/vendor/leaflet.js"></script>
+    <link rel="stylesheet" href="css/mobile-views.css?v=<?= time() ?>">
 </head>
-<body>
+<body class="mob-pkg-body">
 
-    <!-- App Header -->
+    <!-- App Sticky Navigation -->
     <div class="app-header" id="appHeader">
-        <a aria-label="Link" href="packages.php" class="header-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        <a aria-label="Back to Packages" href="packages.php" class="header-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
         </a>
+        <span class="mob-pkg__nav-label">Package Details</span>
         <button class="header-btn" data-action="share-package" data-title="<?php echo htmlspecialchars($pkg['title'] ?? 'Leisure Loop Package'); ?>">
-            <span class="material-symbols-outlined" style="font-size: 20px;">share</span>
+            <span class="material-symbols-outlined text-[19px]">share</span>
         </button>
     </div>
 
-    <!-- Hero Carousel -->
-    <div style="position: relative;">
+    <?php
+    $nights_count = !empty($pkg['nights']) ? (int)$pkg['nights'] : max(1, (int)($pkg['days'] ?? 1) - 1);
+    $days_count = !empty($pkg['days']) ? (int)$pkg['days'] : ($nights_count + 1);
+    $tour_types_list = array_filter(array_map('trim', explode(',', $tour_type)));
+    ?>
+
+    <!-- 1. Header Typography & Identity Block -->
+    <div class="mob-pkg__title-block">
+        <h1 class="mob-pkg__title">
+            <?= htmlspecialchars($pkg['title']) ?>
+        </h1>
+        <div class="mob-pkg__meta-row">
+            <span class="material-symbols-outlined mob-pkg__meta-icon">schedule</span>
+            <span><?= str_pad((string)$nights_count, 2, '0', STR_PAD_LEFT) ?> Nights / <?= str_pad((string)$days_count, 2, '0', STR_PAD_LEFT) ?> Days in <?= htmlspecialchars($pkg['destination']) ?></span>
+        </div>
+        <?php if (!empty($tour_types_list)): ?>
+        <div class="mob-pkg__theme-pills">
+            <?php foreach ($tour_types_list as $tt): ?>
+            <span class="m-theme-pill">
+                <?= htmlspecialchars($tt) ?>
+            </span>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- 2. Compact Hero Media Carousel -->
+    <div class="hero-carousel-wrapper">
         <div class="hero-carousel" id="heroCarousel">
             <?php foreach ($photos_arr as $photo): ?>
             <div class="hero-slide">
-                <img src="<?php echo htmlspecialchars($photo); ?>" class="hero-img" alt="">
+                <img src="<?php echo htmlspecialchars($photo); ?>" class="hero-img" alt="<?php echo htmlspecialchars($pkg['title']); ?>">
                 <div class="hero-overlay"></div>
             </div>
             <?php endforeach; ?>
@@ -52,55 +77,78 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
         </div>
     </div>
 
-    <!-- Overview Section -->
-    <div class="section">
-        <div class="badges-row">
-            <span class="badge"><?php echo htmlspecialchars($pkg['days']); ?>N / <?php echo htmlspecialchars($pkg['days']+1); ?>D</span>
-            <span class="badge"><?php echo htmlspecialchars($tour_type); ?></span>
-        </div>
-        <h1 class="pkg-title"><?php echo htmlspecialchars($pkg['title']); ?></h1>
-        
-        <div class="stats-row">
-            <div class="rating">
-                <span class="material-symbols-outlined star-icon">star</span>
-                <?php echo $rating_score; ?>/5 <span style="font-weight:400; color: rgba(255,255,255,0.5);"> (<?php echo $rating_count; ?> reviews)</span>
+    <!-- 3. Obsidian & Gold Credential Ribbon (Tour Code + Reviews) -->
+    <div class="m-credential-wrap">
+        <div class="m-credential-pill">
+            <div class="m-credential-group">
+                <span class="material-symbols-outlined m-credential-icon">star</span>
+                <span class="m-credential-score"><?= number_format($rating_score, 1) ?>/5</span>
+                <span class="m-credential-count">(<?= $rating_count ?> reviews)</span>
             </div>
-            <div>Code: <span style="color:#fff;"><?php echo $tour_code; ?></span></div>
+            <div class="m-credential-divider"></div>
+            <div class="m-credential-group">
+                <span class="m-credential-label">Code:</span>
+                <span class="m-credential-value"><?= $tour_code ?></span>
+            </div>
         </div>
     </div>
 
-    <!-- Highlights Scroll -->
-    <div class="highlights-scroll">
-        <?php 
-        $icons = ['verified', 'hotel_class', 'directions_car', 'explore'];
-        foreach ($highlights_arr as $i => $highlight): 
-            $icon = $icons[$i % count($icons)];
-        ?>
-        <div class="highlight-chip">
-            <span class="material-symbols-outlined highlight-icon"><?php echo $icon; ?></span>
-            <span class="highlight-text"><?php echo htmlspecialchars($highlight); ?></span>
+    <!-- 4. Tour Highlights Section -->
+    <?php if (!empty($highlights_arr)): ?>
+    <div class="section m-highlights-section">
+        <div class="mob-pkg__highlights">
+            <div class="mob-pkg__highlights-head">
+                <div class="mob-pkg__highlights-left">
+                    <span class="material-symbols-outlined mob-pkg__highlights-icon">auto_awesome</span>
+                    <h2 class="mob-pkg__highlights-title">Tour Highlights</h2>
+                </div>
+                <span class="mob-pkg__highlights-badge">Curated</span>
+            </div>
+            <div class="mob-pkg__highlights-list">
+                <?php
+                $hl_icons = ['verified', 'hotel_class', 'directions_car', 'landscape', 'explore', 'local_see'];
+                foreach ($highlights_arr as $i => $highlight):
+                    $hl_icon = $hl_icons[$i % count($hl_icons)];
+                ?>
+                <div class="mob-pkg__highlight-item">
+                    <div class="mob-pkg__highlight-icon-wrap">
+                        <span class="material-symbols-outlined mob-pkg__highlight-icon"><?= $hl_icon ?></span>
+                    </div>
+                    <div>
+                        <p class="mob-pkg__highlight-text">
+                            <?= htmlspecialchars($highlight) ?>
+                        </p>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
         </div>
-        <?php endforeach; ?>
     </div>
+    <?php endif; ?>
 
     <!-- Itinerary Accordion -->
     <?php if (!empty($itinerary)): ?>
     <div class="section">
-        <h2 class="section-title">Daily Itinerary</h2>
-        <div class="accordion">
+        <h2 class="section-title">Day-by-Day Journey</h2>
+        <div class="m-itinerary-grid">
             <?php foreach ($itinerary as $i => $day): 
                 $day_num = $day['day'] ?? ($i + 1);
             ?>
-            <div class="accordion-item <?php echo $i == 0 ? 'active' : ''; ?>">
-                <div class="accordion-header" data-action="toggle-accordion">
-                    <div>
-                        <span class="accordion-day">DAY <?php echo $day_num; ?></span>
-                        <span><?php echo htmlspecialchars($day['title'] ?? 'Signature Experience'); ?></span>
+            <div class="m-itinerary-card accordion-item <?php echo $i == 0 ? 'active' : ''; ?>">
+                <div class="m-itinerary-header accordion-header" data-action="toggle-accordion">
+                    <div class="m-itinerary-left">
+                        <div class="m-itinerary-day-col">
+                            <span class="m-day-label">DAY</span>
+                            <span class="m-day-num"><?php echo str_pad((string)$day_num, 2, '0', STR_PAD_LEFT); ?></span>
+                        </div>
+                        <div class="m-itinerary-title">
+                            <?php echo htmlspecialchars($day['title'] ?? 'Signature Experience'); ?>
+                        </div>
                     </div>
                     <span class="material-symbols-outlined accordion-icon">keyboard_arrow_down</span>
                 </div>
-                <div class="accordion-content" style="<?php echo $i == 0 ? 'max-height: 1000px;' : ''; ?>">
-                    <div class="accordion-inner">
+                <div class="accordion-content">
+                    <div class="m-itinerary-desc">
                         <?php echo nl2br(htmlspecialchars($day['desc'] ?? 'Details coming soon.')); ?>
                     </div>
                 </div>
@@ -113,76 +161,97 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
     <!-- Fixed Departure Details (Logistics & Stay) -->
     <?php if (($pkg['package_type'] ?? '') === 'fixed'): ?>
     <div class="section">
-        <h2 class="section-title" style="color: #4ade80;">Logistics & Stay</h2>
-        
+        <h2 class="section-title m-title-green">Logistics &amp; Stay</h2>
+
         <?php if (!empty($pkg['hotel_details'])): ?>
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span class="material-symbols-outlined" style="color: #60a5fa;">hotel</span>
-                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">Accommodations</h4>
+        <div class="mob-pkg__logistics-card">
+            <div class="mob-pkg__logistics-head">
+                <span class="material-symbols-outlined mob-pkg__logistics-icon--blue">hotel</span>
+                <h4 class="mob-pkg__logistics-heading">Accommodations</h4>
             </div>
-            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.5;">
-                <?php echo nl2br($pkg['hotel_details']); ?>
+            <div class="mob-pkg__logistics-body">
+                <?php echo nl2br(htmlspecialchars($pkg['hotel_details'])); ?>
             </div>
         </div>
         <?php endif; ?>
 
         <?php if (!empty($pkg['vehicle_details'])): ?>
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span class="material-symbols-outlined" style="color: #c084fc;">directions_car</span>
-                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">Transportation</h4>
+        <div class="mob-pkg__logistics-card">
+            <div class="mob-pkg__logistics-head">
+                <span class="material-symbols-outlined mob-pkg__logistics-icon--purple">directions_car</span>
+                <h4 class="mob-pkg__logistics-heading">Transportation</h4>
             </div>
-            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.5;">
-                <?php echo nl2br($pkg['vehicle_details']); ?>
+            <div class="mob-pkg__logistics-body">
+                <?php echo nl2br(htmlspecialchars($pkg['vehicle_details'])); ?>
             </div>
         </div>
         <?php endif; ?>
 
         <?php if (!empty($pkg['meal_plan_details'])): ?>
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span class="material-symbols-outlined" style="color: #fb923c;">restaurant</span>
-                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">Meal Plan</h4>
+        <div class="mob-pkg__logistics-card">
+            <div class="mob-pkg__logistics-head">
+                <span class="material-symbols-outlined mob-pkg__logistics-icon--orange">restaurant</span>
+                <h4 class="mob-pkg__logistics-heading">Meal Plan</h4>
             </div>
-            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.5;">
-                <?php echo nl2br($pkg['meal_plan_details']); ?>
+            <div class="mob-pkg__logistics-body">
+                <?php echo nl2br(htmlspecialchars($pkg['meal_plan_details'])); ?>
             </div>
         </div>
         <?php endif; ?>
     </div>
     <?php endif; ?>
 
-    <!-- Bespoke Stay & Fleet Options -->
+    <!-- Bespoke Stay Options (Hotel Categories) -->
     <div class="section">
-        <h2 class="section-title" style="margin-bottom: 4px;">Choose Hotel Category</h2>
-        <p style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin: 0 0 12px 0;">Swipe & select your preferred luxury accommodation tier.</p>
-        <div class="m-bespoke-scroll">
-            <?php foreach ($hotel_categories as $idx => $stay): 
+        <span class="m-section-eyebrow">CURATED ACCOMMODATION TIERS</span>
+        <h2 class="section-title">Select Hotel Category</h2>
+        <p class="m-section-subtitle">Tailor your journey's ambiance with handpicked verified properties.</p>
+        
+        <!-- 4 Compact Selectors in 2x2 Grid -->
+        <div class="mob-pkg__selector-grid mb-4">
+            <?php foreach ($hotel_categories as $idx => $stay):
                 $is_sel = !empty($stay['recommended']);
             ?>
-            <div class="m-bespoke-card <?php echo $is_sel ? 'selected' : ''; ?>" id="m-stay-card-<?php echo $idx; ?>" <?php echo htmlspecialchars($stay['stars'] . ' ' . explode(' ', $stay['title'])[0]); ?>')">
-                <img src="<?php echo htmlspecialchars($stay['img']); ?>" class="m-bespoke-img" alt="<?php echo htmlspecialchars($stay['title']); ?>">
-                <span class="m-badge"><?php echo $stay['stars_display']; ?></span>
-                <div class="m-bespoke-body">
-                    <div>
-                        <span style="font-size:0.65rem; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;"><?php echo htmlspecialchars($stay['tagline']); ?></span>
-                        <h3 class="m-bespoke-title"><?php echo htmlspecialchars($stay['title']); ?></h3>
-                        <p style="font-size:0.75rem; color:rgba(255,255,255,0.7); margin:0 0 10px 0; line-height:1.4;"><?php echo htmlspecialchars($stay['desc']); ?></p>
-                    </div>
-                    <div>
-                        <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:8px; margin-top:6px; display:grid; grid-template-columns:1fr 1fr; gap:4px;">
-                            <?php foreach ($stay['features'] as $feat): ?>
-                            <span style="font-size:0.7rem; color:rgba(255,255,255,0.8); display:flex; align-items:center; gap:4px;">
-                                <span class="material-symbols-outlined" style="font-size:14px; color:var(--gold);">check</span>
-                                <span><?php echo htmlspecialchars($feat); ?></span>
-                            </span>
-                            <?php endforeach; ?>
+            <div class="m-selector-card <?php echo $is_sel ? 'selected' : ''; ?>"
+                 data-action="m-select-stay"
+                 data-stay-idx="<?php echo $idx; ?>"
+                 data-stay-label="<?php echo htmlspecialchars($stay['stars'] . ' ' . explode(' ', $stay['title'])[0]); ?>"
+                 role="button"
+                 tabindex="0">
+                <span class="mob-pkg__selector-stars"><?php echo $stay['stars_display']; ?></span>
+                <span class="mob-pkg__selector-name"><?php echo htmlspecialchars($stay['title']); ?></span>
+                <div class="m-selector-indicator">
+                    <span class="material-symbols-outlined text-sm icon-unchecked">radio_button_unchecked</span>
+                    <span class="material-symbols-outlined text-sm icon-checked">check_circle</span>
+                    <span class="indicator-text-unchecked">Select</span>
+                    <span class="indicator-text-checked">Selected</span>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Dynamic Single Active Hotel Detail Card -->
+        <div class="m-stay-details-wrap">
+            <?php foreach ($hotel_categories as $idx => $stay):
+                $is_sel = !empty($stay['recommended']);
+            ?>
+            <div class="m-detail-card <?php echo $is_sel ? 'is-active' : ''; ?>" id="m-stay-detail-<?php echo $idx; ?>">
+                <div class="mob-pkg__detail-img-wrap">
+                    <img src="<?php echo htmlspecialchars($stay['img']); ?>" class="mob-pkg__detail-img" alt="<?php echo htmlspecialchars($stay['title']); ?>">
+                    <div class="mob-pkg__detail-img-overlay" aria-hidden="true"></div>
+                    <div class="mob-pkg__detail-img-badge"><?php echo $stay['stars_display']; ?></div>
+                </div>
+                <div class="mob-pkg__detail-body">
+                    <span class="mob-pkg__detail-eyebrow"><?php echo htmlspecialchars($stay['tagline']); ?></span>
+                    <h3 class="mob-pkg__detail-name"><?php echo htmlspecialchars($stay['title']); ?></h3>
+                    <p class="mob-pkg__detail-desc"><?php echo htmlspecialchars($stay['desc']); ?></p>
+                    <div class="mob-pkg__detail-features">
+                        <?php foreach ($stay['features'] as $feat): ?>
+                        <div class="mob-pkg__detail-feature">
+                            <span class="material-symbols-outlined mob-pkg__detail-feature-icon--green">check_circle</span>
+                            <span><?php echo htmlspecialchars($feat); ?></span>
                         </div>
-                        <button type="button" class="m-bespoke-btn" id="m-stay-btn-<?php echo $idx; ?>">
-                            <span class="material-symbols-outlined" style="font-size:16px;"><?php echo $is_sel ? 'check_circle' : 'radio_button_unchecked'; ?></span>
-                            <span><?php echo $is_sel ? 'Selected Tier' : 'Select Category'; ?></span>
-                        </button>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -190,31 +259,65 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
         </div>
     </div>
 
-    <div class="section" style="margin-top:24px;">
-        <h2 class="section-title" style="margin-bottom: 4px;">Choose Private Cab</h2>
-        <p style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin: 0 0 12px 0;">Dedicated mountain-specialist vehicle & chauffeur.</p>
-        <div class="m-bespoke-scroll">
-            <?php foreach ($cab_types as $idx => $cab): 
+    <!-- Cab Fleet Selection -->
+    <div class="section">
+        <span class="m-section-eyebrow">CHAUFFEUR DRIVEN FLEET</span>
+        <h2 class="section-title">Select Private Cab</h2>
+        <p class="m-section-subtitle">Dedicated mountain-specialist vehicle &amp; experienced chauffeur.</p>
+
+        <!-- 4 Compact Selectors in 2x2 Grid -->
+        <div class="mob-pkg__selector-grid mb-4">
+            <?php foreach ($cab_types as $idx => $cab):
                 $is_sel = !empty($cab['recommended']);
             ?>
-            <div class="m-bespoke-card <?php echo $is_sel ? 'selected' : ''; ?>" id="m-cab-card-<?php echo $idx; ?>" <?php echo htmlspecialchars($cab['name']); ?>')">
-                <img src="<?php echo htmlspecialchars($cab['img']); ?>" class="m-bespoke-img" alt="<?php echo htmlspecialchars($cab['name']); ?>">
-                <span class="m-badge" style="color:#fff;"><span class="material-symbols-outlined" style="font-size:14px; color:var(--gold); vertical-align:middle;">group</span> <?php echo $cab['seats']; ?></span>
-                <div class="m-bespoke-body">
-                    <div>
-                        <span style="font-size:0.65rem; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;"><?php echo htmlspecialchars($cab['category']); ?></span>
-                        <h3 class="m-bespoke-title"><?php echo htmlspecialchars($cab['name']); ?></h3>
-                        <p style="font-size:0.75rem; color:rgba(255,255,255,0.7); margin:0 0 10px 0; line-height:1.4;"><?php echo htmlspecialchars($cab['desc']); ?></p>
+            <div class="m-selector-card <?php echo $is_sel ? 'selected' : ''; ?>"
+                 data-action="m-select-cab"
+                 data-cab-idx="<?php echo $idx; ?>"
+                 data-cab-label="<?php echo htmlspecialchars($cab['name']); ?>"
+                 role="button"
+                 tabindex="0">
+                <span class="mob-pkg__selector-capacity">
+                    <span class="material-symbols-outlined" style="font-size:0.75rem;vertical-align:middle;">group</span> <?php echo $cab['seats']; ?>
+                </span>
+                <span class="mob-pkg__selector-name"><?php echo htmlspecialchars($cab['name']); ?></span>
+                <div class="m-selector-indicator">
+                    <span class="material-symbols-outlined text-sm icon-unchecked">radio_button_unchecked</span>
+                    <span class="material-symbols-outlined text-sm icon-checked">check_circle</span>
+                    <span class="indicator-text-unchecked">Select</span>
+                    <span class="indicator-text-checked">Selected</span>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Dynamic Single Active Cab Detail Card -->
+        <div class="m-cab-details-wrap">
+            <?php foreach ($cab_types as $idx => $cab):
+                $is_sel = !empty($cab['recommended']);
+            ?>
+            <div class="m-detail-card <?php echo $is_sel ? 'is-active' : ''; ?>" id="m-cab-detail-<?php echo $idx; ?>">
+                <div class="mob-pkg__detail-img-wrap">
+                    <img src="<?php echo htmlspecialchars($cab['img']); ?>" class="mob-pkg__detail-img" alt="<?php echo htmlspecialchars($cab['name']); ?>">
+                    <div class="mob-pkg__detail-img-overlay" aria-hidden="true"></div>
+                    <div class="mob-pkg__detail-img-badge mob-pkg__detail-img-badge--white">
+                        <span class="material-symbols-outlined" style="font-size:0.75rem;color:#c5a059;">group</span> <?php echo $cab['seats']; ?>
                     </div>
-                    <div>
-                        <div style="background:rgba(255,255,255,0.05); padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; margin-bottom:8px;">
-                            <span style="color:rgba(255,255,255,0.7);"><span class="material-symbols-outlined" style="font-size:14px; color:var(--gold); vertical-align:middle;">luggage</span> Bag Capacity</span>
-                            <strong style="color:#fff;"><?php echo $cab['bags']; ?></strong>
+                </div>
+                <div class="mob-pkg__detail-body">
+                    <span class="mob-pkg__detail-eyebrow"><?php echo htmlspecialchars($cab['category']); ?></span>
+                    <h3 class="mob-pkg__detail-name"><?php echo htmlspecialchars($cab['name']); ?></h3>
+                    <p class="mob-pkg__detail-desc"><?php echo htmlspecialchars($cab['desc']); ?></p>
+                    <div class="mob-pkg__detail-features">
+                        <div class="mob-pkg__detail-feature">
+                            <span class="material-symbols-outlined mob-pkg__detail-feature-icon--gold">luggage</span>
+                            <span>Bags: <?php echo $cab['bags']; ?></span>
                         </div>
-                        <button type="button" class="m-bespoke-btn" id="m-cab-btn-<?php echo $idx; ?>">
-                            <span class="material-symbols-outlined" style="font-size:16px;"><?php echo $is_sel ? 'check_circle' : 'radio_button_unchecked'; ?></span>
-                            <span><?php echo $is_sel ? 'Selected Cab' : 'Select Cab'; ?></span>
-                        </button>
+                        <?php foreach ($cab['features'] as $feat): ?>
+                        <div class="mob-pkg__detail-feature">
+                            <span class="material-symbols-outlined mob-pkg__detail-feature-icon--green">check_circle</span>
+                            <span><?php echo htmlspecialchars($feat); ?></span>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -222,35 +325,52 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
         </div>
     </div>
 
-    <!-- Inclusions & Exclusions Accordion -->
-    <div class="section">
-        <h2 class="section-title">What's Included</h2>
-        <div class="accordion">
-            <div class="accordion-item active">
-                <div class="accordion-header" data-action="toggle-accordion">
-                    <span>Inclusions</span>
-                    <span class="material-symbols-outlined accordion-icon">keyboard_arrow_down</span>
+    <!-- Inclusions & Exclusions Luxury Card Accordions -->
+    <div class="section m-inc-exc-section">
+        <span class="m-section-eyebrow">CLARITY &amp; TRANSPARENCY</span>
+        <h2 class="section-title m-inc-exc-title">What's Included &amp; Excluded</h2>
+
+        <div class="m-cards-wrapper">
+            <!-- Inclusions Card (Emerald Theme) -->
+            <div class="accordion-item m-card-inc active">
+                <div class="accordion-header m-card-header" data-action="toggle-accordion" role="button" tabindex="0">
+                    <div class="m-card-header-left">
+                        <span class="material-symbols-outlined m-header-icon m-header-icon--inc">check_circle</span>
+                        <span class="m-card-title m-card-title--inc">Inclusions</span>
+                    </div>
+                    <span class="material-symbols-outlined accordion-icon m-card-arrow m-card-arrow--inc">keyboard_arrow_down</span>
                 </div>
-                <div class="accordion-content" style="max-height: 1000px;">
-                    <div class="accordion-inner">
-                        <ul class="check-list">
+                <div class="accordion-content">
+                    <div class="m-card-inner">
+                        <ul class="m-feature-list">
                             <?php foreach ($inclusions_arr as $inc): ?>
-                            <li><?php echo htmlspecialchars($inc); ?></li>
+                            <li class="m-feature-item">
+                                <span class="material-symbols-outlined m-item-icon m-item-icon--inc">check</span>
+                                <span class="m-item-text"><?= htmlspecialchars($inc); ?></span>
+                            </li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div class="accordion-item">
-                <div class="accordion-header" data-action="toggle-accordion">
-                    <span>Exclusions</span>
-                    <span class="material-symbols-outlined accordion-icon">keyboard_arrow_down</span>
+
+            <!-- Exclusions Card (Crimson Theme) -->
+            <div class="accordion-item m-card-exc">
+                <div class="accordion-header m-card-header" data-action="toggle-accordion" role="button" tabindex="0">
+                    <div class="m-card-header-left">
+                        <span class="material-symbols-outlined m-header-icon m-header-icon--exc">cancel</span>
+                        <span class="m-card-title m-card-title--exc">Exclusions</span>
+                    </div>
+                    <span class="material-symbols-outlined accordion-icon m-card-arrow m-card-arrow--exc">keyboard_arrow_down</span>
                 </div>
                 <div class="accordion-content">
-                    <div class="accordion-inner">
-                        <ul class="cross-list">
+                    <div class="m-card-inner">
+                        <ul class="m-feature-list">
                             <?php foreach ($exclusions_arr as $exc): ?>
-                            <li><?php echo htmlspecialchars($exc); ?></li>
+                            <li class="m-feature-item">
+                                <span class="material-symbols-outlined m-item-icon m-item-icon--exc">close</span>
+                                <span class="m-item-text"><?= htmlspecialchars($exc); ?></span>
+                            </li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
@@ -275,114 +395,220 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
         </div>
     </div>
 
+    <!-- Terms & Conditions Section -->
+    <?php
+        $default_fallback_terms = "##Booking Confirmation##: Bookings are confirmed only upon receipt of 50% advance deposit.\n##Cancellation Policy##: Cancellations made 15 days prior to arrival will incur a 20% administrative fee. Cancellations made within 7 days are non-refundable.\n##Permits & Identity##: All guests must carry valid government-issued photo ID cards and passport-size photographs for Himalayan restricted-area entry permits.\n##Weather Delays##: Route alterations caused by landslides, snow blocks, or national park regulations will be accommodated on best-effort basis without liability for missed connections.";
+
+        $tc_raw = '';
+        if (!empty($pkg['use_destination_terms']) && !empty($pkg['dest_terms'])) {
+            $tc_raw = $pkg['dest_terms'];
+        } elseif (!empty($pkg['terms_conditions'])) {
+            $tc_raw = $pkg['terms_conditions'];
+        } else {
+            $tc_raw = $default_fallback_terms;
+        }
+    ?>
+    <div class="section m-tc-section">
+        <span class="m-section-eyebrow">LEGAL &amp; POLICIES</span>
+        <h2 class="section-title">Terms &amp; Conditions</h2>
+        <div class="m-tc-card">
+            <div class="m-tc-content">
+                <?php
+                    $tc_text = htmlspecialchars(trim($tc_raw));
+                    $tc_text = nl2br($tc_text);
+                    $tc_text = preg_replace('/##(.*?)##/s', '<strong class="tc-gold-highlight">$1</strong>', $tc_text);
+                    echo $tc_text;
+                ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Tours Section -->
+    <?php if (!empty($other_tours)): ?>
+    <div class="section m-other-tours-section">
+        <span class="m-section-eyebrow">EXPLORE MORE</span>
+        <h2 class="section-title">Other Tours You May Like</h2>
+        <div class="m-carousel-container">
+            <?php foreach ($other_tours as $tour): ?>
+                <a href="package-detail.php?slug=<?php echo htmlspecialchars($tour['slug']); ?>&view=mobile" class="m-tour-card">
+                    <div class="m-tour-card-img">
+                        <img src="<?php echo htmlspecialchars($tour['image_url'] ?? 'images/placeholder.jpg'); ?>" alt="<?php echo htmlspecialchars($tour['title']); ?>" loading="lazy">
+                        <div class="m-tour-duration"><?php echo $tour['nights']; ?>N / <?php echo $tour['days']; ?>D</div>
+                    </div>
+                    <div class="m-tour-card-body">
+                        <h3 class="m-tour-card-title"><?php echo htmlspecialchars($tour['title']); ?></h3>
+                        <div class="m-tour-card-price">From &#8377;<?php echo number_format($tour['price']); ?></div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <div style="height: 140px;"></div> <!-- Spacer for Sticky CTA -->
 
     <!-- Sticky Bottom CTA -->
     <div class="sticky-cta">
         <div class="cta-price-col">
             <span class="cta-price-label">Starting From</span>
-            <span class="cta-price-val">₹<?php echo number_format($pkg['price'] ?? 0); ?></span>
+            <span class="cta-price-val">&#8377;<?php echo number_format($pkg['price'] ?? 0); ?></span>
         </div>
         <button data-action="open-modal" class="btn-primary">Enquire Now</button>
     </div>
 
-    <!-- Enquiry Modal Bottom Sheet -->
+    <!-- Enquiry Modal Full-Height Sheet -->
     <div class="modal-overlay" id="enquiryModalOverlay" data-action="close-modal" role="button" aria-label="Close modal"></div>
-    <div class="modal-content" id="enquiryModal">
-        <div class="modal-header">
-            <h2 class="modal-title">Plan Your Trip</h2>
+    <div class="modal-content m-enquiry-sheet" id="enquiryModal" data-nights="<?php echo (int)$nights_count; ?>" data-days="<?php echo (int)$days_count; ?>" data-base-price="<?php echo (float)($pkg['price'] ?? 0); ?>">
+        <div class="modal-header m-enquiry-sheet-header">
+            <div>
+                <span class="m-modal-kicker">TRAVELLER DETAILS</span>
+                <h2 class="modal-title m-modal-main-title">Review &amp; Enquire</h2>
+            </div>
             <button class="modal-close" data-action="close-modal" aria-label="Close modal">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="modal-body">
-            <form action="/api/v1/leads" method="POST">
-<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
-                <input type="hidden" name="package" value="<?php echo htmlspecialchars($pkg['title']); ?>">
+        <div class="modal-body m-enquiry-sheet-body">
+            <form action="api-submit-package-booking.php" method="POST" id="mobileEnquiryForm">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                <input type="hidden" name="package_id" value="<?php echo (int)($pkg['id'] ?? 0); ?>">
+                <input type="hidden" name="package_title" value="<?php echo htmlspecialchars($pkg['title']); ?>">
+                <input type="hidden" name="tour_code" value="<?php echo htmlspecialchars($tour_code ?? 'TBA'); ?>">
+                <input type="hidden" name="selected_hotel" id="m_preferred_stay_input" value="4 Star Luxury">
+                <input type="hidden" name="selected_cab" id="m_preferred_cab_input" value="Innova / Xylo / Scorpio">
                 <input type="hidden" name="source" value="mobile_package_details">
-                <input type="hidden" name="enforce_recaptcha" value="1">
-                
-                <div class="form-group">
-                    <span class="material-symbols-outlined form-icon">person</span>
-                    
-<label for="input_faa864de" class="sr-only">Your Full Name</label>
-<input id="input_faa864de" type="text" name="name" class="form-input" placeholder="Your Full Name" required>
-                </div>
-                
-                <div class="form-group">
-                    <span class="material-symbols-outlined form-icon">call</span>
-                    
-<label for="input_589b14c8" class="sr-only">Phone Number</label>
-<input id="input_589b14c8" type="tel" name="phone" class="form-input" placeholder="Phone Number" required>
-                </div>
-                
-                <div class="form-group">
-                    <span class="material-symbols-outlined form-icon">mail</span>
-                    
-<label for="input_7f6c36ba" class="sr-only">Email Address</label>
-<input id="input_7f6c36ba" type="email" name="email" class="form-input" placeholder="Email Address" required>
-                </div>
-                
-                <div class="form-group">
-                    <span class="material-symbols-outlined form-icon">calendar_today</span>
-                    <?php if (($pkg['package_type'] ?? '') === 'fixed'): ?>
-                        <select name="travel_date" class="form-input form-select" required style="padding-left: 44px; color: #fff; appearance: none; background: transparent; border: none; width: 100%;">
-                            <option value="" disabled selected style="color: #000;">Select Departure</option>
-                            <?php foreach ($package_departures as $dep): ?>
-                                <option value="<?php echo htmlspecialchars($dep['start_date']); ?>" style="color: #000;">
-                                    <?php echo date('M d, Y', strtotime($dep['start_date'])); ?> (<?php echo $dep['available_seats']; ?> Seats)
-                                </option>
-                            <?php endforeach; ?>
-                            <?php if (empty($package_departures)): ?>
-                                <option value="" disabled style="color: #000;">No Upcoming Departures</option>
-                            <?php endif; ?>
-                        </select>
-                        <span class="material-symbols-outlined select-arrow">keyboard_arrow_down</span>
-                    <?php else: ?>
-                        
-<label for="input_28d06f15" class="sr-only">Travel Date</label>
-<input id="input_28d06f15" type="text" name="travel_date" class="form-input" placeholder="Travel Date" data-focus="date">
-                    <?php endif; ?>
-                </div>
-                
-                <div class="form-group">
-                    <span class="material-symbols-outlined form-icon">group</span>
-                    <select name="guests" class="form-input form-select">
-                        <option disabled selected>Number of Guests</option>
-                        <option>1 Guest</option>
-                        <option>2 Guests</option>
-                        <option>3-5 Guests</option>
-                        <option>5+ Guests</option>
-                    </select>
-                    <span class="material-symbols-outlined select-arrow">keyboard_arrow_down</span>
-                </div>
-                
-                <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-                <div class="form-group" style="margin-top:1rem;">
-                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                </div>
-                <?php endif; ?>
-                
-                <!-- Mobile Selection Summary -->
-                <input type="hidden" name="preferred_stay" id="m_preferred_stay_input" value="4 Star Luxury">
-                <input type="hidden" name="preferred_cab" id="m_preferred_cab_input" value="Innova / Xylo / Scorpio">
-                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; margin:14px 0;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:6px;">
-                        <span style="color:rgba(255,255,255,0.6);">Selected Stay Tier:</span>
-                        <strong id="m_summary_stay_val" style="color:var(--gold);">4 Star Luxury</strong>
+
+                <!-- 1. Package Identity & Meta Overview -->
+                <div class="m-sheet-card">
+                    <h3 class="m-sheet-pkg-title"><?= htmlspecialchars($pkg['title']) ?></h3>
+                    <div class="m-sheet-meta-row">
+                        <span class="m-sheet-meta-pill">Code: <?= $tour_code ?></span>
+                        <span class="m-sheet-meta-pill"><?= (int)$nights_count ?>N / <?= (int)$days_count ?>D</span>
                     </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:6px;">
-                        <span style="color:rgba(255,255,255,0.6);">Selected Private Cab:</span>
-                        <strong id="m_summary_cab_val" style="color:#fff;">Innova / Xylo / Scorpio</strong>
+
+                    <!-- EaseMyTrip Date Grid -->
+                    <div class="m-sheet-date-grid">
+                        <div class="m-sheet-date-col">
+                            <span class="m-sheet-date-label">Start Date</span>
+                            <span class="m-sheet-date-val" id="m_modal_start_date_display">-</span>
+                        </div>
+                        <div class="m-sheet-nights-pill">
+                            <span class="material-symbols-outlined">nightlight</span>
+                            <span><?= (int)$nights_count ?>N</span>
+                        </div>
+                        <div class="m-sheet-date-col m-sheet-date-col--right">
+                            <span class="m-sheet-date-label">End Date</span>
+                            <span class="m-sheet-date-val" id="m_modal_end_date_display">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Luxury Inclusion Badges -->
+                    <div class="m-sheet-amenities-strip">
+                        <div class="m-sheet-amenity-item" title="Stay Included">
+                            <span class="material-symbols-outlined">hotel</span>
+                            <span>Stay</span>
+                        </div>
+                        <div class="m-sheet-amenity-item" title="Sightseeing Included">
+                            <span class="material-symbols-outlined">photo_camera</span>
+                            <span>Sightseeing</span>
+                        </div>
+                        <div class="m-sheet-amenity-item" title="Transfers Included">
+                            <span class="material-symbols-outlined">directions_car</span>
+                            <span>Transfers</span>
+                        </div>
+                        <div class="m-sheet-amenity-item" title="Meals Included">
+                            <span class="material-symbols-outlined">restaurant</span>
+                            <span>Meals</span>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary" style="width: 100%; display: block; margin-top: 8px;">SUBMIT ENQUIRY</button>
-                <p style="text-align: center; margin-top: 16px; color: rgba(255,255,255,0.4); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">A travel specialist will contact you within 24 hours</p>
+                <!-- 2. Interactive Selection Summary -->
+                <div class="m-sheet-card">
+                    <div class="m-sheet-spec-row">
+                        <span class="m-sheet-spec-label">Selected Stay Tier:</span>
+                        <strong id="m_summary_stay_val" class="m-sheet-spec-val mob-pkg__spec-gold">4 Star Luxury</strong>
+                    </div>
+                    <div class="m-sheet-spec-row m-sheet-spec-row--bordered">
+                        <span class="m-sheet-spec-label">Selected Private Cab:</span>
+                        <strong id="m_summary_cab_val" class="m-sheet-spec-val mob-pkg__spec-white">Innova / Xylo / Scorpio</strong>
+                    </div>
+                </div>
+
+                <!-- 3. Primary Traveller Details Form -->
+                <div class="m-sheet-card">
+                    <span class="m-sheet-subheading">GUEST INFORMATION</span>
+
+                    <div class="mb-3">
+                        <label for="m_guest_first_name" class="m-form-label">First Name *</label>
+                        <input id="m_guest_first_name" type="text" name="guest_name" class="form-input" placeholder="First Name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="m_guest_last_name" class="m-form-label">Last Name *</label>
+                        <input id="m_guest_last_name" type="text" name="guest_last_name" class="form-input" placeholder="Last Name" required>
+                    </div>
+
+                    <div class="mob-pkg__form-row">
+                        <div>
+                            <label for="m_travel_date_input" class="m-form-label">Travel Date *</label>
+                            <input id="m_travel_date_input" type="date" name="travel_date" class="form-input m-date-input" min="<?php echo date('Y-m-d'); ?>" value="<?php echo date('Y-m-d'); ?>" required>
+                        </div>
+                        <div>
+                            <label for="m_guests_select" class="m-form-label">No. of Guests *</label>
+                            <select id="m_guests_select" name="adults" class="form-input form-select m-select-input">
+                                <option value="1">1 Guest</option>
+                                <option value="2" selected>2 Guests</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4 Guests</option>
+                                <option value="5">5 Guests</option>
+                                <option value="6">6+ Guests</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="m_special_requests" class="m-form-label">Special Requests (Optional)</label>
+                        <input id="m_special_requests" type="text" name="special_request" class="form-input" placeholder="e.g. Early check-in, ground floor room">
+                    </div>
+
+                    <span class="m-sheet-subheading mt-4">CONTACT DETAILS</span>
+
+                    <div class="form-group mb-3">
+                        <label for="m_guest_phone" class="m-form-label">Phone Number *</label>
+                        <div class="mob-pkg__field-wrap">
+                            <span class="material-symbols-outlined form-icon" aria-hidden="true">call</span>
+                            <input id="m_guest_phone" type="tel" name="phone" class="form-input" placeholder="Phone Number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="m_guest_email" class="m-form-label">Email Address *</label>
+                        <div class="mob-pkg__field-wrap">
+                            <span class="material-symbols-outlined form-icon" aria-hidden="true">mail</span>
+                            <input id="m_guest_email" type="email" name="email" class="form-input" placeholder="Email Address" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 6rem;"></div> <!-- Spacer for Sticky Sheet Footer -->
+
+                <div id="mModalFormMsg" class="p-form-feedback"></div>
+
+                <!-- 4. EaseMyTrip-Style Sticky Bottom Footer inside Sheet -->
+                <div class="m-sheet-sticky-footer">
+                    <div class="m-sheet-footer-pricing">
+                        <span class="m-sheet-footer-label">Total Amount:</span>
+                        <span class="m-sheet-footer-total" id="m_modal_total_amount_val">&#8377;<?= number_format(($pkg['price'] ?? 0) * 2) ?></span>
+                        <span class="m-sheet-footer-note">(Base Price &times; Guests)</span>
+                    </div>
+                    <button type="submit" class="btn-primary m-sheet-submit-btn" id="mBtnPackageSubmit">SUBMIT ENQUIRY</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <script src="js/modules/mobile-views.js?v=<?= time() ?>" defer></script>
 </body>
 </html>

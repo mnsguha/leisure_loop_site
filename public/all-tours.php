@@ -87,27 +87,11 @@
         $page_title = htmlspecialchars($dest_filter) . " Signature Tours | Leisure Loop Trip";
     }
 
-    // Simple Mobile Detect
-    $useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $is_mobile = (bool) preg_match(
-        '/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i',
-        $useragent
-    );
-
-    if ($is_mobile) {
-        include '../includes/mobile_packages.php';
-        exit;
-    }
-
-    include '../includes/header.php';
-?>
-<link rel="stylesheet" href="css/all-tours.css">
-<?php
-    // ── Fetch active packages ─────────────────────────────────────────────────
-    $packages   = [];
+    // ── Fetch active packages and build dynamic filter arrays ─────────────────
+    $packages = [];
     $catalog_packages = [];
 
-    if ($pdo) {
+    if (isset($pdo) && $pdo) {
         $query = "SELECT * FROM packages WHERE is_active = :is_active AND package_type = :package_type";
         $params = [
             ':is_active' => 1,
@@ -125,16 +109,27 @@
         $query .= " ORDER BY created_at DESC";
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
-        $catalog_packages = $stmt->fetchAll();
+        $catalog_packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ── Build dynamic filter arrays ───────────────────────────────────────────
-    $all_themes       = [];
+    $all_themes = [];
+    if (isset($pdo) && $pdo) {
+        try {
+            $catStmt = $pdo->query("SELECT name FROM tour_categories WHERE is_active = 1 ORDER BY display_order ASC, name ASC");
+            while ($catRow = $catStmt->fetch(PDO::FETCH_ASSOC)) {
+                $catName = trim($catRow['name'] ?? '');
+                if ($catName !== '' && !in_array($catName, $all_themes, true)) {
+                    $all_themes[] = $catName;
+                }
+            }
+        } catch (PDOException $e) {}
+    }
+
     $all_destinations = [];
-    $all_durations    = [];
+    $all_durations = [];
 
     foreach ($catalog_packages as $pkg) {
-        if (!empty($pkg['tour_type'])) {
+        if (empty($all_themes) && !empty($pkg['tour_type'])) {
             foreach (explode(',', $pkg['tour_type']) as $t) {
                 $t = trim($t);
                 if ($t !== '' && !in_array($t, $all_themes, true)) {
@@ -274,7 +269,6 @@
         $dest_filter = $selected_destinations[0];
     }
 
-    // Ensure active URL filter values appear in lists
     if (!empty($dest_filter)) {
         $found = false;
         foreach ($all_destinations as $d) {
@@ -288,7 +282,24 @@
     uasort($all_durations, fn($a, $b) => $a['nights'] <=> $b['nights']);
 
     $package_count = count($packages);
+
+    // ── Mobile Device Routing Check ───────────────────────────────────────────
+    $useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $explicit_mobile = isset($_GET['view']) && $_GET['view'] === 'mobile';
+    $auto_mobile = (bool) preg_match(
+        '/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i',
+        $useragent
+    );
+
+    if ($explicit_mobile || $auto_mobile) {
+        include '../includes/mobile_all_tours.php';
+        exit;
+    }
+
+    // ── Desktop Layout Rendering ──────────────────────────────────────────────
+    include '../includes/header.php';
 ?>
+<link rel="stylesheet" href="css/all-tours.css">
 
     <!-- ── 1. Search Bar ──────────────────────────────────────────────────── -->
     <section class="search-dock-section">
@@ -305,8 +316,6 @@
                         value="<?php 
                             if (isset($_GET['q']) && trim($_GET['q']) !== '') {
                                 echo htmlspecialchars(trim($_GET['q']));
-                            } elseif (!empty($dest_filter)) {
-                                echo htmlspecialchars($dest_filter);
                             }
                         ?>">
                 </div>
@@ -467,7 +476,7 @@
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Empty State (shown by JS when no cards match) -->
+                <!-- Empty State -->
                 <div id="no-packages-placeholder" class="catalog-empty-state" <?php echo empty($packages) ? '' : 'hidden'; ?> aria-live="polite">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -520,7 +529,7 @@
         </div>
     </section>
 
-    <!-- ── 6. Floating Filter & Sorting Pill (always visible) ────────────── -->
+    <!-- ── 6. Floating Filter & Sorting Pill ────────────────────────────── -->
     <button
         id="floatingFilterDock"
         class="floating-filter-dock"
@@ -601,7 +610,7 @@
                     ?>
                         <label class="custom-checkbox-option">
                             <input type="checkbox" class="theme-checkbox" value="<?php echo htmlspecialchars($theme); ?>" <?php echo $isChecked; ?> data-change="apply-filters">
-                            <span class="checkbox-label"><?php echo htmlspecialchars($theme); ?> Tours</span>
+                            <span class="checkbox-label"><?php echo htmlspecialchars($theme); ?></span>
                         </label>
                     <?php endforeach; ?>
                 </div>
@@ -665,7 +674,7 @@
                 </div>
             </fieldset>
 
-        </div><!-- /.drawer-body -->
+        </div>
 
         <div class="drawer-footer">
             <button class="btn-drawer-reset" type="button" data-action="reset-filters">Clear All</button>
@@ -675,7 +684,6 @@
         </div>
     </aside>
 
-    <!-- ── 8. JS Module ───────────────────────────────────────────────────── -->
     <script src="js/modules/all-tours.js" defer></script>
 
 <?php include '../includes/footer.php'; ?>

@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     $insert_cols = "title, slug, destination, price, original_price, image_url, is_active, is_international, is_trending, itinerary, tour_code, tour_type, days, nights, highlights, description_rich, rating_score, rating_count, inclusions, exclusions, use_destination_terms, itinerary_heading, package_type, hotel_details, vehicle_details, meal_plan_details";
     $insert_placeholders = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
     
-    $values = [$title, $slug, $destination, $price, $original_price, $image_url, $$is_active, $is_international, $is_trending, $itinerary_json, $tour_code, $tour_type, $days, $nights, $highlights, $description_rich, $$rating_score, $rating_count, $inclusions, $exclusions, $use_destination_terms, $itinerary_heading, $package_type, $hotel_details, $vehicle_details, $meal_plan_details];
+    $values = [$title, $slug, $destination, $price, $original_price, $image_url, $is_active, $is_international, $is_trending, $itinerary_json, $tour_code, $tour_type, $days, $nights, $highlights, $description_rich, $rating_score, $rating_count, $inclusions, $exclusions, $use_destination_terms, $itinerary_heading, $package_type, $hotel_details, $vehicle_details, $meal_plan_details];
 
     if ($hasMapCoords) {
         $update_fields .= ", map_coords=?";
@@ -162,20 +162,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         <?php include 'sidebar.php'; ?>
 
         <main class="main-content">
-            <div class="header" style="margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <a href="packages.php" style="color:var(--gold); font-size: 1.8rem; text-decoration: none; line-height: 1;" title="Back to Packages">←</a>
-                    <h1 style="margin: 0;"><?php echo $id ? 'Edit' : 'Create'; ?> <span class="accent">Package</span></h1>
+            <div class="header admin-page-header">
+                <div class="header-title-wrapper">
+                    <a href="packages.php" class="back-arrow" title="Back to Packages">←</a>
+                    <h1 class="header-title"><?php echo $id ? 'Edit' : 'Create'; ?> <span class="accent">Package</span></h1>
                 </div>
             </div>
 
-            <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 2rem;">
+            <form method="POST" enctype="multipart/form-data" class="admin-form-layout">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
 
                 <!-- Panel 1: Basic Info -->
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">1. Basic Information</h3>
+                    <h3 class="form-panel-title">1. Basic Information</h3>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Package Title</label>
@@ -200,12 +200,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                         </div>
                         <div class="form-group">
                             <label>Package Type</label>
-                            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
-                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                    <input type="radio" name="package_type" value="curated" <?php echo ($pkg['package_type'] === 'curated' || empty($pkg['package_type'])) ? 'checked' : ''; ?> style="width: auto; appearance: auto; margin: 0;"> Curated Experience
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="package_type" value="curated" <?php echo ($pkg['package_type'] === 'curated' || empty($pkg['package_type'])) ? 'checked' : ''; ?> class="input-radio"> Curated Experience
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                    <input type="radio" name="package_type" value="fixed" <?php echo ($pkg['package_type'] === 'fixed') ? 'checked' : ''; ?> style="width: auto; appearance: auto; margin: 0;"> Fixed Departure
+                                <label class="radio-label">
+                                    <input type="radio" name="package_type" value="fixed" <?php echo ($pkg['package_type'] === 'fixed') ? 'checked' : ''; ?> class="input-radio"> Fixed Departure
                                 </label>
                             </div>
                         </div>
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 
                 <!-- Panel 2: Package Card Settings -->
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">2. Package Listing Card Settings</h3>
+                    <h3 class="form-panel-title">2. Package Listing Card Settings</h3>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Starting Price (INR)</label>
@@ -225,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                             <input type="number" name="original_price" value="<?php echo htmlspecialchars((string) ($pkg['original_price'] ?? '')); ?>" placeholder="e.g. 14000">
                         </div>
                     </div>
-                    <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+                    <div class="form-row form-row-2col">
                         <div class="form-group">
                             <label>Duration (Nights)</label>
                             <input type="number" name="nights" value="<?php echo htmlspecialchars((string) ($pkg['nights'] ?? '')); ?>" placeholder="e.g. 5">
@@ -243,11 +243,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Card Image URL <span style="color:#64748b;font-weight:400;font-size:0.8rem;">— shown on the packages listing grid</span></label>
+                            <label>Card Image URL <span class="label-hint">— shown on the packages listing grid</span></label>
                             <input type="text" name="image_url" value="<?php echo htmlspecialchars($pkg['image_url']); ?>" placeholder="https://...">
                         </div>
                         <div class="form-group">
-                            <label>Upload Card Image <span style="color:#64748b;font-weight:400;font-size:0.8rem;">— replaces URL above if uploaded</span></label>
+                            <label>Upload Card Image <span class="label-hint">— replaces URL above if uploaded</span></label>
                             <input type="file" name="package_image" accept="image/*">
                         </div>
                     </div>
@@ -255,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 
                 <!-- Panel 3: Overview & Map -->
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">3. Detail Page: Overview & Map</h3>
+                    <h3 class="form-panel-title">3. Detail Page: Overview & Map</h3>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Tour Code</label>
@@ -278,9 +278,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 
                 <!-- Panel 4: Highlights -->
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">4. Detail Page: The Experience</h3>
+                    <h3 class="form-panel-title">4. Detail Page: The Experience</h3>
                     <div class="form-group">
-                        <label>Tour Highlights <span style="color:#64748b;font-weight:400;font-size:0.8rem;">— one highlight per line (shown below trust badges)</span></label>
+                        <label>Tour Highlights <span class="label-hint">— one highlight per line (shown below trust badges)</span></label>
                         
 <label for="input_47e02269" class="sr-only">Jungle Jeep Safari&#10;Murti River, View Point Visit&#10;Khayerbari Interpretation Centre Visit&#10;Gorumara National Park&#10;Night stay at Lataguri</label>
 <textarea id="input_47e02269" name="highlights" rows="5" placeholder="Jungle Jeep Safari&#10;Murti River, View Point Visit&#10;Khayerbari Interpretation Centre Visit&#10;Gorumara National Park&#10;Night stay at Lataguri"><?php echo htmlspecialchars($pkg['highlights'] ?? ''); ?></textarea>
@@ -289,8 +289,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 
                 <!-- Panel 5: Logistics & Fine Print -->
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">5. Logistics, Fine Print & Ratings</h3>
-                    <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+                    <h3 class="form-panel-title">5. Logistics, Fine Print & Ratings</h3>
+                    <div class="form-row form-row-2col">
                         <div class="form-group">
                             <label>Customer Rating Score</label>
                             <input type="number" step="0.1" max="5" name="rating_score" value="<?php echo htmlspecialchars((string) ($pkg['rating_score'] ?? '4.8')); ?>" placeholder="e.g. 4.8">
@@ -314,10 +314,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 <textarea id="input_19fd8fb6" name="exclusions" rows="4" placeholder="Inter-state Flight & Transit Tickets..."><?php echo htmlspecialchars($pkg['exclusions'] ?? ''); ?></textarea>
                         </div>
                     </div>
-                    <div id="fixed-departure-fields" style="display: none; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">
-                        <h4 style="margin-bottom: 15px; color: #4ade80;">Fixed Departure Specifics</h4>
+                    <div id="fixed-departure-fields" class="conditional-fields">
+                        <h4 class="conditional-fields-title">Fixed Departure Specifics</h4>
                         <div class="form-group">
-                            <label>Hotel Details (HTML allowed) <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(Used for Fixed Departures)</span></label>
+                            <label>Hotel Details (HTML allowed) <span class="label-hint">(Used for Fixed Departures)</span></label>
                             
 <label for="input_2d66f0cd" class="sr-only">e.g. <b>Le Meridien</b> - 3 Nights...</label>
 <textarea id="input_2d66f0cd" name="hotel_details" rows="3" placeholder="e.g. <b>Le Meridien</b> - 3 Nights..."><?php echo htmlspecialchars($pkg['hotel_details'] ?? ''); ?></textarea>
@@ -339,22 +339,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 
                 <!-- Panel 6: Publishing Controls -->
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">6. Publishing Controls</h3>
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 1rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="checkbox" name="use_destination_terms" <?php echo (!isset($pkg['use_destination_terms']) || $pkg['use_destination_terms']) ? 'checked' : ''; ?> style="width: auto;">
+                    <h3 class="form-panel-title">6. Publishing Controls</h3>
+                    <div class="form-group checkbox-group-col">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="use_destination_terms" <?php echo (!isset($pkg['use_destination_terms']) || $pkg['use_destination_terms']) ? 'checked' : ''; ?> class="input-checkbox">
                             Show Destination Terms & Conditions on Package Detail Page
                         </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="checkbox" name="is_active" <?php echo $pkg['is_active'] ? 'checked' : ''; ?> style="width: auto;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_active" <?php echo $pkg['is_active'] ? 'checked' : ''; ?> class="input-checkbox">
                             Active (published on website)
                         </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="checkbox" name="is_international" <?php echo !empty($pkg['is_international']) ? 'checked' : ''; ?> style="width: auto;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_international" <?php echo !empty($pkg['is_international']) ? 'checked' : ''; ?> class="input-checkbox">
                             Is International Package?
                         </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #fb923c; font-weight: 600;">
-                            <input type="checkbox" name="is_trending" <?php echo !empty($pkg['is_trending']) ? 'checked' : ''; ?> style="width: auto;">
+                        <label class="checkbox-label-highlight">
+                            <input type="checkbox" name="is_trending" <?php echo !empty($pkg['is_trending']) ? 'checked' : ''; ?> class="input-checkbox">
                             🔥 Showcase in "Top Trending Tours" section
                         </label>
                     </div>
@@ -362,12 +362,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 
                 <!-- Panel 7: Itinerary Builder -->
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">7. Itinerary Builder</h3>
+                    <h3 class="form-panel-title">7. Itinerary Builder</h3>
                     <div class="form-group">
                         <label>Itinerary Section Heading</label>
                         <input type="text" name="itinerary_heading" value="<?php echo htmlspecialchars($pkg['itinerary_heading'] ?? 'Day-by-Day Journey'); ?>">
                     </div>
-                    <div id="itinerary-container" style="margin-top: 1.5rem;">
+                    <div id="itinerary-container" class="mt-4">
                         <?php foreach ($pkg['itinerary'] as $index => $day): ?>
                         <div class="itinerary-item">
                             <span class="btn-remove" data-action="remove-parent">Remove</span>
@@ -387,11 +387,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <button type="button" id="add-day" class="btn-outline" style="width: 100%;">+ Add Day</button>
+                    <button type="button" id="add-day" class="btn-outline w-full">+ Add Day</button>
                 </div>
 
-                <div class="form-card" style="background: transparent; border: none; padding: 0;">
-                    <button type="submit" class="btn-primary" style="width: 100%; padding: 1.25rem;">Save Package</button>
+                <div class="form-card form-card-transparent">
+                    <button type="submit" class="btn-primary btn-block-large">Save Package</button>
                 </div>
             </form>
         </main>
