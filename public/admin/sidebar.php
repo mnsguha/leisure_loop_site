@@ -13,7 +13,7 @@ if (in_array($currentPage, ['packages.php', 'fixed_departures.php', 'fixed_depar
     $activeCategory = 'leads';
 } elseif (in_array($currentPage, ['gallery.php', 'testimonials.php', 'testimonial-form.php', 'blogs.php', 'blog-form.php', 'process.php'])) {
     $activeCategory = 'content';
-} elseif (in_array($currentPage, ['settings.php', 'crm-settings.php', 'marquee.php', 'popup.php', 'advertisement.php', 'accreditations.php', 'hotel_partners.php'])) {
+} elseif (in_array($currentPage, ['settings.php', 'crm-settings.php', 'marquee.php', 'popup.php', 'advertisement.php', 'accreditations.php', 'hotel_partners.php', 'database-migrations.php'])) {
     $activeCategory = 'settings';
 }
 ?>
@@ -103,6 +103,7 @@ if (in_array($currentPage, ['packages.php', 'fixed_departures.php', 'fixed_depar
                 <li><a href="advertisement.php" class="<?php echo $currentPage == 'advertisement.php' ? 'active' : ''; ?>">Advertisement</a></li>
                 <li><a href="accreditations.php" class="<?php echo $currentPage == 'accreditations.php' ? 'active' : ''; ?>">Trusted &amp; Accredited</a></li>
                 <li><a href="hotel_partners.php" class="<?php echo $currentPage == 'hotel_partners.php' ? 'active' : ''; ?>">Hotel Partners</a></li>
+                <li><a href="database-migrations.php" class="<?php echo $currentPage == 'database-migrations.php' ? 'active' : ''; ?>" style="color: #ef4444;">Database Migrations</a></li>
             </ul>
         </li>
 

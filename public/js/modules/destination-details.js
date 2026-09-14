@@ -1,4 +1,18 @@
 'use strict';
+(function () {
+
+// Rule 1: Centralized image fallback (replaces inline onerror)
+document.addEventListener('error', function(e) {
+    if (e.target.tagName === 'IMG' && !e.target.dataset.fallbackDone) {
+        e.target.dataset.fallbackDone = '1';
+        e.target.src = 'assets/img/pkg.jpg';
+    }
+}, true);
+
+// Rule 1: Apply z-index from data-layer-z attributes (replaces inline style)
+document.querySelectorAll('[data-layer-z]').forEach(function(el) {
+    el.style.zIndex = el.dataset.layerZ;
+});
 
 function initDestinationHeroParallax() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
@@ -151,9 +165,9 @@ function initPlannerSteps() {
 
     function showStep(index) {
         steps.forEach((step, i) => step.classList.toggle('active', i === index));
-        if (prevBtn) prevBtn.style.display = index > 0 ? 'inline-flex' : 'none';
-        if (nextBtn) nextBtn.style.display = index < steps.length - 1 ? 'inline-flex' : 'none';
-        if (submitBtn) submitBtn.style.display = index === steps.length - 1 ? 'inline-flex' : 'none';
+        if (prevBtn) prevBtn.classList.toggle('planner-step-hidden', index === 0);
+        if (nextBtn) nextBtn.classList.toggle('planner-step-hidden', index === steps.length - 1);
+        if (submitBtn) submitBtn.classList.toggle('planner-step-hidden', index !== steps.length - 1);
     }
 
     if (nextBtn) {
@@ -186,7 +200,11 @@ function bindDestinationEvents() {
             const targetSelector = openBtn.getAttribute('data-target');
             if (targetSelector) {
                 const target = document.querySelector(targetSelector);
-                if (target) target.classList.add('is-active');
+                if (target) {
+                    target.classList.add('is-active');
+                    target.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('scroll-lock');
+                }
             }
             return;
         }
@@ -209,7 +227,11 @@ function bindDestinationEvents() {
         if (closeBtn) {
             e.preventDefault();
             const modal = closeBtn.closest('.modal-overlay');
-            if (modal) modal.classList.remove('is-active');
+            if (modal) {
+                modal.classList.remove('is-active');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
+            }
             return;
         }
 
@@ -229,14 +251,22 @@ function bindDestinationEvents() {
     // Close modals on backdrop click
     document.querySelectorAll('.modal-overlay').forEach(modal => {
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('is-active');
+            if (e.target === modal) {
+                modal.classList.remove('is-active');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
+            }
         });
     });
 
     // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            document.querySelectorAll('.modal-overlay.is-active').forEach(m => m.classList.remove('is-active'));
+            document.querySelectorAll('.modal-overlay.is-active').forEach(m => {
+                m.classList.remove('is-active');
+                m.setAttribute('aria-hidden', 'true');
+            });
+            document.body.classList.remove('scroll-lock');
             const storyModal = document.getElementById('story-modal');
             if (storyModal && storyModal.classList.contains('is-active')) {
                 storyModal.classList.remove('is-active');
@@ -257,9 +287,9 @@ function bindDestinationEvents() {
     const focusableSelector = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Tab') return;
-        const storyModal = document.getElementById('story-modal');
-        if (!storyModal || !storyModal.classList.contains('is-active')) return;
-        const focusable = storyModal.querySelectorAll(focusableSelector);
+        const activeModal = document.querySelector('.modal-overlay.is-active, #story-modal.is-active');
+        if (!activeModal) return;
+        const focusable = activeModal.querySelectorAll(focusableSelector);
         if (focusable.length === 0) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
@@ -287,3 +317,4 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('load', () => {
     if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
 });
+})();

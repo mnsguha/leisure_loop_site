@@ -1,2 +1,0 @@
-"<?php \n    require_once '../config/db.php';\n    $page_title = \"Leisure Loop Trip | The Art of Discovery\";\n    include '../includes/header.php'; \n?>\n\n    <!-- Editorial Hero -->\n    <header class=\"hero\" id=\"home\">\n        <div class=\"hero-vi
-<truncated 6024 bytes>

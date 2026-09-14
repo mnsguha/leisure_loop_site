@@ -19,10 +19,10 @@ include "../includes/header.php";
                 $scale = $layer['scale'] ?? (1.1 + ($index * 0.05));
                 $zIndex = $layer['z_index'] ?? ($index + 1);
             ?>
-            <img class="p-layer p-layer-hero-media" src="<?php echo htmlspecialchars($layer['image_url']); ?>" alt="Layer <?php echo $index; ?>" style="--layer-z: <?php echo $zIndex; ?>;" data-speed="<?php echo $speed; ?>" data-scale-base="<?php echo $scale; ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+            <img class="p-layer p-layer-hero-media" src="<?php echo htmlspecialchars($layer['image_url']); ?>" alt="Layer <?php echo $index; ?>" data-layer-z="<?php echo $zIndex; ?>" data-speed="<?php echo $speed; ?>" data-scale-base="<?php echo $scale; ?>">
         <?php endforeach; ?>
     <?php else: ?>
-        <img class="p-layer p-layer-hero-media" src="<?php echo htmlspecialchars($destination['cover_image'] ?: 'images/placeholder.jpg'); ?>" alt="Hero" style="--layer-z: 1;" data-speed="0.3" data-scale-base="1.15" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+        <img class="p-layer p-layer-hero-media" src="<?php echo htmlspecialchars($destination['cover_image'] ?: 'images/placeholder.jpg'); ?>" alt="Hero" data-layer-z="1" data-speed="0.3" data-scale-base="1.15">
     <?php endif; ?>
 
     <div class="hero-overlay"></div>
@@ -80,13 +80,13 @@ include "../includes/header.php";
 <div class="hit-zone narrative-hit-zone" data-zone="2"></div>
 
 <div data-pos="0" class="narrative-img-card reveal-scale-hidden stagger-2">
-<img alt="Narrative Image 1" src="<?php echo htmlspecialchars($destination['story_narrative_image'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg')); ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';"/>
+<img alt="Narrative Image 1" src="<?php echo htmlspecialchars($destination['story_narrative_image'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg')); ?>"/>
 </div>
 <div data-pos="1" class="narrative-img-card reveal-scale-hidden stagger-3">
-<img alt="Narrative Image 2" src="<?php echo htmlspecialchars($destination['story_narrative_image_2'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg')); ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';"/>
+<img alt="Narrative Image 2" src="<?php echo htmlspecialchars($destination['story_narrative_image_2'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg')); ?>"/>
 </div>
 <div data-pos="2" class="narrative-img-card reveal-scale-hidden stagger-4">
-<img alt="Narrative Image 3" src="<?php echo htmlspecialchars($destination['story_narrative_image_3'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg')); ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';"/>
+<img alt="Narrative Image 3" src="<?php echo htmlspecialchars($destination['story_narrative_image_3'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg')); ?>"/>
 </div>
 </div>
 </div>
@@ -131,7 +131,7 @@ include "../includes/header.php";
                 ?>
                 <div class="sightseeing-grid">
                     <div class="glass-card sightseeing-card reveal-hidden stagger-<?php echo $delay; ?> <?php echo $isReverse ? 'sightseeing-card--reverse' : ''; ?>">
-                        <img src="<?php echo htmlspecialchars($spot['image']); ?>" alt="<?php echo htmlspecialchars($spot['title']); ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <img src="<?php echo htmlspecialchars($spot['image']); ?>" alt="<?php echo htmlspecialchars($spot['title']); ?>">
                         <div class="sightseeing-card-overlay"></div>
                     </div>
                     <div class="sightseeing-content reveal-hidden stagger-<?php echo $delay + 1; ?>">
@@ -164,7 +164,7 @@ include "../includes/header.php";
             <?php 
                 $img_src = !empty($pkg['image_url']) ? htmlspecialchars($pkg['image_url']) : 'assets/images/placeholder_tour.jpg';
             ?>
-            <img alt="<?php echo htmlspecialchars($pkg['title']); ?>" src="<?php echo $img_src; ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';"/>
+            <img alt="<?php echo htmlspecialchars($pkg['title']); ?>" src="<?php echo $img_src; ?>"/>
             <div class="journey-card-overlay"></div>
         </div>
         <div class="journey-card-content">
@@ -307,7 +307,7 @@ include "../includes/header.php";
                 <?php 
                     $modal_hero = $destination['cover_image'] ?: 'images/placeholder.jpg';
                 ?>
-                <img src="<?php echo htmlspecialchars($modal_hero); ?>" alt="<?php echo htmlspecialchars($destination['name']); ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                <img src="<?php echo htmlspecialchars($modal_hero); ?>" alt="<?php echo htmlspecialchars($destination['name']); ?>">
                 <div class="story-modal-hero-gradient"></div>
             </div>
             <!-- Modal Editorial Content -->
@@ -325,8 +325,8 @@ include "../includes/header.php";
                             $img2 = $destination['story_narrative_image_2'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg');
                             $img3 = $destination['story_narrative_image_3'] ?: ($destination['cover_image'] ?: 'images/placeholder.jpg');
                         ?>
-                        <img src="<?php echo htmlspecialchars($img2); ?>" class="story-modal-img" alt="<?php echo htmlspecialchars($destination['name']); ?> gallery image 1" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
-                        <img src="<?php echo htmlspecialchars($img3); ?>" class="story-modal-img" alt="<?php echo htmlspecialchars($destination['name']); ?> gallery image 2" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <img src="<?php echo htmlspecialchars($img2); ?>" class="story-modal-img" alt="<?php echo htmlspecialchars($destination['name']); ?> gallery image 1">
+                        <img src="<?php echo htmlspecialchars($img3); ?>" class="story-modal-img" alt="<?php echo htmlspecialchars($destination['name']); ?> gallery image 2">
                     </div>
                     <p>
                         Every element of your stay&mdash;from the thread count of your linens to the vintage of your evening wine&mdash;is selected to harmonize with the raw, untamed beauty outside your window. Here, luxury is defined not just by opulence, but by exclusive access to authentic, transformative experiences.

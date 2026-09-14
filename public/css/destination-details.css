@@ -117,7 +117,7 @@
     object-fit: cover;
     pointer-events: none;
     will-change: transform;
-    z-index: var(--layer-z, auto);
+    z-index: auto;
     /* Scale from center provides equal overflow buffer on all sides */
     transform: scale(1.15);
     transform-origin: center center;
@@ -835,6 +835,7 @@
 /* --- Planner Modal Steps --- */
 .planner-steps .step { display: none; }
 .planner-steps .step.active { display: block; }
+.planner-step-hidden { display: none !important; }
 
 .section-label {
     font-size: 0.78rem;

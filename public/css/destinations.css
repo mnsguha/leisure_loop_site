@@ -28,7 +28,7 @@
 }
 
 .emt-hero-content {
-    max-width: 1100px;
+    max-width: 1400px;
     margin: 0 auto;
     position: relative;
     z-index: 12;
@@ -74,7 +74,7 @@
 /* 2. Interactive Search Capsule Dock */
 .emt-search-dock-wrapper {
     width: 100%;
-    max-width: 900px;
+    max-width: 1300px;
     margin: 0 auto;
     position: relative;
     z-index: 10;
@@ -85,7 +85,7 @@
     border: 2px solid var(--gold, #c5a059);
     border-radius: 60px;
     box-shadow: 0 25px 70px rgba(0, 0, 0, 0.65), 0 0 35px rgba(197, 160, 89, 0.25);
-    padding: 8px 12px 8px 30px;
+    padding: 2px 12px 2px 30px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -103,7 +103,7 @@
     align-items: center;
     gap: 14px;
     text-align: left;
-    min-height: 48px;
+    min-height: 36px;
 }
 
 .dock-field.field-where { flex: 1.6; }
@@ -166,7 +166,7 @@
     color: #ffffff;
     border: none;
     border-radius: 50px;
-    padding: 16px 34px;
+    padding: 10px 34px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -189,7 +189,7 @@
 /* 3. Quick-Discovery Theme Ribbon Bar */
 .quick-discovery-section {
     position: relative;
-    z-index: 8;
+    z-index: 12;
     max-width: 1300px;
     margin: -25px auto 40px;
     padding: 0 40px;
