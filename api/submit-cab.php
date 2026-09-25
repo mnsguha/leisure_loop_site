@@ -8,8 +8,7 @@ require_once '../includes/functions.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
-    exit;
+    ll_json_response('error', 'METHOD_NOT_ALLOWED', 'Invalid request method.');
 }
 
 // Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
@@ -36,8 +35,7 @@ $duration = cleanInput('duration');
 $itinerary_details = cleanInput('itinerary_details');
 
 if (!$name || !$phone || !$trip_type) {
-    echo json_encode(['success' => false, 'message' => 'Name, Phone, and Trip Type are required.']);
-    exit;
+    ll_json_response('error', 'VALIDATION_ERROR', 'Name, Phone, and Trip Type are required.');
 }
 
 if ($pdo) {
@@ -60,14 +58,11 @@ if ($pdo) {
             $itinerary_details ?: null
         ]);
         
-        echo json_encode([
-            'success' => true,
-            'message' => 'Your cab booking request has been received! Our team will contact you shortly.'
-        ]);
+        ll_json_response('success', 'OK', 'Your cab booking request has been received! Our team will contact you shortly.');
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'A database error occurred. Please try again.']);
+        ll_json_response('error', 'INTERNAL_ERROR', 'A database error occurred. Please try again.');
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
+    ll_json_response('error', 'INTERNAL_ERROR', 'Database connection failed.');
 }
 ?>

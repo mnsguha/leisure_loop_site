@@ -1,0 +1,13 @@
+# Secrets / local environment — never commit, never deploy
+config/db.php
+config/admin.php
+config/database.sqlite
+
+# Local tooling & backups
+scratch/
+temp.php
+.backups/
+public/fix_fonts.php
+
+# User uploads (live copies live on the server)
+public/uploads/

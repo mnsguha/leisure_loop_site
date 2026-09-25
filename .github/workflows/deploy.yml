@@ -29,14 +29,36 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # 1. Use rsync to safely copy from staging to web root
-            # We explicitly exclude the live database configuration and user uploads
+            # 0. Rollback point: timestamped backup of the live tree (keep last 3)
+            sudo tar -czf /var/www/html_backup_$(date +%F_%H%M).tar.gz /var/www/html 2>/dev/null || true
+            ls -1t /var/www/html_backup_*.tar.gz 2>/dev/null | tail -n +4 | xargs -r sudo rm -f
+
+            # 1. Server-owned credentials: create admin credentials file once (never in git)
+            if [ ! -f /var/www/html/config/admin.php ]; then
+              sudo tee /var/www/html/config/admin.php > /dev/null <<'ADMEOF'
+            <?php
+            return [
+                'username' => 'admin',
+                'password_hash' => '$2y$10$3HJI5UUjrXaDcr/PQ2W4j.kt27F18CnsF.7WIVl0NnEQkUuj1S0qy',
+            ];
+            ADMEOF
+            fi
+
+            # 2. Use rsync to safely copy from staging to web root
+            #    Server-owned files (db.php, admin.php, uploads) and local-only
+            #    directories are excluded from the sync.
             sudo rsync -av \
               --exclude '.git' \
               --exclude '.github' \
               --exclude 'config/db.php' \
+              --exclude 'config/admin.php' \
               --exclude 'public/uploads' \
+              --exclude 'scratch' \
+              --exclude 'temp.php' \
+              --exclude 'public/fix_fonts.php' \
+              --exclude 'sql' \
+              --exclude '.backups' \
               /home/ubuntu/leisure_loop_staging/ /var/www/html/
-            
-            # 2. Reset ownership to the Apache web server user
+
+            # 3. Reset ownership to the Apache web server user
             sudo chown -R www-data:www-data /var/www/html/

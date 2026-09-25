@@ -8,13 +8,11 @@ requireAdmin();
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
-    exit;
+    ll_json_response('error', 'METHOD_NOT_ALLOWED', 'Invalid request method.');
 }
 
 if (!$pdo) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
-    exit;
+    ll_json_response('error', 'INTERNAL_ERROR', 'Database connection failed.');
 }
 
 // Ensure columns exist
@@ -33,8 +31,7 @@ $apiUrl = $settings['crm_url'] ?? null;
 $apiKey = $settings['crm_api_key'] ?? null;
 
 if (empty($apiUrl) || empty($apiKey)) {
-    echo json_encode(['success' => false, 'message' => 'CRM Webhook not configured. Please set the API Key and URL in settings.']);
-    exit;
+    ll_json_response('error', 'VALIDATION_ERROR', 'CRM Webhook not configured. Please set the API Key and URL in settings.');
 }
 
 // Ensure the raw request body is read for type
@@ -139,9 +136,7 @@ function pushToCRM(string $url, string $key, array $payload): bool {
     return ($httpCode === 201 || $httpCode === 200);
 }
 
-echo json_encode([
-    'success' => true, 
-    'synced' => $syncedCount, 
-    'failed' => $failedCount,
-    'message' => "Successfully synced $syncedCount records."
+ll_json_response('success', 'OK', "Successfully synced $syncedCount records.", [
+    'synced' => $syncedCount,
+    'failed' => $failedCount
 ]);

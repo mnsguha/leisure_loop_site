@@ -7,12 +7,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = isset($_POST['csrf_token']) ? (string) $_POST['csrf_token'] : '';
     if ($token === '' || !hash_equals((string) ($_SESSION['csrf_token'] ?? ''), $token)) {
         $error = 'Session expired. Please try again.';
+    } elseif (lead_rate_hit('session', 'login_hits', 5, 600) || lead_rate_hit('ip', 'login:' . ll_client_ip(), 10, 900)) {
+        // Fail-closed login throttle (Part 1, Rule 71): no credential evaluation over quota.
+        ll_log_security('LOGIN_RATE_LIMIT');
+        $error = 'Too many attempts. Please try again later.';
     } else {
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
+        $creds = require __DIR__ . '/../../config/admin.php';
 
-        // Simple hardcoded check - change this for production!
-        if ($username === 'admin' && $password === 'LeisureLoop2026') {
+        if ($username === $creds['username'] && password_verify($password, $creds['password_hash'])) {
+            session_regenerate_id(true);
             $_SESSION['admin_logged_in'] = true;
             header('Location: index.php');
             exit;

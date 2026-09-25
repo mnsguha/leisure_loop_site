@@ -10,8 +10,7 @@ require_once '../includes/functions.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
-    exit;
+    ll_json_response('error', 'METHOD_NOT_ALLOWED', 'Invalid request method.');
 }
 
 // Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
@@ -51,8 +50,7 @@ if ($message === '' && $destination !== '') {
 }
 
 if (!$name || !$phone) {
-    echo json_encode(['success' => false, 'message' => 'Name and phone are required.']);
-    exit;
+    ll_json_response('error', 'VALIDATION_ERROR', 'Name and phone are required.');
 }
 
 $local_id = null;
@@ -187,9 +185,7 @@ if ($local_id && $pdo && $status_column) {
     }
 }
 
-echo json_encode([
-    'success' => true,
-    'message' => 'Thank you! Our travel expert will contact you shortly.',
+ll_json_response('success', 'OK', 'Thank you! Our travel expert will contact you shortly.', [
     'sync_status' => $http_code === 201 ? 'synced' : 'queued'
 ]);
 ?>

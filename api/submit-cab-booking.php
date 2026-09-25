@@ -5,8 +5,7 @@ require_once '../includes/functions.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
-    exit;
+    ll_json_response('error', 'METHOD_NOT_ALLOWED', 'Invalid request method.');
 }
 
 // Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
@@ -35,8 +34,7 @@ $duration = cleanInput('duration');
 $search_itinerary_details = cleanInput('search_itinerary_details');
 
 if (!$name || !$phone || !$vehicle_id) {
-    echo json_encode(['success' => false, 'message' => 'Name, Phone, and Vehicle details are required.']);
-    exit;
+    ll_json_response('error', 'VALIDATION_ERROR', 'Name, Phone, and Vehicle details are required.');
 }
 
 $itinerary_details = json_encode([
@@ -71,15 +69,11 @@ if ($pdo) {
         $booking_id = $pdo->lastInsertId();
         pdf_grant_access('cab', (string) $booking_id);
 
-        echo json_encode([
-            'success' => true,
-            'booking_id' => $booking_id,
-            'message' => 'Booking successful'
-        ]);
+        ll_json_response('success', 'OK', 'Booking successful', ['booking_id' => $booking_id]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'A database error occurred. Please try again.']);
+        ll_json_response('error', 'INTERNAL_ERROR', 'A database error occurred. Please try again.');
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
+    ll_json_response('error', 'INTERNAL_ERROR', 'Database connection failed.');
 }
 ?>

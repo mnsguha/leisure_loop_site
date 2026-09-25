@@ -5,8 +5,7 @@ require_once '../includes/functions.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request']);
-    exit;
+    ll_json_response('error', 'METHOD_NOT_ALLOWED', 'Invalid request');
 }
 
 // Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
@@ -29,8 +28,7 @@ $special_request = isset($_POST['special_request']) ? trim($_POST['special_reque
 $children = isset($_POST['children']) ? (int)$_POST['children'] : 0;
 
 if (!$guest_name || !$phone || !$check_in || !$check_out) {
-    echo json_encode(['success' => false, 'message' => 'Required fields are missing.']);
-    exit;
+    ll_json_response('error', 'VALIDATION_ERROR', 'Required fields are missing.');
 }
 
 $total_amount = 0.00;
@@ -113,13 +111,11 @@ if ($pdo) {
             @mail($email, $subject, $msg, $headers);
         }
 
-        echo json_encode([
-            'success' => true,
-            'message' => $type == 'signature' ? 'Booking Confirmed! Preparing your voucher...' : 'Inquiry Submitted successfully! Our team will contact you.',
+        ll_json_response('success', 'OK', $type == 'signature' ? 'Booking Confirmed! Preparing your voucher...' : 'Inquiry Submitted successfully! Our team will contact you.', [
             'booking_id' => $booking_id
         ]);
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Database error.']);
+        ll_json_response('error', 'INTERNAL_ERROR', 'Database error.');
     }
 }
 ?>

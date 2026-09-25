@@ -5,8 +5,7 @@ require_once '../includes/functions.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
-    exit;
+    ll_json_response('error', 'METHOD_NOT_ALLOWED', 'Invalid request method.');
 }
 
 // Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
@@ -32,8 +31,7 @@ $selected_hotel = cleanInput('selected_hotel');
 $selected_cab = cleanInput('selected_cab');
 
 if (!$name || !$phone || !$package_id) {
-    echo json_encode(['success' => false, 'message' => 'Name, Phone, and Package details are required.']);
-    exit;
+    ll_json_response('error', 'VALIDATION_ERROR', 'Name, Phone, and Package details are required.');
 }
 
 // Prepare JSON notes for the PDF slip and CRM
@@ -91,12 +89,10 @@ if ($pdo) {
         $local_id = $pdo->lastInsertId();
         pdf_grant_access('package', (string) $local_id);
     } catch (Throwable $e) {
-        echo json_encode(['success' => false, 'message' => 'Database error occurred.']);
-        exit;
+        ll_json_response('error', 'INTERNAL_ERROR', 'Database error occurred.');
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
-    exit;
+    ll_json_response('error', 'INTERNAL_ERROR', 'Database connection failed.');
 }
 
 // 2. Fetch CRM Settings from Database
@@ -150,10 +146,8 @@ if ($local_id && $pdo && $status_column) {
     }
 }
 
-echo json_encode([
-    'success' => true,
+ll_json_response('success', 'OK', 'Booking submitted successfully!', [
     'booking_id' => $local_id,
-    'message' => 'Booking submitted successfully!',
     'sync_status' => $http_code === 201 ? 'synced' : 'queued'
 ]);
 ?>
