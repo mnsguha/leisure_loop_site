@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
 
 // ── Device / View Detection ────────────────────────────────────────────────
 $useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';

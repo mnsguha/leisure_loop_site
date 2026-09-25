@@ -53,7 +53,7 @@
 }
 
 .emt-dest-hero h1 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 3.8rem;
     font-weight: 700;
     color: #ffffff;
@@ -138,7 +138,7 @@
 .dock-input, .dock-select {
     border: none;
     background: transparent;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.02rem;
     font-weight: 600;
     color: #111827;
@@ -298,7 +298,7 @@
 }
 
 .filter-group-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.25rem;
     color: var(--gold, #C5A059);
     margin: 0 0 16px 0;
@@ -392,7 +392,7 @@
 }
 
 .grid-header-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.6rem;
     color: #ffffff;
     margin: 0;
@@ -405,7 +405,7 @@
     background: rgba(197, 160, 89, 0.15);
     border: 1px solid rgba(197, 160, 89, 0.4);
     color: var(--gold, #C5A059);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.8rem;
     font-weight: 700;
     padding: 16px 12px;
@@ -511,7 +511,7 @@
 }
 
 .catalog-card-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.55rem;
     font-weight: 700;
     margin: 0 0 12px 0;

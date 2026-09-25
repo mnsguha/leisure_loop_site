@@ -20,18 +20,26 @@ if ($hotel_id <= 0) {
 }
 
 try {
+    $check_in  = isset($_POST['check_in']) ? $_POST['check_in'] : date('Y-m-d');
+    
     $stmt = $pdo->prepare("
         SELECT h.starting_tariff, 
-               (SELECT MIN(rr.base_rate_2_pax) 
-                FROM hotel_room_rates rr 
-                JOIN hotel_room_plans rp ON rr.plan_id = rp.id 
-                JOIN hotel_rooms r ON rp.room_id = r.id 
-                WHERE r.hotel_id = h.id AND rr.base_rate_2_pax > 0
+               COALESCE(
+                 (SELECT MIN(rr.base_rate_2_pax) 
+                  FROM hotel_room_rates rr 
+                  JOIN hotel_room_plans rp ON rr.plan_id = rp.id 
+                  JOIN hotel_rooms r ON rp.room_id = r.id 
+                  WHERE r.hotel_id = h.id AND rr.rate_date = ? AND rr.base_rate_2_pax > 0),
+                 (SELECT MIN(rr.base_rate_2_pax) 
+                  FROM hotel_room_rates rr 
+                  JOIN hotel_room_plans rp ON rr.plan_id = rp.id 
+                  JOIN hotel_rooms r ON rp.room_id = r.id 
+                  WHERE r.hotel_id = h.id AND rr.base_rate_2_pax > 0)
                ) as dynamic_starting_tariff 
         FROM hotels h 
         WHERE h.id = ? AND h.is_active = 1
     ");
-    $stmt->execute([$hotel_id]);
+    $stmt->execute([$check_in, $hotel_id]);
     $hotel = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$hotel) {

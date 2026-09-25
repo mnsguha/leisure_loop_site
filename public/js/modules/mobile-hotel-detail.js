@@ -14,10 +14,30 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── 1. Hero Image Slider (Scroll-snap + Dot Sync) ──────────────────
+    // ── 1. Hero Image Slider & Gallery Modal ──────────────────────────
     const slider    = document.getElementById('mHdHeroSlider');
     const dotsWrap  = document.getElementById('mHdHeroDots');
     const dots      = dotsWrap ? dotsWrap.querySelectorAll('.mhd-hero-dot') : [];
+    let heroAutoSlideInterval = null;
+
+    const startAutoSlide = () => {
+        if (!slider) return;
+        heroAutoSlideInterval = setInterval(() => {
+            const slideWidth = slider.offsetWidth;
+            if (!slideWidth) return;
+            let nextScroll = slider.scrollLeft + slideWidth;
+            
+            // If we reach the end, jump back to start
+            if (nextScroll >= slider.scrollWidth - 10) {
+                nextScroll = 0;
+            }
+            slider.scrollTo({ left: nextScroll, behavior: 'smooth' });
+        }, 4000); // 4 seconds
+    };
+
+    const stopAutoSlide = () => {
+        if (heroAutoSlideInterval) clearInterval(heroAutoSlideInterval);
+    };
 
     if (slider && dots.length > 0) {
         slider.addEventListener('scroll', () => {
@@ -28,6 +48,189 @@ document.addEventListener('DOMContentLoaded', () => {
                 dot.classList.toggle('is-active', idx === activeIndex);
             });
         }, { passive: true });
+
+        // Start sliding and pause on touch
+        startAutoSlide();
+        slider.addEventListener('touchstart', stopAutoSlide, { passive: true });
+        slider.addEventListener('touchend', startAutoSlide, { passive: true });
+    }
+
+    // Bento Gallery Modal Logic
+    const galleryModal = document.getElementById('mHdGalleryModal');
+    const galleryCloseBtn = document.getElementById('mHdGalleryCloseBtn');
+    
+    if (slider && galleryModal) {
+        // Open gallery when tapping the slider
+        slider.addEventListener('click', () => {
+            galleryModal.classList.remove('is-hidden');
+            galleryModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden'; // prevent bg scroll
+            stopAutoSlide(); // pause slider when gallery open
+        });
+        
+        // Close gallery
+        if (galleryCloseBtn) {
+            galleryCloseBtn.addEventListener('click', () => {
+                galleryModal.classList.add('is-hidden');
+                galleryModal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                startAutoSlide();
+            });
+        }
+    }
+
+    // ── Fullscreen Lightbox Slider Logic ──────────────────────────────
+    const lightboxModal = document.getElementById('mHdLightbox');
+    const lightboxCloseBtn = document.getElementById('mHdLightboxCloseBtn');
+    const lightboxSlider = document.getElementById('mHdLightboxSlider');
+    const lightboxCounter = document.getElementById('mHdLightboxCounter');
+    
+    if (galleryModal && lightboxModal && lightboxSlider) {
+        let totalLightboxSlides = 0;
+        
+        // Event delegation for bento items
+        galleryModal.addEventListener('click', (e) => {
+            const bentoItem = e.target.closest('.mhd-bento-item');
+            if (!bentoItem) return;
+            
+            const indexStr = bentoItem.getAttribute('data-index');
+            if (indexStr === null) return;
+            
+            const idx = parseInt(indexStr, 10);
+            
+            // Show lightbox
+            lightboxModal.classList.remove('is-hidden');
+            lightboxModal.setAttribute('aria-hidden', 'false');
+            
+            // Wait for modal to be visible before scrolling to the exact slide
+            requestAnimationFrame(() => {
+                const slideWidth = lightboxSlider.offsetWidth;
+                if (slideWidth > 0) {
+                    lightboxSlider.scrollTo({ left: slideWidth * idx, behavior: 'instant' });
+                }
+            });
+        });
+        
+        // Count total slides for pagination text
+        const slides = lightboxSlider.querySelectorAll('.mhd-lightbox-slide');
+        totalLightboxSlides = slides.length;
+        
+        // Scroll listener to update counter
+        lightboxSlider.addEventListener('scroll', () => {
+            const slideWidth = lightboxSlider.offsetWidth;
+            if (!slideWidth) return;
+            const activeIndex = Math.round(lightboxSlider.scrollLeft / slideWidth);
+            if (lightboxCounter) {
+                lightboxCounter.textContent = `${activeIndex + 1} / ${totalLightboxSlides}`;
+            }
+        }, { passive: true });
+        
+        // Close logic
+        const closeLightbox = () => {
+            lightboxModal.classList.add('is-hidden');
+            lightboxModal.setAttribute('aria-hidden', 'true');
+            // Keep body locked because we return to the Bento gallery which also locks body
+        };
+        
+        if (lightboxCloseBtn) {
+            lightboxCloseBtn.addEventListener('click', closeLightbox);
+        }
+        
+        // Escape key to close Lightbox (if open) or Gallery (if only gallery is open)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const isLightboxOpen = !lightboxModal.classList.contains('is-hidden');
+                const isGalleryOpen = !galleryModal.classList.contains('is-hidden');
+                
+                if (isLightboxOpen) {
+                    closeLightbox();
+                } else if (isGalleryOpen) {
+                    galleryModal.classList.add('is-hidden');
+                    galleryModal.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                    if (typeof startAutoSlide === 'function') startAutoSlide();
+                }
+            }
+        });
+    }
+
+    // ── Room Category Image Gallery Logic ─────────────────────────────
+    const roomGalleryModal = document.getElementById('mHdRoomGalleryModal');
+    const roomGalleryCloseBtn = document.getElementById('mHdRoomGalleryCloseBtn');
+    const roomGallerySlider = document.getElementById('mHdRoomGallerySlider');
+    const roomGalleryCounter = document.getElementById('mHdRoomGalleryCounter');
+    const roomGalleryTitle = document.getElementById('mHdRoomGalleryTitle');
+    const roomGalleryOverlay = document.getElementById('mHdRoomGalleryOverlay');
+
+    if (roomGalleryModal && roomGallerySlider) {
+        let totalRoomSlides = 0;
+        
+        // Listen for clicks on any room image wrapper
+        document.body.addEventListener('click', (e) => {
+            const roomImgWrap = e.target.closest('.mhd-room-img-wrap');
+            if (!roomImgWrap) return;
+            
+            const roomName = roomImgWrap.getAttribute('data-room-name') || 'Room Gallery';
+            const imagesJson = roomImgWrap.getAttribute('data-images');
+            
+            if (!imagesJson) return;
+            
+            try {
+                const images = JSON.parse(imagesJson);
+                if (images.length === 0) return;
+                
+                totalRoomSlides = images.length;
+                
+                // Populate slider
+                roomGallerySlider.innerHTML = images.map(img => 
+                    `<div class="mhd-room-gallery-slide"><img src="${img}" alt="Room photo"></div>`
+                ).join('');
+                
+                if (roomGalleryTitle) roomGalleryTitle.textContent = roomName;
+                if (roomGalleryCounter) roomGalleryCounter.textContent = `1 / ${totalRoomSlides}`;
+                
+                // Reset scroll
+                roomGallerySlider.scrollLeft = 0;
+                
+                // Show modal
+                roomGalleryModal.classList.remove('is-hidden');
+                roomGalleryModal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            } catch (err) {
+                console.error("Failed to parse room images", err);
+            }
+        });
+        
+        // Update counter on scroll
+        roomGallerySlider.addEventListener('scroll', () => {
+            const slideWidth = roomGallerySlider.offsetWidth;
+            if (!slideWidth) return;
+            const activeIndex = Math.round(roomGallerySlider.scrollLeft / slideWidth);
+            if (roomGalleryCounter) {
+                roomGalleryCounter.textContent = `${activeIndex + 1} / ${totalRoomSlides}`;
+            }
+        }, { passive: true });
+        
+        // Close modal
+        const closeRoomGallery = () => {
+            roomGalleryModal.classList.add('is-hidden');
+            roomGalleryModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            
+            // Clear DOM after transition to avoid ghosting
+            setTimeout(() => {
+                roomGallerySlider.innerHTML = '';
+            }, 300);
+        };
+        
+        if (roomGalleryCloseBtn) roomGalleryCloseBtn.addEventListener('click', closeRoomGallery);
+        if (roomGalleryOverlay) roomGalleryOverlay.addEventListener('click', closeRoomGallery);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !roomGalleryModal.classList.contains('is-hidden')) {
+                closeRoomGallery();
+            }
+        });
     }
 
     // ── 2. Sticky Tab Navigation → Smooth Scroll ───────────────────────
@@ -198,11 +401,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const reservationForm   = document.getElementById('mobileHotelDetailForm');
 
     if (planRadios.length > 0) {
-        // Pre-select the first radio if none is selected
+        // Pre-select the radio with the lowest price if none is selected
         let hasSelection = Array.from(planRadios).some(r => r.checked);
         if (!hasSelection) {
-            planRadios[0].checked = true;
-            updateBottomBarForPlan(planRadios[0]);
+            let lowestRadio = planRadios[0];
+            let lowestPrice = parseInt(lowestRadio.dataset.price, 10) || Infinity;
+            
+            planRadios.forEach(radio => {
+                let p = parseInt(radio.dataset.price, 10);
+                if (!isNaN(p) && p > 0 && p < lowestPrice) {
+                    lowestPrice = p;
+                    lowestRadio = radio;
+                }
+            });
+            
+            lowestRadio.checked = true;
+            updateBottomBarForPlan(lowestRadio);
         }
 
         planRadios.forEach(radio => {
@@ -233,9 +447,69 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bottomSelectBtn) {
             bottomSelectBtn.textContent = 'CONTINUE';
             bottomSelectBtn.onclick = () => {
-                const bookingSection = document.getElementById('mHdBookingSection');
-                if (bookingSection) {
-                    bookingSection.scrollIntoView({ behavior: 'smooth' });
+                const pdModal = document.getElementById('mHdPriceDetailsModal');
+                if (pdModal) {
+                    const pdRoomName = document.getElementById('mHdDispRoomName');
+                    const pdPlanName = document.getElementById('mHdDispPlanName');
+                    const pdNetRate = document.getElementById('mHdSidebarNetRate');
+                    const pdTotalTax = document.getElementById('mHdSidebarTotalTax');
+                    const pdTotalFinal = document.getElementById('mHdSidebarTotalFinal');
+                    
+                    if (pdRoomName) pdRoomName.textContent = roomName;
+                    
+                    const numRooms = parseInt(document.getElementById('mHdRoomsCounter')?.textContent || '1', 10);
+                    const adults = parseInt(document.getElementById('mHdAdultsCounter')?.textContent || '2', 10);
+                    const children = parseInt(document.getElementById('mHdChildrenCounter')?.textContent || '0', 10);
+                    
+                    if (pdPlanName) {
+                        let paxStrFull = `${adults} Adult${adults > 1 ? 's' : ''}`;
+                        if (children > 0) {
+                            paxStrFull += `, ${children} Child${children > 1 ? 'ren' : ''}`;
+                        }
+                        const roomStr = `${numRooms} Room${numRooms > 1 ? 's' : ''}`;
+                        pdPlanName.textContent = `${paxStrFull} | ${roomStr} | ${planName}`;
+                    }
+
+                    const checkInInput = document.getElementById('mHdFormCheckIn')?.value;
+                    const checkOutInput = document.getElementById('mHdFormCheckOut')?.value;
+                    
+                    let numNights = 1;
+                    if (checkInInput && checkOutInput) {
+                        const inDate = new Date(checkInInput);
+                        const outDate = new Date(checkOutInput);
+                        if (!isNaN(inDate) && !isNaN(outDate) && outDate > inDate) {
+                            numNights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
+                        }
+                        const dispCheckIn = document.getElementById('mHdSidebarCheckIn');
+                        const dispCheckOut = document.getElementById('mHdSidebarCheckOut');
+                        if (dispCheckIn) dispCheckIn.textContent = inDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+                        if (dispCheckOut) dispCheckOut.textContent = outDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+                    }
+                    
+                    const dispNights = document.getElementById('mHdSidebarNights');
+                    if (dispNights) dispNights.textContent = numNights + 'N';
+                    
+                    const totalNet = price * numRooms * numNights;
+                    const totalGst = tax * numRooms * numNights;
+                    const finalPayable = totalNet + totalGst;
+                    
+                    if (pdNetRate) pdNetRate.textContent = '₹' + totalNet.toLocaleString('en-IN');
+                    if (pdTotalTax) pdTotalTax.textContent = '+ ₹' + totalGst.toLocaleString('en-IN') + ' Taxes & fees';
+                    if (pdTotalFinal) pdTotalFinal.textContent = '₹' + finalPayable.toLocaleString('en-IN');
+                    
+                    // Update form values for checkout
+                    const formRooms = document.getElementById('mHdFormRooms');
+                    const formFinalPrice = document.getElementById('mHdFormFinalPrice');
+                    const formRoomId = document.getElementById('mHdFormRoomId');
+                    const formPlanId = document.getElementById('mHdFormPlanId');
+                    
+                    if (formRooms) formRooms.value = numRooms;
+                    if (formFinalPrice) formFinalPrice.value = finalPayable;
+                    if (formRoomId) formRoomId.value = radio.dataset.roomId || '';
+                    if (formPlanId) formPlanId.value = radio.value || ''; // radio.value is the plan id
+                    
+                    pdModal.classList.remove('is-hidden');
+                    document.body.style.overflow = 'hidden';
                 }
             };
         }
@@ -340,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (formCheckIn && formCheckIn.value) formData.append('check_in', formCheckIn.value);
         if (formCheckOut && formCheckOut.value) formData.append('check_out', formCheckOut.value);
 
-        fetch('api/hotel-price.php', {
+        fetch('api-hotel-price.php', {
             method: 'POST',
             body: formData
         })
@@ -532,6 +806,93 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 10. Reservation Form Submission ───────────────────────────────
     const detailForm = document.getElementById('mobileHotelDetailForm');
+    
+    // ── Price Details Modal Logic ──────────────────────────────────────────
+    const pdModal = document.getElementById('mHdPriceDetailsModal');
+    const pdOverlay = document.getElementById('mHdPriceDetailsOverlay');
+    const pdCloseBtn = document.getElementById('mHdPriceDetailsCloseBtn');
+    const pdProceedBtn = document.getElementById('mHdBtnProceed');
+    
+    const coModal = document.getElementById('mHdCheckoutModal');
+    const coCloseBtn = document.getElementById('mHdCheckoutCloseBtn');
+    
+    const closePdModal = () => {
+        if (pdModal) {
+            pdModal.classList.add('is-hidden');
+            document.body.style.overflow = '';
+        }
+    };
+    
+    if (pdCloseBtn) pdCloseBtn.addEventListener('click', closePdModal);
+    if (pdOverlay) pdOverlay.addEventListener('click', closePdModal);
+    
+    if (pdProceedBtn) {
+        pdProceedBtn.addEventListener('click', () => {
+            // Close Price Details, Open Checkout
+            if (pdModal) pdModal.classList.add('is-hidden');
+            if (coModal) coModal.classList.remove('is-hidden');
+            
+            // Sync guest counts from guest picker if applicable
+            const mainAdults = document.getElementById('mHdAdultsCounter');
+            const mainChildren = document.getElementById('mHdChildrenCounter');
+            const formAdults = document.getElementById('mHdFormAdults');
+            const formChildren = document.getElementById('mHdFormChildren');
+            if (mainAdults && formAdults) formAdults.value = mainAdults.textContent;
+            if (mainChildren && formChildren) formChildren.value = mainChildren.textContent;
+            
+            // Also ensure selected_room and selected_plan_name are updated in form
+            const formSelectedRoom = document.getElementById('mHdFormSelectedRoom');
+            const formSelectedPlan = document.getElementById('mHdFormSelectedPlanName');
+            const pdRoomName = document.getElementById('mHdDispRoomName');
+            const pdPlanName = document.getElementById('mHdDispPlanName');
+            if (formSelectedRoom && pdRoomName) formSelectedRoom.value = pdRoomName.textContent;
+            if (formSelectedPlan && pdPlanName) formSelectedPlan.value = pdPlanName.textContent;
+
+            // Update Checkout Enquiry Summary Cards
+            const chkCheckIn = document.getElementById('mHdCheckoutSummaryCheckIn');
+            const chkCheckOut = document.getElementById('mHdCheckoutSummaryCheckOut');
+            const chkNights = document.getElementById('mHdCheckoutSummaryNights');
+            const chkGuests = document.getElementById('mHdCheckoutSummaryGuests');
+            const chkRoom = document.getElementById('mHdCheckoutSummaryRoomName');
+            const chkPlan = document.getElementById('mHdCheckoutSummaryPlanName');
+            const chkBase = document.getElementById('mHdCheckoutSummaryBasePrice');
+            const chkTax = document.getElementById('mHdCheckoutSummaryTaxes');
+            const chkTotal = document.getElementById('mHdCheckoutSummaryTotal');
+            
+            if (chkCheckIn) chkCheckIn.textContent = document.getElementById('mHdSidebarCheckIn')?.textContent || '--';
+            if (chkCheckOut) chkCheckOut.textContent = document.getElementById('mHdSidebarCheckOut')?.textContent || '--';
+            
+            if (chkNights) {
+                const nText = document.getElementById('mHdSidebarNights')?.textContent || '1N';
+                const nNum = parseInt(nText, 10) || 1;
+                chkNights.textContent = nNum > 1 ? `${nNum} Nights` : `${nNum} Night`;
+            }
+            
+            if (chkGuests) {
+                const aCnt = parseInt(document.getElementById('mHdAdultsCounter')?.textContent || '2', 10);
+                const rCnt = parseInt(document.getElementById('mHdRoomsCounter')?.textContent || '1', 10);
+                const aStr = aCnt > 1 ? `${aCnt} Adults` : `${aCnt} Adult`;
+                const rStr = rCnt > 1 ? `${rCnt} Rooms` : `${rCnt} Room`;
+                chkGuests.textContent = `${aStr} • ${rStr}`;
+            }
+            
+            if (chkRoom) chkRoom.textContent = document.getElementById('mHdDispRoomName')?.textContent || '--';
+            if (chkPlan) chkPlan.textContent = document.getElementById('mHdDispPlanName')?.textContent || '--';
+            if (chkBase) chkBase.textContent = document.getElementById('mHdSidebarNetRate')?.textContent || '--';
+            if (chkTax) chkTax.textContent = document.getElementById('mHdSidebarTotalTax')?.textContent || 'Included';
+            if (chkTotal) chkTotal.textContent = document.getElementById('mHdSidebarTotalFinal')?.textContent || '--';
+        });
+    }
+    
+    const closeCoModal = () => {
+        if (coModal) {
+            coModal.classList.add('is-hidden');
+            document.body.style.overflow = '';
+        }
+    };
+    
+    if (coCloseBtn) coCloseBtn.addEventListener('click', closeCoModal);
+
     const formMsg    = document.getElementById('mHdFormMsg');
 
     if (detailForm) {
@@ -545,26 +906,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const formData = new FormData(detailForm);
 
+            // Combine First Name and Last Name
+            const firstName = formData.get('guest_name') || '';
+            const lastName = formData.get('guest_last_name') || '';
+            formData.set('guest_name', `${firstName} ${lastName}`.trim());
+
             fetch(detailForm.action, {
                 method: 'POST',
                 body:   formData,
             })
             .then(res => res.json())
             .then(data => {
-                if (formMsg) {
-                    formMsg.textContent = data.message ?? 'Thank you! We will contact you shortly.';
-                    formMsg.classList.remove('msg--error');
-                    formMsg.classList.add('msg--gold');
+                if (data.success) {
+                    if (formMsg) {
+                        formMsg.textContent = data.message ?? 'Success! Downloading slip...';
+                        formMsg.classList.remove('msg--error');
+                        formMsg.classList.add('msg--gold');
+                    }
+                    
+                    if (data.booking_id) {
+                        window.open('api-download-hotel-inquiry-slip.php?id=' + data.booking_id, '_blank');
+                    }
+                    
+                    setTimeout(() => window.location.reload(), 3000);
+                } else {
+                    if (formMsg) {
+                        formMsg.textContent = data.message || 'Something went wrong. Please try again.';
+                        formMsg.classList.add('msg--error');
+                        formMsg.classList.remove('msg--gold');
+                    }
+                    if (submitBtn) {
+                        submitBtn.disabled    = false;
+                        submitBtn.textContent = 'RESERVE NOW';
+                    }
                 }
-                detailForm.reset();
             })
             .catch(() => {
                 if (formMsg) {
-                    formMsg.textContent = 'Something went wrong. Please try again.';
+                    formMsg.textContent = 'Network error. Please try again.';
                     formMsg.classList.add('msg--error');
+                    formMsg.classList.remove('msg--gold');
                 }
-            })
-            .finally(() => {
                 if (submitBtn) {
                     submitBtn.disabled    = false;
                     submitBtn.textContent = 'RESERVE NOW';

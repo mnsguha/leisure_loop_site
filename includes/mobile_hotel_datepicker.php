@@ -41,9 +41,11 @@
                 }
                 
                 // Days
+                $todayStr = date('Y-m-d');
                 for ($d = 1; $d <= $daysInMonth; $d++) {
                     $dateStr = $monthDate->format('Y-m-') . str_pad((string)$d, 2, '0', STR_PAD_LEFT);
-                    $calendarHtml .= "<div class='mhd-dp-day' data-date='{$dateStr}'>{$d}</div>";
+                    $disabledCls = ($dateStr < $todayStr) ? ' mhd-dp-disabled' : '';
+                    $calendarHtml .= "<div class='mhd-dp-day{$disabledCls}' data-date='{$dateStr}'>{$d}</div>";
                 }
                 
                 $calendarHtml .= "</div>";

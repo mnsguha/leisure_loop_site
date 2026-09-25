@@ -1,8 +1,7 @@
 <?php
 require_once '../config/db.php';
-require_once '../config/recaptcha.php';
-$use_recaptcha = recaptchaIsConfigured();
-$recaptcha_site_key = recaptchaSiteKey();
+require_once '../includes/functions.php';
+csrf_stamp_form();
 require_once '../includes/header.php';
 
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
@@ -120,6 +119,7 @@ $img = strpos($img, 'http') === 0 ? $img : $img;
                     </div>
 
                     <form action="process-lead.php" method="POST" id="sidebarEnquiryForm">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                         <input type="hidden" name="source" value="Journal Sidebar Form">
@@ -167,13 +167,6 @@ $img = strpos($img, 'http') === 0 ? $img : $img;
                                 <label for="phone">Contact Number *</label>
                                 <input type="tel" name="phone" id="phone" placeholder="e.g. +91 99999 99999" class="glass-input" required>
                             </div>
-                            
-                            <input type="hidden" name="enforce_recaptcha" value="1">
-                            <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-                            <div style="margin-top:1rem;">
-                                <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                            </div>
-                            <?php endif; ?>
                             
                             <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                                 <button type="button" class="btn-primary" style="background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.1); width: 40%; padding: 0.9rem; border-radius: 8px; cursor: pointer; font-weight: 700; text-transform: uppercase;" data-action="go-step" data-step="1">

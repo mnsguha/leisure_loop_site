@@ -30,10 +30,6 @@
     <link rel="stylesheet" href="css/mobile-splash.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/mobile-views.css?v=<?php echo time(); ?>">
     <?php endif; ?>
-
-    <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <?php endif; ?>
 </head>
 <body class="<?php echo !empty($body_class) ? $body_class : (!empty($is_home_page) ? 'has-topbar' : 'no-topbar'); ?>">
     <?php
@@ -130,11 +126,11 @@
         <nav class="glass-nav solid-nav-header option-c<?php echo !$show_top_bar ? ' nav-no-topbar' : ''; ?>">
             <div class="container nav-content">
                 <div class="logo">
-                    <a href="index.php" style="text-decoration: none; color: inherit;">
+                    <a href="index.php" class="logo-link-reset">
                         <?php if ($has_site_logo): ?>
                         <img src="<?php echo $site_logo_url; ?>" alt="Leisure Loop Trip" class="site-logo">
                         <?php else: ?>
-                        <span class="logo-text">LEISURE <span style="color: var(--gold);">LOOP</span></span>
+                        <span class="logo-text">LEISURE <span class="text-gold">LOOP</span></span>
                         <?php endif; ?>
                     </a>
                 </div>

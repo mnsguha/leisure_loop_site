@@ -79,7 +79,7 @@
     border: 1px solid rgba(197, 160, 89, 0.4);
     border-radius: 50px;
     color: var(--gold);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.25em;
@@ -113,7 +113,7 @@
 }
 
 .hero-dest-subtitle {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: clamp(1.05rem, 1.6vw, 1.4rem);
     font-weight: 700;
     color: #ffffff;
@@ -233,7 +233,7 @@
     border: none;
     outline: none;
     color: #111827;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.02rem;
     font-weight: 600;
     width: 100%;
@@ -257,7 +257,7 @@
     padding: 14px 36px;
     border: none;
     border-radius: 50px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 700;
     font-size: 0.95rem;
     letter-spacing: 0.08em;
@@ -313,7 +313,7 @@
     gap: 6px;
 }
 .sanctuaries-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.3rem;
     font-weight: 700;
     color: #ffffff;
@@ -437,7 +437,7 @@
     z-index: 2;
 }
 .sanctuary-dest-name {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.18rem;
     font-weight: 800;
     color: #ffffff;
@@ -507,7 +507,7 @@
 }
 
 .trending-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.4rem;
     font-weight: 700;
     color: #ffffff;
@@ -545,7 +545,7 @@
     color: rgba(255, 255, 255, 0.75);
     padding: 9px 22px;
     border-radius: 30px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
@@ -691,7 +691,7 @@
 }
 
 .trending-card-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.32rem;
     font-weight: 700;
     color: #ffffff;
@@ -781,7 +781,7 @@
     color: rgba(255, 255, 255, 0.75);
     padding: 9px 22px;
     border-radius: 30px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
@@ -839,6 +839,7 @@
 
 .theme-strip-heading {
     text-align: center;
+    font-family: var(--font-heading);
     font-size: 0.88rem;
     font-weight: 700;
     color: var(--gold);
@@ -930,7 +931,7 @@
 }
 
 .emt-circle-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.3rem;
     font-weight: 500;
     color: #ffffff;
@@ -941,7 +942,7 @@
 }
 
 .emt-circle-sub {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.78rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.55);
@@ -1056,7 +1057,7 @@
     border: 1.5px solid var(--gold);
     border-radius: 50px;
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.96rem;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -1135,7 +1136,7 @@
     background: rgba(197, 160, 89, 0.15);
     border: 1px solid rgba(197, 160, 89, 0.45);
     color: var(--gold);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.82rem;
     font-weight: 700;
     padding: 5px 14px;
@@ -1161,7 +1162,7 @@
 .package-switcher-tab {
     padding: 11px 32px;
     border-radius: 99px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: 0.92rem;
     text-decoration: none;
@@ -1214,7 +1215,7 @@
     border-radius: 50px;
     padding: 11px 24px 11px 16px;
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.88rem;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -1317,7 +1318,7 @@
 }
 
 .drawer-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.35rem;
     font-weight: 700;
     color: #ffffff;
@@ -1360,7 +1361,7 @@
     background: rgba(5, 10, 20, 0.82);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 700;
     padding: 5px 12px;
@@ -1387,7 +1388,7 @@
 }
 
 .card-tour-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.35rem;
     color: #ffffff;
     font-weight: 700;
@@ -1450,7 +1451,7 @@
     font-size: 1.35rem;
     font-weight: 800;
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
 }
 
 .pricing-block .orig-price {
@@ -1530,7 +1531,7 @@
 }
 
 .trust-card-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.15rem;
     font-weight: 700;
     color: #ffffff;
@@ -1769,7 +1770,7 @@
     font-weight: 800 !important;
     color: #ffffff !important;
     margin-bottom: 1.2rem !important;
-    font-family: 'Playfair Display', serif !important;
+    font-family: var(--font-serif) !important;
     line-height: 1.2 !important;
 }
 

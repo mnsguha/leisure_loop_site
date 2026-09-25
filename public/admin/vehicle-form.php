@@ -10,7 +10,6 @@ $vehicle = [
     'pax_capacity' => 4,
     'luggage_capacity' => 2,
     'ac_type' => 'AC',
-    'price_per_day' => '',
     'image' => '',
     'fuel_type' => 'Petrol',
     'cancellation_policy' => 'Free before 6 hours from the journey time',
@@ -33,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pax_capacity = (int)($_POST['pax_capacity'] ?? 4);
     $luggage_capacity = (int)($_POST['luggage_capacity'] ?? 2);
     $ac_type = $_POST['ac_type'] ?? 'AC';
-    $price_per_day = $_POST['price_per_day'] ?? 0;
     $image = $_POST['image'] ?? '';
     $fuel_type = $_POST['fuel_type'] ?? 'Petrol';
     $cancellation_policy = $_POST['cancellation_policy'] ?? '';
@@ -50,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($id) {
-        $stmt = $pdo->prepare("UPDATE vehicles SET cab_class_id=?, name=?, pax_capacity=?, luggage_capacity=?, ac_type=?, price_per_day=?, image=?, fuel_type=?, cancellation_policy=?, part_payment=?, is_active=? WHERE id=?");
-        $stmt->execute([$cab_class_id, $name, $pax_capacity, $luggage_capacity, $ac_type, $price_per_day, $image, $fuel_type, $cancellation_policy, $part_payment, $is_active, $id]);
+        $stmt = $pdo->prepare("UPDATE vehicles SET cab_class_id=?, name=?, pax_capacity=?, luggage_capacity=?, ac_type=?, image=?, fuel_type=?, cancellation_policy=?, part_payment=?, is_active=? WHERE id=?");
+        $stmt->execute([$cab_class_id, $name, $pax_capacity, $luggage_capacity, $ac_type, $image, $fuel_type, $cancellation_policy, $part_payment, $is_active, $id]);
     } else {
-        $stmt = $pdo->prepare("INSERT INTO vehicles (cab_class_id, name, pax_capacity, luggage_capacity, ac_type, price_per_day, image, fuel_type, cancellation_policy, part_payment, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$cab_class_id, $name, $pax_capacity, $luggage_capacity, $ac_type, $price_per_day, $image, $fuel_type, $cancellation_policy, $part_payment, $is_active]);
+        $stmt = $pdo->prepare("INSERT INTO vehicles (cab_class_id, name, pax_capacity, luggage_capacity, ac_type, image, fuel_type, cancellation_policy, part_payment, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$cab_class_id, $name, $pax_capacity, $luggage_capacity, $ac_type, $image, $fuel_type, $cancellation_policy, $part_payment, $is_active]);
     }
     
     header('Location: vehicles.php');
@@ -103,11 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label>Vehicle Name (e.g. Maruti Swift)</label>
                         <input type="text" name="name" value="<?php echo htmlspecialchars($vehicle['name']); ?>" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Price Per Day (₹)</label>
-                        <input type="number" step="0.01" name="price_per_day" value="<?php echo htmlspecialchars($vehicle['price_per_day']); ?>" required>
                     </div>
                     
                     <div class="form-group">

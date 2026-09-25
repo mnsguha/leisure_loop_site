@@ -34,7 +34,8 @@
             <h2 class="splash-form-title">Join the Journey</h2>
             <p class="splash-form-subtitle">Enter your contact details to start exploring.</p>
 
-            <form id="splash-signup-form" action="/api/v1/leads" method="POST">
+            <form id="splash-signup-form" action="api-submit-lead.php" method="POST">
+                <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <label for="splash-guest-name" class="sr-only">Guest Name</label>
                 <input type="text" id="splash-guest-name" name="name" class="splash-input" placeholder="Guest Name" required>

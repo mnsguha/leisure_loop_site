@@ -5,6 +5,10 @@ if (!isset($pdo) || !$pdo) {
     require_once '../config/db.php';
 }
 
+// Sticky "Enquire Now" bar owns the bottom edge on this page
+// (same convention as mobile_cab_detail / mobile_hotel_detail).
+$hide_bottom_nav = true;
+
 $slug = $_GET['slug'] ?? '';
 if (empty($slug)) {
     header('Location: destinations.php?view=mobile');
@@ -48,8 +52,33 @@ function resolveDestImg(?string $img): string {
     return 'images/dest/' . ltrim($img, '/');
 }
 
-$heroImage = resolveDestImg($destination['cover_image'] ?? $destination['card_image'] ?? '');
 $page_title = htmlspecialchars($destination['name']) . " | Leisure Loop Trip";
+
+// Hero slider slides (auto-scrolling, hotel-detail style): optional video first,
+// then the original destination cover, then story images (deduped by resolved path)
+$hero_cover = !empty($destination['cover_image'])
+    ? $destination['cover_image']
+    : (!empty($destination['card_image']) ? $destination['card_image'] : 'images/placeholder.jpg');
+$hero_candidates = array_filter([
+    $hero_cover,
+    $destination['story_narrative_image']   ?? '',
+    $destination['story_narrative_image_2'] ?? '',
+    $destination['story_narrative_image_3'] ?? '',
+]);
+$hero_images = [];
+$hero_seen   = [];
+foreach ($hero_candidates as $hero_candidate) {
+    $hero_resolved = resolveDestImg($hero_candidate);
+    if (!isset($hero_seen[$hero_resolved])) {
+        $hero_seen[$hero_resolved] = true;
+        $hero_images[] = $hero_resolved;
+    }
+}
+if (empty($hero_images)) {
+    $hero_images = [resolveDestImg($hero_cover)];
+}
+$hero_has_video = !empty($destination['hero_video_url']);
+$hero_slide_count = count($hero_images) + ($hero_has_video ? 1 : 0);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,23 +90,30 @@ $page_title = htmlspecialchars($destination['name']) . " | Leisure Loop Trip";
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="css/mobile-views.css?v=<?= time() ?>">
 </head>
-<body class="mob-dest-body">
+<body class="mob-dest-body mob-dest-detail">
 
     <!-- Hero Header -->
     <div class="mob-dest__hero">
-        <?php if (!empty($destination['hero_video_url'])): ?>
-            <video autoplay loop muted playsinline class="mob-dest__hero-media">
-                <source src="<?= htmlspecialchars($destination['hero_video_url']) ?>" type="video/mp4">
-            </video>
-        <?php else: ?>
-            <img src="<?= htmlspecialchars($heroImage) ?>" alt="<?= htmlspecialchars($destination['name']) ?>" class="mob-dest__hero-media" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
-        <?php endif; ?>
+        <div class="mob-dest__hero-slider" id="mobDestHeroSlider" role="group" aria-label="<?= htmlspecialchars($destination['name']) ?> photos">
+            <?php if ($hero_has_video): ?>
+            <div class="mob-dest__hero-slide">
+                <video autoplay loop muted playsinline class="mob-dest__hero-video">
+                    <source src="<?= htmlspecialchars($destination['hero_video_url']) ?>" type="video/mp4">
+                </video>
+            </div>
+            <?php endif; ?>
+            <?php foreach ($hero_images as $hero_idx => $hero_img): ?>
+            <div class="mob-dest__hero-slide">
+                <img src="<?= htmlspecialchars($hero_img) ?>" alt="<?= htmlspecialchars($destination['name']) ?> photo <?= $hero_idx + 1 ?>" class="mob-dest__hero-img" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+            </div>
+            <?php endforeach; ?>
+        </div>
         <div class="mob-dest__hero-overlay" aria-hidden="true"></div>
 
         <!-- Topbar -->
         <div class="mob-dest__hero-topbar">
             <a href="destinations.php?view=mobile" class="mob-dest__back" aria-label="Back to destinations">
-                <span class="material-symbols-outlined" style="font-size:1.125rem;">arrow_back</span>
+                <span class="material-symbols-outlined icon-back-hero">arrow_back</span>
             </a>
             <span class="mob-dest__category-badge">
                 <?= htmlspecialchars($destination['category'] ?? 'Sanctuary') ?>
@@ -89,6 +125,15 @@ $page_title = htmlspecialchars($destination['name']) . " | Leisure Loop Trip";
             <span class="mob-dest__tagline"><?= htmlspecialchars($destination['tagline'] ?: 'Himalayan Sanctuary') ?></span>
             <h1 class="mob-dest__name"><?= htmlspecialchars($destination['name']) ?></h1>
         </div>
+
+        <?php if ($hero_slide_count > 1): ?>
+        <!-- Slider Dots -->
+        <div class="mob-dest__hero-dots" aria-hidden="true">
+            <?php for ($hero_idx = 0; $hero_idx < $hero_slide_count; $hero_idx++): ?>
+            <span class="mob-dest__hero-dot<?= $hero_idx === 0 ? ' is-active' : '' ?>"></span>
+            <?php endfor; ?>
+        </div>
+        <?php endif; ?>
     </div>
 
     <!-- Quick Facts Grid -->
@@ -136,7 +181,7 @@ $page_title = htmlspecialchars($destination['name']) . " | Leisure Loop Trip";
     <?php if (!empty($sightseeing)): ?>
     <section class="mob-dest__section">
         <div class="mob-dest__section-bar">
-            <div class="mob-dest__section-head" style="margin-bottom:0;">
+            <div class="mob-dest__section-head mob-dest__section-head--flush">
                 <span class="mob-dest__accent-bar mob-dest__accent-bar--sky" aria-hidden="true"></span>
                 <h2 class="mob-dest__section-title--sm">Must Visit Places</h2>
             </div>
@@ -183,7 +228,7 @@ $page_title = htmlspecialchars($destination['name']) . " | Leisure Loop Trip";
     <?php if (!empty($related_packages)): ?>
     <section class="mob-dest__section">
         <div class="mob-dest__section-bar">
-            <div class="mob-dest__section-head" style="margin-bottom:0;">
+            <div class="mob-dest__section-head mob-dest__section-head--flush">
                 <span class="mob-dest__accent-bar mob-dest__accent-bar--emerald" aria-hidden="true"></span>
                 <h2 class="mob-dest__section-title--sm">Curated Tours</h2>
             </div>
@@ -192,7 +237,7 @@ $page_title = htmlspecialchars($destination['name']) . " | Leisure Loop Trip";
         <div class="mob-dest__scroll-row">
             <?php foreach ($related_packages as $pkg): ?>
             <a href="package-detail.php?slug=<?= urlencode($pkg['slug']) ?>&view=mobile" class="app-pkg-card">
-                <div class="app-pkg-img" style="background-image: url('<?= htmlspecialchars(resolveDestImg($pkg['image_url'] ?? '')) ?>');">
+                <div class="app-pkg-img" data-bg="<?= htmlspecialchars(resolveDestImg($pkg['image_url'] ?? '')) ?>">
                     <div class="app-pkg-badge"><?= htmlspecialchars((string)($pkg['nights'] ?? '3')) ?>N / <?= htmlspecialchars((string)($pkg['days'] ?? '4')) ?>D</div>
                     <div class="app-pkg-content">
                         <span class="app-pkg-dest"><?= htmlspecialchars($pkg['destination'] ?? 'TOUR') ?></span>
@@ -214,5 +259,3 @@ $page_title = htmlspecialchars($destination['name']) . " | Leisure Loop Trip";
     </div>
 
     <?php include __DIR__ . '/mobile_footer.php'; ?>
-</body>
-</html>

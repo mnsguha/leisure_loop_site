@@ -1,6 +1,8 @@
 <?php 
-    require_once '../config/db.php';
-    require_once '../includes/data_faqs.php';
+require_once '../config/db.php';
+require_once '../includes/data_faqs.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
     
     $page_title = "Knowledge Base | Leisure Loop Trip";
     

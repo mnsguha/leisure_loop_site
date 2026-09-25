@@ -12,6 +12,11 @@
     --glass: rgba(255, 255, 255, 0.04);
     --glass-border: rgba(255, 255, 255, 0.12);
     --ease: cubic-bezier(0.25, 1, 0.5, 1);
+    --font-title: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-heading: 'Montserrat', sans-serif;
+    --font-serif: var(--font-title), Georgia, serif;
+    --font-sans: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --topbar-h: 38px;   /* Height of the top info strip */
     --nav-h: 70px;      /* Height of the main navigation bar */
 }
@@ -25,7 +30,7 @@
 body {
     background-color: var(--bg);
     color: var(--white);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -47,7 +52,7 @@ body {
 }
 
 h1, h2, h3, .serif {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-weight: 400;
 }
 
@@ -249,7 +254,7 @@ body.has-topbar {
 }
 
 .logo-text {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.5rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -447,7 +452,7 @@ body.has-topbar {
 }
 
 .hero-card h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.6rem;
     margin-bottom: 6px;
     font-weight: 400;
@@ -516,7 +521,7 @@ body.has-topbar {
     padding: 14px 15px 14px 46px;
     border-radius: 4px;
     color: #fff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.9rem;
     outline: none;
     transition: all 0.3s ease;
@@ -606,7 +611,7 @@ body.has-topbar {
     color: #fff;
     outline: none;
     transition: all 0.3s ease;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     letter-spacing: 0.03em;
 }
 
@@ -639,7 +644,7 @@ body.has-topbar {
     font-size: 0.75rem;
     margin-top: 8px;
     transition: all 0.3s ease;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     box-shadow: 0 4px 20px rgba(197,160,89,0.3);
 }
 .btn-card--full {
@@ -690,14 +695,14 @@ body.has-topbar {
     font-size: clamp(3rem, 6vw, 5rem);
     line-height: 1;
     margin-bottom: 40px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-title);
     font-weight: 800;
     text-transform: capitalize;
 }
 
 .hero h1 em {
     font-style: italic;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-weight: 400;
 }
 
@@ -725,6 +730,7 @@ body.has-topbar {
 }
 
 .section-title {
+
     font-size: 3.5rem;
     margin-bottom: 80px;
     line-height: 1.2;
@@ -833,14 +839,14 @@ body.has-topbar {
     font-size: 2rem;
     font-weight: 800;
     color: var(--gold);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
 }
 
 .packages-count small {
     font-size: 0.75rem;
     color: var(--text-dim);
     font-weight: 400;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     margin-left: 10px;
 }
 
@@ -1052,7 +1058,7 @@ body.has-topbar {
 
 .dest-info h3 {
     font-size: 1.6rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     color: #fff;
     margin-bottom: 4px;
 }
@@ -1140,7 +1146,7 @@ body.has-topbar {
 
 .stat-number {
     display: block;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.8rem;
     color: #fff;
     font-weight: 400;
@@ -1219,7 +1225,7 @@ body.has-topbar {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: min(40vw, 600px);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-weight: 400;
     line-height: 1;
     opacity: 0.03;
@@ -1351,7 +1357,7 @@ body.has-topbar {
     pointer-events: none;
     text-transform: uppercase;
     z-index: 1;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     letter-spacing: 0.1em;
 }
 
@@ -1414,7 +1420,7 @@ body.has-topbar {
 
 .pkg-title {
     font-size: 1.4rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     color: #fff;
     line-height: 1.3;
     font-weight: 400;
@@ -1439,7 +1445,7 @@ body.has-topbar {
     color: #fff;
     font-size: 1.25rem;
     margin-left: 8px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
 }
 
     .pkg-btn {
@@ -1587,7 +1593,7 @@ body.has-topbar {
     font-weight: 300;
     letter-spacing: 0.1em;
     color: var(--white);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-style: italic;
     opacity: 0.8;
 }
@@ -1804,7 +1810,7 @@ body.has-topbar {
 
 .dest-text h3 {
     font-size: 2.4rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     margin-bottom: 8px;
     color: white;
     font-weight: 500;
@@ -2002,7 +2008,7 @@ body.has-topbar {
 
 .dest-title-reveal {
     font-size: clamp(4rem, 10vw, 8rem);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     color: white;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
     margin: 0;
@@ -2076,7 +2082,7 @@ body.has-topbar {
 }
 
 .editorial-text {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.35rem;
     line-height: 2.1;
     color: rgba(255,255,255,0.85);
@@ -2088,7 +2094,7 @@ body.has-topbar {
 .editorial-text::first-letter {
     float: left;
     font-size: 5.5rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     color: var(--gold);
     line-height: 0.7;
     margin-right: 20px;
@@ -2107,7 +2113,7 @@ body.has-topbar {
 }
 
 .concierge-card h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.8rem;
     margin-bottom: 20px;
     color: var(--gold);
@@ -2179,7 +2185,7 @@ body.has-topbar {
 }
 
 .sight-info h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.3rem;
     margin-bottom: 10px;
     color: var(--gold);
@@ -2369,7 +2375,7 @@ body.has-topbar {
 .hero-form-row--bar input[type="date"] {
     border: none;
     background: transparent !important;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem;
     color: rgba(255,255,255,0.9);
     width: 100%;
@@ -2485,7 +2491,7 @@ body.has-topbar {
 .horizontal-search-bar input {
     border: none;
     background: transparent !important;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem;
     color: rgba(255,255,255,0.9);
     width: 100%;
@@ -2508,7 +2514,7 @@ body.has-topbar {
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s var(--ease);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     flex-shrink: 0;
@@ -2562,7 +2568,7 @@ body.has-topbar {
     display: block;
     color: rgba(255,255,255,0.9);
     font-size: 0.95rem;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
 }
 
 .popover-label span {
@@ -2606,7 +2612,7 @@ body.has-topbar {
     color: rgba(255,255,255,0.9);
     font-size: 0.95rem;
     pointer-events: none;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
 }
 
 .btn-done-popover {
@@ -2619,7 +2625,7 @@ body.has-topbar {
     border-radius: 10px;
     cursor: pointer;
     font-weight: 700;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-size: 0.85rem;
@@ -3020,7 +3026,7 @@ body.has-topbar {
 }
 
 .promo-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     color: var(--white);
     font-size: 1.25rem;
     font-weight: 700;
@@ -3174,7 +3180,7 @@ body.has-topbar {
 }
 
 .mega-title {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.85rem;
     font-weight: 700;
     margin-bottom: 1.2rem;
@@ -3351,7 +3357,7 @@ body.has-topbar {
 
 .sidebar-title {
     font-size: 1.2rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     color: #fff;
     font-weight: 500;
 }
@@ -3636,7 +3642,7 @@ body.has-topbar {
 
 .catalog-card-title {
     font-size: 1.25rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-weight: 500;
     color: #fff;
     line-height: 1.4;
@@ -3823,7 +3829,7 @@ body.has-topbar {
 }
 
 .accreditations-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.6rem;
     color: var(--gold);
     font-weight: 400;
@@ -4003,7 +4009,7 @@ body.has-topbar {
     top: -5rem;
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 8rem;
     font-weight: 700;
     color: var(--gold);
@@ -4042,7 +4048,7 @@ body.has-topbar {
 }
 
 .process-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.6rem;
     color: #ffffff;
     margin-bottom: 1rem;
@@ -4149,7 +4155,7 @@ body.has-topbar {
 }
 
 .luxe-toc-header h4 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.15rem;
     color: var(--gold);
     margin: 0;
@@ -4223,7 +4229,7 @@ body.has-topbar {
 }
 
 .glass-form-card h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.6rem;
     color: #ffffff;
     margin-top: 0;
@@ -4323,7 +4329,7 @@ select.glass-input option {
 }
 
 .luxe-trust-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.1rem;
     color: #ffffff;
     margin-top: 0;
@@ -4384,7 +4390,7 @@ select.glass-input option {
 .luxe-comparison-table th {
     background: rgba(197, 160, 89, 0.1);
     color: var(--gold);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.15rem;
     padding: 1.2rem;
     text-align: left;
@@ -4843,7 +4849,7 @@ select.glass-input option {
 }
 
 .pkg-title {
-    font-family: var(--font-serif);
+    font-family: var(--font-title);
     font-size: 1.5rem;
     color: white;
     margin: 0;
@@ -5218,7 +5224,7 @@ select.glass-input option {
     background: #050a14;
     border-top: 1px solid rgba(197, 160, 89, 0.15);
     color: var(--text-muted);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     position: relative;
     overflow: hidden;
 }
@@ -5272,7 +5278,7 @@ select.glass-input option {
     color: #fff;
     font-size: 1rem;
     margin: 0 0 0.3rem 0;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
 }
 
 .concierge-info p, .concierge-info a {
@@ -5301,7 +5307,7 @@ select.glass-input option {
 /* Column Headings */
 .footer-heading {
     color: var(--gold);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.2em;
@@ -5328,7 +5334,7 @@ select.glass-input option {
 }
 
 .footer-tagline {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.1rem;
     color: #fff;
     font-style: italic;
@@ -5630,7 +5636,7 @@ html, body { overflow-x: clip !important; width: 100%; max-width: 100vw; }
     position: fixed;
     inset: 0;
     background: rgba(7, 12, 24, 0.85);
-    z-index: 2000;
+    z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5723,7 +5729,7 @@ html, body { overflow-x: clip !important; width: 100%; max-width: 100vw; }
     font-weight: 700;
     font-size: 1.4rem;
     color: var(--gold);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
 }
 
 .enq-stat-label {
@@ -6008,7 +6014,7 @@ select.enq-glass-select option {
 }
 
 .fd-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.5rem;
     color: white;
     margin-bottom: 1.5rem;
@@ -6075,7 +6081,7 @@ select.enq-glass-select option {
 }
 
 .search-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-title);
     font-size: 1.8rem !important;
     color: #fff;
     margin-bottom: 5px;
@@ -6089,4 +6095,31 @@ select.enq-glass-select option {
     margin-bottom: 0;
     position: relative;
     z-index: 55;
+}
+
+/* === data-bg / CSS Custom Property Conversions === */
+
+.stardust-particle {
+    width: var(--sz);
+    height: var(--sz);
+    top: var(--top);
+    left: var(--left);
+    position: absolute;
+}
+
+.fd-badge {
+    background: var(--badge-bg);
+    color: var(--badge-color);
+    border: 1px solid var(--badge-color);
+}
+
+.marquee-photo {
+    transform: rotate(var(--rotation));
+}
+
+.pre-faq-card--gradient {
+    background-image: linear-gradient(to right, rgba(5,10,20,0.95) 0%, rgba(5,10,20,0.7) 40%, rgba(5,10,20,0.2) 100%);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 }

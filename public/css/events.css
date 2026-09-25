@@ -13,7 +13,7 @@
 body {
     background-color: var(--dark-bg);
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
 }
 
 /* --- Hero Section --- */
@@ -70,7 +70,7 @@ body {
 }
 
 .events-hero-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: clamp(2.8rem, 5vw, 4.2rem);
     font-weight: 700;
     color: #ffffff;
@@ -112,7 +112,7 @@ body {
 }
 
 .events-section-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.2rem;
     font-weight: 700;
     color: #ffffff;
@@ -249,7 +249,7 @@ body {
 }
 
 .events-card-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.35rem;
     font-weight: 700;
     color: #ffffff;

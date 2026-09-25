@@ -1,6 +1,7 @@
-<?php 
-    require_once '../config/db.php';
-    require_once '../config/recaptcha.php';
+<?php
+require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
     
     // Detect Mobile
     $useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
@@ -13,8 +14,6 @@
     }
     
     $page_title = "B2B Partner Program | Leisure Loop Trip";
-    $use_recaptcha = recaptchaIsConfigured();
-    $recaptcha_site_key = recaptchaSiteKey();
     include '../includes/header.php';
 ?>
 <link rel="stylesheet" href="css/content-pages.css">
@@ -88,7 +87,8 @@
         </div>
 
         <div class="b2b-form-wrapper">
-            <form id="b2bForm" action="../api/submit-lead.php" method="POST" class="js-lead-form">
+            <form id="b2bForm" action="api-submit-lead.php" method="POST" class="js-lead-form">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                 
@@ -139,13 +139,6 @@
                 <!-- Hidden field to hold the combined message -->
                 <input type="hidden" name="message" id="b2b_combined_message" value="">
                 <!-- Hidden fields for tracking source -->
-                <input type="hidden" name="enforce_recaptcha" value="1">
-                <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-                <div class="form-group-float recaptcha-shell" style="margin-bottom: 1.5rem;">
-                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                </div>
-                <?php endif; ?>
-
                 <button type="submit" class="btn-gold" style="width: 100%; border: none; font-size: 1.1rem; letter-spacing: 0.1em; margin-top: 1rem;">
                     SUBMIT REGISTRATION
                 </button>

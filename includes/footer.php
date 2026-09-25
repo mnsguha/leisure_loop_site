@@ -65,7 +65,7 @@
                         <?php if ($has_site_logo): ?>
                         <img src="<?php echo $site_logo_url; ?>" alt="Leisure Loop Trip" class="site-logo-footer">
                         <?php else: ?>
-                        <span class="logo-text" style="display:block; margin-bottom:1.5rem;">LEISURE <span class="accent">LOOP</span></span>
+                        <span class="logo-text footer-logo-block">LEISURE <span class="accent">LOOP</span></span>
                         <?php endif; ?>
                         
                         <div class="footer-tagline">Leisure Loop Trip Pvt Ltd</div>

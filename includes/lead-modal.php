@@ -4,7 +4,8 @@
     <div class="modal-glass">
         <button class="modal-close" data-action="close-modal" aria-label="Close modal">&times;</button>
         
-        <form id="<?= $pfx ?>travelPlannerForm" action="/api/v1/leads" method="POST" class="js-lead-form">
+        <form id="<?= $pfx ?>travelPlannerForm" action="api-submit-lead.php" method="POST" class="js-lead-form">
+            <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
             <input type="hidden" name="source" value="Bespoke Planner Modal">
             <div class="planner-steps">

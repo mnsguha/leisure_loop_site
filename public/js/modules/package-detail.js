@@ -350,6 +350,7 @@ function openPackageCheckoutModal() {
     if (!modal) return;
     
     modal.classList.add('is-active');
+    document.body.classList.add('scroll-lock');
     
     // Synchronize travel date with search bar and block past dates
     const travelDateInput = document.getElementById('modal_travel_date_input');
@@ -385,6 +386,7 @@ function openPackageCheckoutModal() {
 function closePackageCheckoutModal() {
     const modal = document.getElementById('packageCheckoutModal');
     if (modal) modal.classList.remove('is-active');
+    document.body.classList.remove('scroll-lock');
 }
 
 function updateModalSummaryPrice() {

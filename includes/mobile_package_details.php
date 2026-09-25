@@ -14,9 +14,6 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?php echo $page_title; ?></title>
-    <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <?php endif; ?>
     <link rel="stylesheet" href="css/vendor/leaflet.css" />
     <script src="js/vendor/leaflet.js"></script>
     <link rel="stylesheet" href="css/mobile-views.css?v=<?= time() ?>">
@@ -277,7 +274,7 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
                  role="button"
                  tabindex="0">
                 <span class="mob-pkg__selector-capacity">
-                    <span class="material-symbols-outlined" style="font-size:0.75rem;vertical-align:middle;">group</span> <?php echo $cab['seats']; ?>
+                    <span class="material-symbols-outlined icon-xs-inline">group</span> <?php echo $cab['seats']; ?>
                 </span>
                 <span class="mob-pkg__selector-name"><?php echo htmlspecialchars($cab['name']); ?></span>
                 <div class="m-selector-indicator">
@@ -300,7 +297,7 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
                     <img src="<?php echo htmlspecialchars($cab['img']); ?>" class="mob-pkg__detail-img" alt="<?php echo htmlspecialchars($cab['name']); ?>">
                     <div class="mob-pkg__detail-img-overlay" aria-hidden="true"></div>
                     <div class="mob-pkg__detail-img-badge mob-pkg__detail-img-badge--white">
-                        <span class="material-symbols-outlined" style="font-size:0.75rem;color:#c5a059;">group</span> <?php echo $cab['seats']; ?>
+                        <span class="material-symbols-outlined icon-xs-gold">group</span> <?php echo $cab['seats']; ?>
                     </div>
                 </div>
                 <div class="mob-pkg__detail-body">
@@ -391,7 +388,7 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
             $parts = explode(',', $mc);
             $fallback = (count($parts) === 2) ? ((float)trim($parts[0])) . ',' . ((float)trim($parts[1])) : '27.3314,88.6138';
             ?>
-            <div id="tourMap" style="width: 100%; height: 100%;" data-itinerary='<?php echo htmlspecialchars(json_encode(array_values($itinerary)), ENT_QUOTES, 'UTF-8'); ?>' data-fallback-coords="<?php echo htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8'); ?>"></div>
+            <div id="tourMap" class="map-full" data-itinerary='<?php echo htmlspecialchars(json_encode(array_values($itinerary)), ENT_QUOTES, 'UTF-8'); ?>' data-fallback-coords="<?php echo htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8'); ?>"></div>
         </div>
     </div>
 
@@ -445,7 +442,7 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
     </div>
     <?php endif; ?>
 
-    <div style="height: 140px;"></div> <!-- Spacer for Sticky CTA -->
+    <div class="spacer-cta"></div> <!-- Spacer for Sticky CTA -->
 
     <!-- Sticky Bottom CTA -->
     <div class="sticky-cta">
@@ -471,6 +468,7 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
 
         <div class="modal-body m-enquiry-sheet-body">
             <form action="api-submit-package-booking.php" method="POST" id="mobileEnquiryForm">
+                <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="package_id" value="<?php echo (int)($pkg['id'] ?? 0); ?>">
                 <input type="hidden" name="package_title" value="<?php echo htmlspecialchars($pkg['title']); ?>">
@@ -592,7 +590,7 @@ $page_title = htmlspecialchars($pkg['title']) . " | Leisure Loop";
                     </div>
                 </div>
 
-                <div style="height: 6rem;"></div> <!-- Spacer for Sticky Sheet Footer -->
+                <div class="spacer-form"></div> <!-- Spacer for Sticky Sheet Footer -->
 
                 <div id="mModalFormMsg" class="p-form-feedback"></div>
 

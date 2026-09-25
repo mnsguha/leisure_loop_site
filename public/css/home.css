@@ -22,7 +22,7 @@
     font-size: 2.8rem;
     margin: 0.5rem 0 0 0;
     font-weight: 500;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     color: white;
 }
 
@@ -305,7 +305,7 @@
 }
 
 .ad-brand-text {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.2rem;
     font-weight: 700;
     color: #fff;
@@ -474,7 +474,7 @@
 }
 
 .theme-pill-name {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.85rem;
     font-weight: 600;
     color: #ffffff;
@@ -558,7 +558,7 @@
     pointer-events: none;
 }
 .circle-theme-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.35rem;
     font-weight: 500;
     color: #ffffff;
@@ -646,7 +646,7 @@
 }
 
 .distinction-brand-col h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.85rem;
     font-weight: 400;
     color: #ffffff;
@@ -655,7 +655,7 @@
 }
 
 .distinction-brand-col p {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.92rem;
     color: rgba(255, 255, 255, 0.55);
     line-height: 1.7;
@@ -669,7 +669,7 @@
     min-height: 48px;
     padding: 0.5rem 0;
     color: var(--gold);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -724,7 +724,7 @@
 }
 
 .distinction-num {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.9rem;
     font-weight: 600;
     color: var(--gold);
@@ -765,7 +765,7 @@
 }
 
 .distinction-item h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.35rem;
     font-weight: 500;
     color: #ffffff;
@@ -774,7 +774,7 @@
 }
 
 .distinction-item p {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.86rem;
     color: rgba(255, 255, 255, 0.45);
     line-height: 1.68;
@@ -828,7 +828,7 @@
     margin-bottom: 3rem;
 }
 .accreditations-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.4rem;
     font-weight: 500;
     color: var(--gold);
@@ -969,7 +969,7 @@
 }
 
 .home-journal-section .section-header-centered h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 3.2rem;
     color: #ffffff;
     margin: 0 auto;
@@ -1067,7 +1067,7 @@
 }
 
 .journal-card h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.2rem;
     color: #ffffff;
     margin: 0 0 0.8rem 0;
@@ -1193,11 +1193,11 @@
     margin-bottom: 0.5rem;
     opacity: 0.4;
     line-height: 0.5;
-    font-family: serif;
+    font-family: var(--font-serif);
 }
 
 .marquee-quote-text {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.45rem;
     color: #fff;
     line-height: 1.5;
@@ -1208,7 +1208,7 @@
 .marquee-client-name {
     color: var(--gold);
     margin: 0 0 0.4rem 0;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.95rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -1478,7 +1478,7 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 2rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.5rem;
     color: var(--gold);
     box-shadow: 0 10px 30px rgba(212,175,55,0.1);
@@ -1494,14 +1494,14 @@
     object-fit: contain;
 }
 .company-name {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.2rem;
     color: white;
     margin-bottom: 1rem;
 }
 .company-desc {
     color: #cbd5e1;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 2rem;
@@ -1804,7 +1804,7 @@
 }
 
 .process-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.3rem;
     font-weight: 500;
     color: #ffffff;
@@ -1812,7 +1812,7 @@
 }
 
 .process-text {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.88rem;
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.7;
@@ -2027,7 +2027,7 @@
 }
 
 .newsletter-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: clamp(1.8rem, 4vw, 2.8rem);
     font-weight: 600;
     color: #ffffff;
@@ -2036,7 +2036,7 @@
 }
 
 .newsletter-desc {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.6);
     line-height: 1.7;
@@ -2059,7 +2059,7 @@
     border-radius: 50px;
     padding: 0.9rem 1.6rem;
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.95rem;
     outline: none;
     transition: border-color 0.3s ease, background 0.3s ease;
@@ -2200,14 +2200,14 @@
 }
 
 .difference-card h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.4rem;
     color: #ffffff;
     margin-bottom: 1rem;
 }
 
 .difference-card p {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.95rem;
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.6;

@@ -28,7 +28,7 @@ include "../includes/header.php";
                     <label for="desktop-oneway-pickup">From (Pick-up)</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">location_on</span>
-                        <input type="text" id="desktop-oneway-pickup" class="search-input" name="pickup_location" placeholder="Enter Airport or City" required>
+                        <input type="text" id="desktop-oneway-pickup" class="search-input" name="pickup_location" placeholder="Enter Airport or City" required aria-required="true">
                     </div>
                 </div>
                 <div class="swap-icon" data-action="swap-locations" aria-label="Swap pickup and drop locations">
@@ -38,7 +38,7 @@ include "../includes/header.php";
                     <label for="desktop-oneway-drop">To (Drop-off)</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">location_on</span>
-                        <input type="text" id="desktop-oneway-drop" class="search-input" name="drop_location" placeholder="Destination or Hotel" required>
+                        <input type="text" id="desktop-oneway-drop" class="search-input" name="drop_location" placeholder="Destination or Hotel" required aria-required="true">
                     </div>
                 </div>
                 <div class="search-form-group">
@@ -46,7 +46,7 @@ include "../includes/header.php";
                     <div class="cabs-datetime-row">
                         <div class="input-with-icon cabs-datetime-group">
                             <span class="material-symbols-outlined">calendar_month</span>
-                            <input type="date" id="desktop-oneway-date" class="search-input" name="travel_date" min="<?= $today_date ?>" required>
+                            <input type="date" id="desktop-oneway-date" class="search-input" name="travel_date" min="<?= $today_date ?>" required aria-required="true">
                         </div>
                         <div class="input-with-icon cabs-datetime-group">
                             <label for="desktop-oneway-time" class="sr-only">Pick-up Time</label>
@@ -85,7 +85,7 @@ include "../includes/header.php";
                     <label for="desktop-hourly-pickup">Pick-up Location</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">location_on</span>
-                        <input type="text" id="desktop-hourly-pickup" class="search-input" name="pickup_location" placeholder="Select pick-up location, hotel, etc." required>
+                        <input type="text" id="desktop-hourly-pickup" class="search-input" name="pickup_location" placeholder="Select pick-up location, hotel, etc." required aria-required="true">
                     </div>
                 </div>
                 <div class="search-form-group">
@@ -93,7 +93,7 @@ include "../includes/header.php";
                     <div class="cabs-datetime-row">
                         <div class="input-with-icon cabs-datetime-group">
                             <span class="material-symbols-outlined">calendar_month</span>
-                            <input type="date" id="desktop-hourly-date" class="search-input" name="travel_date" min="<?= $today_date ?>" required>
+                            <input type="date" id="desktop-hourly-date" class="search-input" name="travel_date" min="<?= $today_date ?>" required aria-required="true">
                         </div>
                         <div class="input-with-icon cabs-datetime-group">
                             <label for="desktop-hourly-time" class="sr-only">Pick-up Time</label>
@@ -106,12 +106,13 @@ include "../includes/header.php";
                     <label for="desktop-hourly-duration">Rent For</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">timelapse</span>
-                        <select id="desktop-hourly-duration" class="search-input" name="duration" required>
+                        <select id="desktop-hourly-duration" class="search-input" name="duration" required aria-required="true">
                             <option value="" disabled selected>Select duration</option>
-                            <option value="4 Hrs / 40 Kms">4 Hrs / 40 Kms</option>
-                            <option value="8 Hrs / 80 Kms">8 Hrs / 80 Kms</option>
-                            <option value="12 Hrs / 120 Kms">12 Hrs / 120 Kms</option>
-                            <option value="24 Hrs (Full Day)">24 Hrs (Full Day)</option>
+                            <?php if (!empty($cab_durations)): ?>
+                                <?php foreach ($cab_durations as $d): ?>
+                                    <option value="<?php echo (int)$d['hours']; ?>"><?php echo htmlspecialchars($d['label']); ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                 </div>
@@ -145,21 +146,21 @@ include "../includes/header.php";
                     <label for="desktop-itinerary-pickup">Start Location</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">location_on</span>
-                        <input type="text" id="desktop-itinerary-pickup" class="search-input" name="pickup_location" placeholder="e.g. Bagdogra Airport" required>
+                        <input type="text" id="desktop-itinerary-pickup" class="search-input" name="pickup_location" placeholder="e.g. Bagdogra Airport" required aria-required="true">
                     </div>
                 </div>
                 <div class="search-form-group">
                     <label for="desktop-itinerary-start">Start Date</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">calendar_month</span>
-                        <input type="date" class="search-input" name="travel_date" id="desktop-itinerary-start" min="<?= $today_date ?>" required>
+                        <input type="date" class="search-input" name="travel_date" id="desktop-itinerary-start" min="<?= $today_date ?>" required aria-required="true">
                     </div>
                 </div>
                 <div class="search-form-group">
                     <label for="desktop-itinerary-end">End Date</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">event</span>
-                        <input type="date" class="search-input" name="return_date" id="desktop-itinerary-end" min="<?= $today_date ?>" required>
+                        <input type="date" class="search-input" name="return_date" id="desktop-itinerary-end" min="<?= $today_date ?>" required aria-required="true">
                     </div>
                 </div>
                 <div class="search-form-group">
@@ -182,7 +183,7 @@ include "../includes/header.php";
                     <label for="desktop-itinerary-details">Itinerary Plan / Route Details</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">route</span>
-                        <input type="text" id="desktop-itinerary-details" class="search-input" name="itinerary_details" placeholder="e.g. Day 1: Darjeeling, Day 2-3: Gangtok, Day 4: Drop at NJP" required>
+                        <input type="text" id="desktop-itinerary-details" class="search-input" name="itinerary_details" placeholder="e.g. Day 1: Darjeeling, Day 2-3: Gangtok, Day 4: Drop at NJP" required aria-required="true">
                     </div>
                 </div>
             </div>
@@ -204,12 +205,16 @@ include "../includes/header.php";
             <a href="cab-detail.php?id=<?php echo $cc['id']; ?>" class="fleet-card-link">
                 <div class="fleet-card">
                     <?php $img_path = !empty($cc['image']) ? (preg_match('/^https?:\/\//i', $cc['image']) ? $cc['image'] : ltrim($cc['image'], '/')) : 'assets/img/pkg.jpg'; ?>
-                    <img src="<?php echo htmlspecialchars($img_path); ?>" alt="<?php echo htmlspecialchars($cc['name']); ?>" class="fleet-img">
+                    <img src="<?php echo htmlspecialchars($img_path); ?>" alt="<?php echo htmlspecialchars($cc['name']); ?>" class="fleet-img" onerror="if(!this.dataset.fallbackDone){this.dataset.fallbackDone='1';this.src='assets/img/pkg.jpg';}">
                     <div class="fleet-info">
                         <h3><?php echo htmlspecialchars($cc['name']); ?></h3>
                         <div class="meta"><?php echo htmlspecialchars($cc['description']); ?></div>
                         <div class="fleet-price">
-                            <div class="price-tag">&#8377;<?php echo number_format($cc['starting_price']); ?> <span>/ day onwards</span></div>
+                            <?php if ($cc['min_rate'] !== null): ?>
+                            <div class="price-tag">&#8377;<?php echo number_format($cc['min_rate']); ?> <span>/ day onwards</span></div>
+                            <?php else: ?>
+                            <div class="price-tag"><span>Contact for pricing</span></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -282,21 +287,22 @@ include "../includes/header.php";
 </div>
 
 <!-- Contact Modal -->
-<div class="cabs-modal-overlay" id="desktop-contactModal">
+<div class="cabs-modal-overlay" id="desktop-contactModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="cabs-modal-content">
         <span class="cabs-modal-close" data-action="close-modal" data-target="#desktop-contactModal">&times;</span>
         <h3 class="modal-title">Almost there!</h3>
         <p class="modal-subtitle">Where should we send your booking confirmation and details?</p>
         
         <form id="desktop-finalCabSubmitForm">
+            <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="search-form-group cabs-modal-field">
                 <label for="desktop-cab-guest-name">Guest Name *</label>
-                <input type="text" id="desktop-cab-guest-name" class="search-input" name="name" required placeholder="Enter your full name">
+                <input type="text" id="desktop-cab-guest-name" class="search-input" name="name" required aria-required="true" placeholder="Enter your full name">
             </div>
             <div class="search-form-group cabs-modal-field">
                 <label for="desktop-cab-guest-phone">Phone Number *</label>
-                <input type="tel" id="desktop-cab-guest-phone" class="search-input" name="phone" required placeholder="+91 xxxxx xxxxx">
+                <input type="tel" id="desktop-cab-guest-phone" class="search-input" name="phone" required aria-required="true" placeholder="+91 xxxxx xxxxx">
             </div>
             <div class="search-form-group cabs-modal-field-lg">
                 <label for="desktop-cab-guest-email">Email Address</label>

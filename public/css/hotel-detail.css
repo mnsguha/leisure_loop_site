@@ -13,7 +13,7 @@
 body {
     background-color: var(--bg-dark);
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
 }
 
 /* ── Hotel Detail Page: Make nav scroll naturally so search bar can stick at top ── */
@@ -225,7 +225,7 @@ body {
 }
 
 .detail-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.2rem;
     margin: 0 0 8px;
 }
@@ -312,7 +312,7 @@ body {
 }
 
 .about-section h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.4rem;
     color: var(--gold);
     margin: 0 0 15px;
@@ -531,7 +531,13 @@ body {
 
 .price-tax {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 2px;
+}
+
+.price-per-night {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
     margin-bottom: 12px;
 }
 
@@ -741,13 +747,18 @@ body {
 
 .modal-left {
     width: 60%;
+    min-height: 0;
     padding: 25px;
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .modal-right {
     width: 40%;
+    min-height: 0;
     padding: 25px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background: rgba(0, 0, 0, 0.25);
     border-left: 1px solid var(--border-color);
 }
@@ -897,7 +908,7 @@ body {
 .h-modal-date-col--right { text-align: right; align-items: flex-end; }
 .h-modal-date-label { font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px; font-weight: 600; }
 .h-modal-date-label .material-symbols-outlined { font-size: 13px; color: var(--gold, #c5a059); }
-.h-modal-date-val { font-size: 0.75rem; font-weight: 700; color: #ffffff; font-family: 'Inter', sans-serif; letter-spacing: 0.02em; }
+.h-modal-date-val { font-size: 0.75rem; font-weight: 700; color: #ffffff; font-family: var(--font-sans); letter-spacing: 0.02em; }
 .h-modal-nights-pill { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(197, 160, 89, 0.12); border: 1px solid rgba(197, 160, 89, 0.45); color: var(--gold, #c5a059); font-size: 0.6rem; font-weight: 700; flex-shrink: 0; margin: 0 8px; }
 .h-modal-nights-pill .material-symbols-outlined { font-size: 12px; margin-bottom: -2px; }
 
@@ -906,15 +917,15 @@ body {
 .h-modal-amenity-item { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; }
 .h-modal-amenity-item .material-symbols-outlined { font-size: 18px; color: var(--gold, #c5a059); }
 .h-modal-amenity-item span:last-child { font-size: 0.62rem; color: rgba(255, 255, 255, 0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-.h-modal-content { background: #1a2533; width: 90%; max-width: 900px; border-radius: 8px; overflow: hidden; display: flex; max-height: 90vh; border: 1px solid rgba(255,255,255,0.1); }
-.h-modal-left { width: 65%; padding: 30px; overflow-y: auto; background: rgba(255,255,255,0.05);}
-.h-modal-right { width: 35%; padding: 30px; background: rgba(0,0,0,0.2); border-left: 1px solid rgba(255,255,255,0.1); }
+.h-modal-content { background: #1a2533; width: 90%; max-width: 1100px; border-radius: 8px; overflow: hidden; display: flex; max-height: 90vh; border: 1px solid rgba(255,255,255,0.1); }
+.h-modal-left { width: 60%; min-height: 0; padding: 30px; overflow-y: auto; overscroll-behavior: contain; background: rgba(255,255,255,0.05);}
+.h-modal-right { width: 40%; min-height: 0; padding: 30px; overflow-y: auto; overscroll-behavior: contain; background: rgba(0,0,0,0.2); border-left: 1px solid rgba(255,255,255,0.1); }
 .h-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.h-modal-header h2 { margin: 0; font-size: 1.4rem; color: var(--gold); font-family: 'Playfair Display', serif; }
+.h-modal-header h2 { margin: 0; font-size: 1.4rem; color: var(--gold); font-family: var(--font-serif); }
 .h-close-modal { font-size: 1.5rem; cursor: pointer; color: rgba(255,255,255,0.5); }
 .h-close-modal:hover { color: #fff; }
 .h-form-section { border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; margin-bottom: 20px; background: rgba(0,0,0,0.2); }
-.h-form-section h3 { margin: 0 0 15px; font-size: 1.1rem; color: #fff; font-family: 'Playfair Display', serif; }
+.h-form-section h3 { margin: 0 0 15px; font-size: 1.1rem; color: #fff; font-family: var(--font-serif); }
 .h-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
 .h-form-group { margin-bottom: 15px; }
 .h-form-group label { display: block; font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 5px; }
@@ -923,7 +934,41 @@ body {
 .h-btn-proceed:hover { opacity: 0.9; }
 
 /* Right Summary Styles */
-.h-modal-summary-title { color: var(--gold); margin: 0 0 20px; font-family: 'Playfair Display', serif; font-size: 1.05rem; }
+.h-modal-summary-title { color: var(--gold); margin: 0 0 20px; font-family: var(--font-serif); font-size: 1.05rem; }
+
+.h-summary-room-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.h-summary-room-img {
+    width: 72px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(197, 160, 89, 0.35);
+    background: rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+.h-summary-room-img[hidden] {
+    display: none;
+}
+
+.h-summary-room-text {
+    min-width: 0;
+}
+
+.h-summary-room-text .selected-room-name {
+    margin-bottom: 4px;
+}
+
+.h-summary-room-text .selected-plan-name {
+    margin-bottom: 0;
+}
+
 .h-modal-pkg-title { color: #fff; font-size: 0.95rem; margin: 0 0 5px; }
 .h-modal-pkg-code { color: rgba(255,255,255,0.6); font-size: 0.75rem; margin: 0 0 20px; }
 .h-modal-details-box { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -933,6 +978,30 @@ body {
 .h-modal-detail-val { color: #fff; font-weight: 600; font-size: 0.8rem; }
 .h-modal-total-row { display: flex; justify-content: space-between; align-items: baseline; }
 .h-modal-total-label { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
-.h-modal-total-val { color: var(--gold); font-size: 1.25rem; font-weight: bold; font-family: 'Playfair Display', serif; }
+.h-modal-total-val { color: var(--gold); font-size: 1.25rem; font-weight: bold; font-family: var(--font-serif); }
 .h-modal-note { text-align: right; margin-top: 5px; color: rgba(255,255,255,0.5); font-size: 0.75rem; }
 
+/* --- Sidebar Price Breakdown Utilities --- */
+.sidebar-row-net {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.sidebar-row-gst {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+.sidebar-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 12px 0;
+}
+.sidebar-row.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--gold);
+}

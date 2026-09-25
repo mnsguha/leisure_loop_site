@@ -1,11 +1,17 @@
 <?php
 require_once '../config/db.php';
+require_once '../includes/functions.php';
 require_once '../includes/fpdf/fpdf.php';
 
 $booking_id = isset($_GET['id']) ? trim($_GET['id']) : '';
 
 if (!$booking_id || !$pdo) {
     die("Invalid booking ID");
+}
+
+if (!pdf_allowed('hotel', $booking_id)) {
+    http_response_code(403);
+    die("Access denied.");
 }
 
 $stmt = $pdo->prepare("

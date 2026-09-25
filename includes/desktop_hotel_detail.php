@@ -2,7 +2,7 @@
 // includes/desktop_hotel_detail.php
 include "../includes/header.php";
 ?>
-<link rel="stylesheet" href="css/hotel-detail.css">
+<link rel="stylesheet" href="css/hotel-detail.css?v=2">
 
 <!-- Top Search Bar -->
 <div class="search-bar-container">
@@ -18,11 +18,11 @@ include "../includes/header.php";
         </div>
         <div class="search-input-group">
             <label class="group-label" for="desktop-inputCheckIn">CHECK-IN</label>
-            <input type="date" id="desktop-inputCheckIn" value="<?php echo htmlspecialchars($check_in); ?>" class="pointer-input">
+            <input type="date" id="desktop-inputCheckIn" value="<?php echo htmlspecialchars($check_in); ?>" min="<?php echo date('Y-m-d'); ?>" class="pointer-input">
         </div>
         <div class="search-input-group">
             <label class="group-label" for="desktop-inputCheckOut">CHECK-OUT</label>
-            <input type="date" id="desktop-inputCheckOut" value="<?php echo htmlspecialchars($check_out); ?>" class="pointer-input">
+            <input type="date" id="desktop-inputCheckOut" value="<?php echo htmlspecialchars($check_out); ?>" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" class="pointer-input">
         </div>
         <div class="search-input-group" id="desktop-guestsContainer">
             <label class="group-label" for="desktop-displayGuests">ROOMS & GUESTS</label>
@@ -215,8 +215,15 @@ include "../includes/header.php";
                     
                     <div class="room-plans-right">
                         <?php foreach($room['plans'] as $plan): 
-                            $default_rate = !empty($plan['date_rates']) ? $plan['date_rates'][0]['base_rate_2_pax'] : 0;
-                            $final_price = $default_rate;
+                            $default_rate = !empty($plan['current_rate']) ? $plan['current_rate']['base_rate_2_pax'] : 0;
+                            $tax_est = 0;
+                            if ($default_rate <= 1000) {
+                                $tax_est = 0;
+                            } else if ($default_rate <= 7500) {
+                                $tax_est = $default_rate * 0.05;
+                            } else {
+                                $tax_est = $default_rate * 0.18;
+                            }
                         ?>
                         <div class="plan-row">
                             <div class="plan-details">
@@ -232,10 +239,11 @@ include "../includes/header.php";
                             </div>
                             <div class="plan-pricing">
                                 <div class="pricing-col" id="desktop-price-container-<?php echo $plan['id']; ?>">
-                                    <div class="price-final" id="desktop-final-<?php echo $plan['id']; ?>"><?php echo $final_price > 0 ? '₹' . number_format($final_price) : 'N/A'; ?></div>
-                                    <div class="price-tax">Avg Per Night<br>(Incl Taxes)</div>
+                                    <div class="price-final" id="desktop-final-<?php echo $plan['id']; ?>"><?php echo $default_rate > 0 ? '₹' . number_format($default_rate) : 'N/A'; ?></div>
+                                    <div class="price-tax" id="desktop-tax-<?php echo $plan['id']; ?>">+ ₹<?php echo number_format($tax_est); ?> Taxes &amp; fees</div>
+                                    <div class="price-per-night">Per night</div>
                                 </div>
-                                <button class="btn-add-cart" id="desktop-btn-add-<?php echo $plan['id']; ?>" data-action="select-plan" data-plan-id="<?php echo $plan['id']; ?>" data-room-id="<?php echo $room['id']; ?>" data-room-name="<?php echo htmlspecialchars($room['room_type_name'], ENT_QUOTES); ?>" data-plan-name="<?php echo htmlspecialchars($plan['plan_name'], ENT_QUOTES); ?>">SELECT</button>
+                                <button class="btn-add-cart" id="desktop-btn-add-<?php echo $plan['id']; ?>" data-action="select-plan" data-plan-id="<?php echo $plan['id']; ?>" data-room-id="<?php echo $room['id']; ?>" data-room-name="<?php echo htmlspecialchars($room['room_type_name'], ENT_QUOTES); ?>" data-plan-name="<?php echo htmlspecialchars($plan['plan_name'], ENT_QUOTES); ?>" data-room-image="<?php echo htmlspecialchars($main_img, ENT_QUOTES); ?>">SELECT</button>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -260,8 +268,6 @@ include "../includes/header.php";
 
                 <div id="desktop-cartFull" class="hidden">
                     <div class="selected-hotel-name"><?php echo htmlspecialchars($hotel['name']); ?>, <?php echo htmlspecialchars($hotel['place']); ?></div>
-                    <div class="selected-room-name" id="desktop-dispRoomName">PREMIUM ROOM</div>
-                    <div class="selected-plan-name" id="desktop-dispPlanName">Room Only</div>
                     
                     <div class="date-summary">
                         <?php 
@@ -283,9 +289,21 @@ include "../includes/header.php";
                             <div class="value" id="desktop-sidebarCheckOut"><?php echo date('M d', strtotime($check_out)); ?></div>
                         </div>
                     </div>
+
+                    <div class="selected-room-name" id="desktop-dispRoomName">PREMIUM ROOM</div>
+                    <div class="selected-plan-name" id="desktop-dispPlanName">Room Only</div>
                     
                     <div class="price-breakdown">
-                        <div class="total-row">
+                        <div class="sidebar-row sidebar-row-net">
+                            <span>Net Rate :</span>
+                            <span id="desktop-sidebarNetRate">₹0.00</span>
+                        </div>
+                        <div class="sidebar-row sidebar-row-gst">
+                            <span>GST :</span>
+                            <span id="desktop-sidebarTotalTax">+ ₹0 Taxes &amp; fees</span>
+                        </div>
+                        <div class="sidebar-divider"></div>
+                        <div class="sidebar-row total-row">
                             <span>TOTAL PAYABLE :</span>
                             <span id="desktop-sidebarTotalFinal">₹0.00</span>
                         </div>
@@ -301,8 +319,8 @@ include "../includes/header.php";
 </div>
 
 <!-- Checkout Modal -->
-<div id="desktop-checkoutModal" class="modal-overlay">
-    <div class="h-modal-content">
+<div id="desktop-checkoutModal" class="modal-overlay" data-lenis-prevent>
+    <div class="h-modal-content" data-lenis-prevent>
         <div class="h-modal-left">
             <div class="h-modal-header">
                 <h2>Guest Details</h2>
@@ -310,6 +328,7 @@ include "../includes/header.php";
             </div>
             
             <form id="desktop-checkoutForm">
+                <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="hotel_id" value="<?php echo $hotel['id']; ?>">
                 <input type="hidden" name="type" value="<?php echo $hotel['type']; ?>">
@@ -365,7 +384,6 @@ include "../includes/header.php";
         <div class="h-modal-right">
             <h3 class="h-modal-summary-title">Enquiry Summary</h3>
             <p class="h-modal-pkg-title" id="desktop-modalSummaryHotel"><?php echo htmlspecialchars($hotel['name']); ?></p>
-            <p class="h-modal-pkg-code" id="desktop-modalSummaryRoomPlan">Room</p>
             
             <div class="h-modal-dates-card">
                 <div class="h-modal-date-col">
@@ -382,20 +400,28 @@ include "../includes/header.php";
                 </div>
             </div>
 
-            <div class="h-modal-details-box">
-                <div class="h-modal-detail-row">
-                    <span class="h-modal-detail-label">Base Price</span>
-                    <span class="h-modal-detail-val" id="desktop-modalBasePrice">--</span>
-                </div>
-                <div class="h-modal-detail-row">
-                    <span class="h-modal-detail-label">Taxes & Fees</span>
-                    <span class="h-modal-detail-val" id="desktop-modalTaxes">Included</span>
+            <div class="h-summary-room-head">
+                <img id="desktop-modalRoomImg" class="h-summary-room-img" alt="" hidden>
+                <div class="h-summary-room-text">
+                    <div class="selected-room-name" id="desktop-modalRoomName">PREMIUM ROOM</div>
+                    <div class="selected-plan-name" id="desktop-modalPlanName">Room Only</div>
                 </div>
             </div>
-            
-            <div class="h-modal-total-row">
-                <span class="h-modal-total-label">Total Payable</span>
-                <span class="h-modal-total-val" id="desktop-modalSummaryTotal">--</span>
+
+            <div class="price-breakdown">
+                <div class="sidebar-row sidebar-row-net">
+                    <span>Net Rate :</span>
+                    <span id="desktop-modalBasePrice">--</span>
+                </div>
+                <div class="sidebar-row sidebar-row-gst">
+                    <span>GST :</span>
+                    <span id="desktop-modalTaxes">Included</span>
+                </div>
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-row total-row">
+                    <span>TOTAL PAYABLE :</span>
+                    <span id="desktop-modalSummaryTotal">--</span>
+                </div>
             </div>
             
             <div class="h-modal-amenities-strip">
@@ -441,6 +467,6 @@ include "../includes/header.php";
 </div>
 
 <div id="hotel-room-data-store" hidden data-rooms="<?php echo htmlspecialchars(json_encode($rooms_with_plans), ENT_QUOTES, 'UTF-8'); ?>"></div>
-<script src="js/modules/hotel-detail.js" defer></script>
+<script src="js/modules/hotel-detail.js?v=<?php echo time(); ?>" defer></script>
 
 <?php include "../includes/footer.php"; ?>

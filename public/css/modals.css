@@ -1,3 +1,14 @@
+/* Body scroll-lock — top-layer modal keeps page scroll captive (loaded site-wide via header) */
+body.scroll-lock,
+html:has(body.scroll-lock) {
+    overflow: hidden !important;
+}
+
+/* Let Lenis yield wheel events to nested modal scroll panes */
+[data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
 /* ─── LEAD MODAL (BESPOKE PLANNER) ─── */
 .modal-overlay {
     position: fixed;
@@ -110,6 +121,34 @@
     align-items: flex-end;
     gap: 14px;
     pointer-events: none; /* Let clicks pass through empty spacing */
+    cursor: grab;
+    touch-action: none;
+}
+
+.emt-floating-dock-hub.is-dock-float {
+    left: var(--dock-x, auto);
+    top: var(--dock-y, auto);
+    right: auto;
+    bottom: auto;
+}
+
+.emt-floating-dock-hub.is-dragging {
+    cursor: grabbing;
+    z-index: 9997 !important;
+    pointer-events: auto; /* ensure move/up reach the hub while dragging */
+}
+
+.emt-floating-dock-hub.is-dragging .emt-dock-pill,
+.emt-floating-dock-hub.is-dragging .emt-dock-pill:hover {
+    transform: none;
+    transition: none;
+}
+
+.emt-floating-dock-hub,
+.emt-floating-dock-hub * {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .emt-floating-dock-hub > * {

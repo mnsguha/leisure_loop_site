@@ -15,7 +15,7 @@
 
 /* Extracted from blog-detail.php */
 .article-body h2, .article-body h3, .article-body h4 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     color: #fff;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
@@ -52,7 +52,7 @@
     padding: 1rem 1.8rem;
     margin: 3rem 0;
     font-size: 1.3rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--gold);
     background: rgba(197, 160, 89, 0.03);
@@ -245,7 +245,7 @@
     }
 
     .benefit-card-title {
-        font-family: 'Playfair Display', serif;
+        font-family: var(--font-serif);
         font-size: 1.8rem;
         color: #fff;
         margin-bottom: 1rem;

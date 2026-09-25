@@ -29,22 +29,47 @@ document.addEventListener('DOMContentLoaded', () => {
             cab_type: urlParams.get('cab_type') || ''
         };
         
+        // Auto-set service type from search tab (hourly/oneway fixed; itinerary = user choice)
+        if (searchDetails.type === 'hourly') {
+            chosenServiceType = 'Hourly';
+        } else if (searchDetails.type === 'itinerary') {
+            chosenServiceType = null;
+        } else {
+            chosenServiceType = 'Oneway';
+        }
+
         // Apply dynamic date pricing if travel_date was provided
-        if (searchDetails.travel_date) {
-            document.querySelectorAll('.room-category').forEach(card => {
-                const vid = card.getAttribute('data-vid');
-                const basePrice = parseFloat(card.getAttribute('data-baseprice')) || 0;
-                let currentPrice = basePrice;
+                    if (searchDetails.travel_date) {
+                        document.querySelectorAll('.room-category').forEach(card => {
+                            const vid = card.getAttribute('data-vid');
+                            const basePrice = parseFloat(card.getAttribute('data-baseprice')) || 0;
+                            let currentPrice = basePrice;
 
-                if (vehicleRates[vid] && vehicleRates[vid][searchDetails.travel_date]) {
-                    currentPrice = parseFloat(vehicleRates[vid][searchDetails.travel_date]);
-                }
+                            if (vehicleRates[vid] && vehicleRates[vid][searchDetails.travel_date]) {
+                                let ratesForDate = vehicleRates[vid][searchDetails.travel_date];
+                                
+                                if (searchDetails.type === 'hourly' && searchDetails.duration) {
+                                    const hours = parseInt(searchDetails.duration, 10);
+                                    const perHour = parseFloat(ratesForDate['price_per_hour']) || 0;
+                                    currentPrice = (perHour > 0 && hours > 0) ? perHour * hours : parseFloat(ratesForDate['price']) || 0;
+                                } else {
+                                    currentPrice = parseFloat(ratesForDate['price']) || 0;
+                                }
+                            }
 
-                selectedDynamicPrices[vid] = currentPrice;
+                            if (currentPrice <= 0) {
+                                currentPrice = 0;
+                            }
+
+                            selectedDynamicPrices[vid] = currentPrice;
 
                 const priceEl = card.querySelector('.price-final');
                 if (priceEl) {
-                    priceEl.innerHTML = '₹' + Math.round(currentPrice).toLocaleString('en-IN') + ' <span style="font-size:0.9rem;color:rgba(255,255,255,0.5);">/ day</span>';
+                    if (currentPrice > 0) {
+                        priceEl.textContent = '₹' + Math.round(currentPrice).toLocaleString('en-IN');
+                    } else {
+                        priceEl.innerHTML = '<span class="price-unit">N/A</span>';
+                    }
                 }
             });
         }
@@ -79,53 +104,66 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const isHourly = searchDetails.type === 'hourly';
+        const isItinerary = searchDetails.type === 'itinerary';
+
         let searchSummary = '';
-        if (searchDetails.type === 'hourly') {
+        if (isHourly) {
             searchSummary = `
-                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
-                    <strong style="color: var(--gold);">Pick-up:</strong> ${searchDetails.pickup_location || 'N/A'}<br>
-                    <strong style="color: var(--gold);">Duration:</strong> ${searchDetails.duration || 'N/A'}<br>
-                    <strong style="color: var(--gold);">Date:</strong> ${searchDetails.travel_date || 'N/A'}
+                <div class="sidebar-summary">
+                    <strong>Pick-up:</strong> ${searchDetails.pickup_location || 'N/A'}<br>
+                    <strong>Duration:</strong> ${searchDetails.duration || 'N/A'}<br>
+                    <strong>Date:</strong> ${searchDetails.travel_date || 'N/A'}
                 </div>`;
-        } else if (searchDetails.type === 'itinerary') {
+        } else if (isItinerary) {
             searchSummary = `
-                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
-                    <strong style="color: var(--gold);">Start:</strong> ${searchDetails.pickup_location || 'N/A'}<br>
-                    <strong style="color: var(--gold);">Date:</strong> ${searchDetails.travel_date || 'N/A'}
+                <div class="sidebar-summary">
+                    <strong>Start:</strong> ${searchDetails.pickup_location || 'N/A'}<br>
+                    <strong>Date:</strong> ${searchDetails.travel_date || 'N/A'}
                 </div>`;
         } else {
             searchSummary = `
-                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
-                    <strong style="color: var(--gold);">From:</strong> ${searchDetails.pickup_location || 'N/A'}<br>
-                    <strong style="color: var(--gold);">To:</strong> ${searchDetails.drop_location || 'N/A'}<br>
-                    <strong style="color: var(--gold);">Date:</strong> ${searchDetails.travel_date || 'N/A'}
+                <div class="sidebar-summary">
+                    <strong>From:</strong> ${searchDetails.pickup_location || 'N/A'}<br>
+                    <strong>To:</strong> ${searchDetails.drop_location || 'N/A'}<br>
+                    <strong>Date:</strong> ${searchDetails.travel_date || 'N/A'}
                 </div>`;
         }
+
+        let serviceTypeHtml = '';
+        if (isItinerary) {
+            const checkedDisposal = chosenServiceType === 'Disposal' ? 'checked' : '';
+            const checkedP2P = chosenServiceType === 'Point to Point' ? 'checked' : '';
+            serviceTypeHtml = `
+                <div class="sidebar-section-label">Select Service Type:</div>
+                <div class="payment-type">
+                    <label>
+                        <input type="radio" name="service_type_radio" value="Disposal" data-action="set-service-type" ${checkedDisposal}>
+                        Disposal (Full Day usage within city/outstation limits)
+                    </label>
+                    <label>
+                        <input type="radio" name="service_type_radio" value="Point to Point" data-action="set-service-type" ${checkedP2P}>
+                        Point to Point (Direct A to B transfer)
+                    </label>
+                </div>`;
+        } else {
+            serviceTypeHtml = `<div class="sidebar-section-label">Service Type: ${chosenServiceType || 'N/A'}</div>`;
+        }
+
+        const canSubmit = Boolean(chosenServiceType);
 
         sidebar.innerHTML = `
             <div class="selected-hotel-name">${selectedVehicle.name}</div>
             <div class="selected-room-name">Premium Chauffeur Driven</div>
             ${searchSummary}
-            <div class="selected-plan-name">Base fare: ₹${Math.round(selectedVehicle.price).toLocaleString('en-IN')} / day</div>
-
-            <div style="margin-top:16px; margin-bottom:8px; font-size: 0.9rem; font-weight: 600; color:var(--gold);">Select Service Type:</div>
-            <div class="payment-type">
-                <label>
-                    <input type="radio" name="service_type_radio" value="Disposal" data-action="set-service-type">
-                    Disposal (Full Day usage within city/outstation limits)
-                </label>
-                <label>
-                    <input type="radio" name="service_type_radio" value="Point to Point" data-action="set-service-type">
-                    Point to Point (Direct A to B transfer)
-                </label>
-            </div>
+            ${serviceTypeHtml}
 
             <div class="total-row">
                 <span>Total Estimated</span>
                 <span>₹${Math.round(selectedVehicle.price).toLocaleString('en-IN')}</span>
             </div>
 
-            <button type="button" class="btn-proceed" id="btnSubmitEnquiry" disabled data-action="open-cab-checkout">Submit Inquiry</button>
+            <button type="button" class="btn-proceed" id="btnSubmitEnquiry" ${canSubmit ? '' : 'disabled'} data-action="open-cab-checkout">Submit Inquiry</button>
         `;
     }
 
@@ -171,9 +209,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const vid = selectBtn.getAttribute('data-id');
             const vname = selectBtn.getAttribute('data-name');
             const vprice = parseFloat(selectBtn.getAttribute('data-price')) || 0;
+            const vimage = selectBtn.getAttribute('data-image') || '';
+            const vkm = selectBtn.getAttribute('data-km') || '';
+            const vseats = selectBtn.getAttribute('data-seats') || '';
+            const vbags = selectBtn.getAttribute('data-bags') || '';
+            const vac = selectBtn.getAttribute('data-ac') || '';
+            const vfuel = selectBtn.getAttribute('data-fuel') || '';
             const dynamicPrice = selectedDynamicPrices[vid] || vprice;
 
-            selectedVehicle = { id: vid, name: vname, price: dynamicPrice };
+            if (dynamicPrice <= 0) {
+                alert('No rate available for this vehicle on the selected date.');
+                return;
+            }
+
+            selectedVehicle = { id: vid, name: vname, price: dynamicPrice, image: vimage, km: vkm, seats: vseats, bags: vbags, ac: vac, fuel: vfuel };
 
             document.querySelectorAll('.vehicle-action-btn').forEach(b => {
                 b.innerText = 'SELECT';
@@ -207,15 +256,111 @@ document.addEventListener('DOMContentLoaded', () => {
             setField('desktop-formSearchItinerary', searchDetails.itinerary_details || '');
 
             const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+            const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+            const setHidden = (id, show) => { const el = document.getElementById(id); if (el) el.hidden = !show; };
+
+            const tripType = searchDetails.type || 'oneway';
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            const formatDateNice = (raw) => {
+                if (!raw) return 'N/A';
+                const parts = String(raw).split('-');
+                if (parts.length !== 3) return raw;
+                const y = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10);
+                const d = parseInt(parts[2], 10);
+                if (!y || !m || !d) return raw;
+                const dt = new Date(y, m - 1, d);
+                return dayNames[dt.getDay()] + ', ' + monthNames[m - 1] + ' ' + d;
+            };
+
+            const formatTimeNice = (raw) => {
+                if (!raw) return 'TBD';
+                const t = String(raw).split(':');
+                if (t.length < 2) return raw;
+                let hh = parseInt(t[0], 10);
+                const mm = t[1];
+                if (Number.isNaN(hh)) return raw;
+                const ampm = hh >= 12 ? 'PM' : 'AM';
+                hh = hh % 12;
+                if (hh === 0) hh = 12;
+                return hh + ':' + mm + ' ' + ampm;
+            };
+
             setTxt('desktop-modalSummaryVehicle', selectedVehicle.name);
             setTxt('desktop-modalSummaryService', chosenServiceType);
-            setTxt('desktop-modalDate', searchDetails.travel_date || 'N/A');
+
+            const vimg = document.getElementById('desktop-modalVehicleImg');
+            if (vimg) {
+                if (selectedVehicle.image) {
+                    vimg.src = selectedVehicle.image;
+                    vimg.alt = selectedVehicle.name;
+                    vimg.hidden = false;
+                } else {
+                    vimg.removeAttribute('src');
+                    vimg.alt = '';
+                    vimg.hidden = true;
+                }
+            }
+
+            let labelPickup = 'Pick-up';
+            let labelDrop = 'Drop-off';
+            let pillHtml = '<span class="material-symbols-outlined">arrow_forward</span>';
+
+            if (tripType === 'hourly') {
+                labelPickup = 'Pick-up';
+                labelDrop = 'Duration';
+                const hrs = searchDetails.duration ? String(searchDetails.duration) + 'H' : '—';
+                pillHtml = hrs;
+            } else if (tripType === 'itinerary') {
+                labelPickup = 'Start';
+                labelDrop = 'Route';
+                pillHtml = '<span class="material-symbols-outlined">route</span>';
+            }
+
+            const updateRouteLabel = (id, text) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const icon = el.querySelector('.material-symbols-outlined');
+                el.textContent = text + ' ';
+                if (icon) el.appendChild(icon);
+            };
+            updateRouteLabel('desktop-modalLabelPickup', labelPickup);
+            updateRouteLabel('desktop-modalLabelDrop', labelDrop);
+
+            setHtml('desktop-modalRoutePill', pillHtml);
+
             setTxt('desktop-modalPickup', searchDetails.pickup_location || 'N/A');
-            setTxt('desktop-modalDrop', searchDetails.drop_location || (searchDetails.duration || searchDetails.itinerary_details || 'N/A'));
+            if (tripType === 'hourly') {
+                setTxt('desktop-modalDrop', searchDetails.duration ? searchDetails.duration + ' hr' : 'N/A');
+            } else if (tripType === 'itinerary') {
+                const itin = (searchDetails.itinerary_details || '').trim();
+                setTxt('desktop-modalDrop', itin ? (itin.length > 42 ? itin.slice(0, 42) + '…' : itin) : 'N/A');
+            } else {
+                setTxt('desktop-modalDrop', searchDetails.drop_location || 'N/A');
+            }
+
+            setTxt('desktop-modalDate', formatDateNice(searchDetails.travel_date));
+            setTxt('desktop-modalTime', formatTimeNice(searchDetails.travel_time));
             setTxt('desktop-modalSummaryTotal', '₹' + Math.round(selectedVehicle.price).toLocaleString('en-IN'));
 
+            const setMeta = (wrapId, valId, val) => {
+                const text = String(val || '').trim();
+                setHidden(wrapId, Boolean(text));
+                if (text) setTxt(valId, text);
+            };
+            setMeta('desktop-modalMetaSeats', 'desktop-modalSeats', selectedVehicle.seats ? selectedVehicle.seats + ' Seats' : '');
+            setMeta('desktop-modalMetaBags', 'desktop-modalBags', selectedVehicle.bags ? selectedVehicle.bags + ' Bags' : '');
+            setMeta('desktop-modalMetaAc', 'desktop-modalAc', selectedVehicle.ac);
+            setMeta('desktop-modalMetaFuel', 'desktop-modalFuel', selectedVehicle.fuel);
+            setMeta('desktop-modalMetaKm', 'desktop-modalKmCharges', selectedVehicle.km);
+
             const modal = document.getElementById('desktop-checkoutModal');
-            if (modal) modal.classList.add('is-active');
+            if (modal) {
+                modal.classList.add('is-active');
+                document.body.classList.add('scroll-lock');
+            }
             return;
         }
 
@@ -225,11 +370,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const modal = document.getElementById('desktop-checkoutModal');
             if (modal) modal.classList.remove('is-active');
+            document.body.classList.remove('scroll-lock');
             return;
         }
 
         if (e.target.id === 'desktop-checkoutModal') {
             e.target.classList.remove('is-active');
+            document.body.classList.remove('scroll-lock');
         }
     });
 
@@ -237,8 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('change', (e) => {
         if (e.target.matches('[data-action="set-service-type"]')) {
             chosenServiceType = e.target.value;
-            const btn = document.getElementById('desktop-btnSubmitEnquiry');
-            if (btn) btn.disabled = false;
+            const btn = document.getElementById('btnSubmitEnquiry');
+            if (btn) btn.disabled = !chosenServiceType;
         }
     });
 
@@ -259,8 +406,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Determine the base URL path (works whether running at root or under /leisure_loop_site/)
             const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-            const submitEndpoint = basePath ? `${basePath}/api/submit-cab-booking.php` : 'api/submit-cab-booking.php';
-            const voucherEndpoint = basePath ? `${basePath}/api/download-cab-inquiry-slip.php` : 'api/download-cab-inquiry-slip.php';
+            const submitEndpoint = basePath ? `${basePath}/api-submit-cab-booking.php` : 'api-submit-cab-booking.php';
+            const voucherEndpoint = basePath ? `${basePath}/api-download-cab-inquiry-slip.php` : 'api-download-cab-inquiry-slip.php';
 
             fetch(submitEndpoint, {
                 method: 'POST',

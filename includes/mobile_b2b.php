@@ -1,10 +1,7 @@
 <?php
 require_once '../config/db.php';
-require_once '../config/recaptcha.php';
 
 $page_title = "B2B Partner Program | Leisure Loop";
-$use_recaptcha = recaptchaIsConfigured();
-$recaptcha_site_key = recaptchaSiteKey();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,10 +13,6 @@ $recaptcha_site_key = recaptchaSiteKey();
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
-    
-    <?php if ($use_recaptcha && $recaptcha_site_key): ?>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <?php endif; ?>
 
     <link rel="stylesheet" href="css/mobile-views.css">
 </head>
@@ -28,7 +21,7 @@ $recaptcha_site_key = recaptchaSiteKey();
     <!-- Top App Bar -->
     <header class="mob-topbar">
         <a href="index.php" class="mob-topbar__back" aria-label="Back">
-            <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
+            <span class="material-symbols-outlined icon-20">arrow_back</span>
         </a>
         <span class="mob-topbar__title">B2B Partner</span>
         <div class="mob-topbar__spacer"></div>
@@ -86,15 +79,16 @@ $recaptcha_site_key = recaptchaSiteKey();
     <div class="modal-content" id="enquiryModal">
         <div class="modal-header">
             <div>
-                <span style="font-size: 0.6rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; display: block; margin-bottom: 4px;">REGISTER AGENCY</span>
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #fff; margin: 0; font-style: italic;">Become A Partner</h2>
+                <span class="modal-kicker">REGISTER AGENCY</span>
+                <h2 class="modal-title-serif">Become A Partner</h2>
             </div>
             <button aria-label="Close" class="modal-close" data-action="close-modal">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
         <div class="modal-body">
-            <form id="b2bFormMobile" action="/api/v1/leads" method="POST">
+            <form id="b2bFormMobile" action="api-submit-lead.php" method="POST">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                 
@@ -136,13 +130,6 @@ $recaptcha_site_key = recaptchaSiteKey();
 
                 <!-- Hidden inputs mirroring desktop functionality -->
                 <input type="hidden" name="message" id="b2b_combined_message" value="">
-                <input type="hidden" name="enforce_recaptcha" value="1">
-                
-                <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-                <div class="form-group mt-4">
-                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                </div>
-                <?php endif; ?>
 
                 <button type="submit" class="btn-gold">SUBMIT REGISTRATION</button>
             </form>

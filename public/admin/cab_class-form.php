@@ -8,7 +8,6 @@ $class = [
     'name' => '',
     'description' => '',
     'image' => '',
-    'starting_price' => '',
     'is_active' => 1
 ];
 
@@ -22,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $description = $_POST['description'] ?? '';
     $image = $_POST['image'] ?? '';
-    $starting_price = $_POST['starting_price'] ?? 0;
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     
     // File upload override for image
@@ -36,11 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($id) {
-        $stmt = $pdo->prepare("UPDATE cab_classes SET name=?, description=?, image=?, starting_price=?, is_active=? WHERE id=?");
-        $stmt->execute([$name, $description, $image, $starting_price, $is_active, $id]);
+        $stmt = $pdo->prepare("UPDATE cab_classes SET name=?, description=?, image=?, is_active=? WHERE id=?");
+        $stmt->execute([$name, $description, $image, $is_active, $id]);
     } else {
-        $stmt = $pdo->prepare("INSERT INTO cab_classes (name, description, image, starting_price, is_active) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $description, $image, $starting_price, $is_active]);
+        $stmt = $pdo->prepare("INSERT INTO cab_classes (name, description, image, is_active) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$name, $description, $image, $is_active]);
     }
     
     header('Location: cab_classes.php');
@@ -81,11 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group full-width">
                         <label>Description (Short marketing text)</label>
                         <textarea name="description" rows="3"><?php echo htmlspecialchars($class['description']); ?></textarea>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label>Starting Price (₹ per day)</label>
-                        <input type="number" step="0.01" name="starting_price" value="<?php echo htmlspecialchars($class['starting_price']); ?>" required>
                     </div>
                     
                     <div class="form-group full-width">

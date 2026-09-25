@@ -1,6 +1,6 @@
 <?php
 require_once '../config/db.php';
-require_once '../config/recaptcha.php';
+require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -9,45 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
+lead_guard_json($_POST);
+
 $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode(['success' => false, 'message' => 'Please enter a valid email address']);
     exit;
-}
-
-$enforce_recaptcha = !empty($_POST['enforce_recaptcha']);
-$recaptcha_token = $_POST['g-recaptcha-response'] ?? '';
-
-if ($enforce_recaptcha && recaptchaIsConfigured()) {
-    $is_valid = false;
-    if ($recaptcha_token) {
-        $payload = http_build_query([
-            'secret' => recaptchaSecretKey(),
-            'response' => $recaptcha_token,
-            'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
-        ]);
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'content' => $payload,
-                'timeout' => 10
-            ]
-        ]);
-        $responseBody = @file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
-        if ($responseBody) {
-            $result = json_decode($responseBody, true);
-            if (!empty($result['success'])) {
-                $is_valid = true;
-            }
-        }
-    }
-    
-    if (!$is_valid) {
-        echo json_encode(['success' => false, 'message' => 'Please verify that you are not a robot.']);
-        exit;
-    }
 }
 
 try {

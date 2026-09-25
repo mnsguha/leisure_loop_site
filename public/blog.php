@@ -1,5 +1,7 @@
 <?php
 require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
 require_once '../includes/header.php';
 
 $blogs = [];

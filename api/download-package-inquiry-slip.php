@@ -1,11 +1,17 @@
 <?php
 require_once '../config/db.php';
+require_once '../includes/functions.php';
 require_once '../includes/fpdf/fpdf.php';
 
 $booking_id = isset($_GET['id']) ? trim($_GET['id']) : '';
 
 if (!$booking_id || !$pdo) {
     die("Invalid Inquiry ID");
+}
+
+if (!pdf_allowed('package', $booking_id)) {
+    http_response_code(403);
+    die("Access denied.");
 }
 
 $stmt = $pdo->prepare("
@@ -116,77 +122,86 @@ $pdf->Rect(0, 0, 210, 35, 'F'); // A4 width is 210mm
 // Brand Header with Logo
 $logo_path = '../public/assets/img/leisure.png';
 if (file_exists($logo_path)) {
-    $pdf->Image($logo_path, 10, 10, 80); 
+    // Increased width to 85 and shifted X to 4 to compensate for transparent padding in the logo image
+    $pdf->Image($logo_path, 4, 7, 85); 
 } else {
     $pdf->SetFont('Arial', 'B', 24);
     $pdf->SetTextColor(197, 160, 89);
-    $pdf->SetXY(10, 10);
+    $pdf->SetXY(10, 12);
     $pdf->Cell(60, 15, 'LEISURE LOOP', 0, 0, 'L');
 }
 
-// Company Info
-$pdf->SetXY(10, 8);
-$pdf->SetFont('Arial', '', 9);
+// Right aligned Ack No and Date
+$pdf->SetXY(120, 13);
+$pdf->SetFont('Arial', 'B', 12);
 $pdf->SetTextColor(255, 255, 255);
-$pdf->Cell(0, 5, 'Leisure Loop Trip Pvt Ltd', 0, 1, 'R');
-$pdf->Cell(0, 5, 'Email: enquiry@leisurelooptrip.com', 0, 1, 'R');
-$pdf->Cell(0, 5, 'Phone: +91 89189 21629', 0, 1, 'R');
+$pdf->Cell(80, 6, 'Package Inquiry Acknowledgment', 0, 1, 'R');
 
-$pdf->SetY(40);
+$pdf->SetXY(120, 21);
+$pdf->SetFont('Arial', '', 9);
+$pdf->Cell(80, 5, 'Ack No: ' . $b['id'], 0, 1, 'R');
+$pdf->SetXY(120, 26);
+$pdf->Cell(80, 5, 'Date: ' . date('d M Y'), 0, 1, 'R');
 
-// ---------------------------------------------------------
-// 2. SUB-HEADER (Title & Ack No)
-// ---------------------------------------------------------
-$pdf->SetFont('Arial', 'B', 16);
-$pdf->SetTextColor(0, 0, 0);
-$pdf->Cell(100, 10, 'Package Inquiry Acknowledgement', 0, 0, 'L');
-
-$pdf->SetFont('Arial', '', 10);
-$pdf->SetTextColor(100, 100, 100);
-$pdf->Cell(90, 5, 'Ack No: ' . $b['id'], 0, 1, 'R');
-$pdf->Cell(190, 5, 'Date: ' . date('d M Y'), 0, 1, 'R');
-
-$pdf->SetDrawColor(220, 220, 220);
-$pdf->Line(10, $pdf->GetY() + 2, 200, $pdf->GetY() + 2);
-$pdf->Ln(7);
+$pdf->SetY(45);
 
 // ---------------------------------------------------------
-// 3. PACKAGE "HERO" SECTION
+// 2. PACKAGE HERO SECTION & STATUS BADGE
 // ---------------------------------------------------------
-$startY = $pdf->GetY();
-
 $pdf->SetFont('Arial', 'B', 18);
-$pdf->SetTextColor(0, 0, 0);
-// Wrap long titles
-$pdf->MultiCell(135, 8, htmlspecialchars_decode($package_title), 0, 'L');
+$pdf->SetTextColor(15, 23, 42); // Dark slate
+// MultiCell to allow wrapping for very long names
+$x = $pdf->GetX();
+$y = $pdf->GetY();
+$pdf->MultiCell(130, 8, htmlspecialchars_decode($package_title), 0, 'L');
+$newY = $pdf->GetY();
 
-$pdf->SetFont('Arial', 'B', 13);
-$pdf->SetTextColor(197, 160, 89); // Gold
-$pdf->Cell(150, 8, 'Tour Code: ' . $tour_code, 0, 1, 'L');
-
-// Draw "INQUIRY RECEIVED" Badge on the right
-$badgeX = 145;
-$badgeY = $startY + 5;
+// INQUIRY RECEIVED Badge (Top Right of this block)
+$pdf->SetXY(145, $y);
 $pdf->SetDrawColor(52, 152, 219); // Blue
-$pdf->SetLineWidth(0.5);
-$pdf->Rect($badgeX, $badgeY, 55, 12, 'D');
-$pdf->SetXY($badgeX, $badgeY + 3);
-$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetFillColor(240, 248, 255); // Alice blue
 $pdf->SetTextColor(52, 152, 219);
-$pdf->Cell(55, 6, 'INQUIRY RECEIVED', 0, 0, 'C');
-$pdf->SetLineWidth(0.2); // Reset line width
+$pdf->SetLineWidth(0.5);
+$pdf->SetFont('Arial', 'B', 10);
+$pdf->Cell(55, 8, 'INQUIRY RECEIVED', 1, 1, 'C', true);
+$pdf->SetLineWidth(0.2);
 
-$pdf->SetY($startY + 30);
-$pdf->SetDrawColor(220, 220, 220);
-$pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
-$pdf->Ln(5);
+$pdf->SetY($newY);
+
+// Tour Code
+$pdf->SetFont('Arial', 'B', 14);
+$pdf->SetTextColor(197, 160, 89); // Gold
+$pdf->Cell(190, 6, 'Tour Code: ' . $tour_code, 0, 1, 'L');
+
+$pdf->Ln(8);
 
 // ---------------------------------------------------------
+// 3. GUEST DETAILS BLOCK (Matches Hotel Slip)
 // ---------------------------------------------------------
-// 4. DETAILS (Grid Style)
-// ---------------------------------------------------------
+$pdf->SetFillColor(248, 250, 252); // Light Slate
+$pdf->SetDrawColor(226, 232, 240); // Border color
+$pdf->Rect(10, $pdf->GetY(), 190, 22, 'DF');
 
-$pdf->Ln(2);
+$pdf->SetXY(15, $pdf->GetY() + 3);
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->SetTextColor(100, 116, 139);
+$pdf->Cell(60, 5, 'GUEST NAME', 0, 0, 'L');
+$pdf->Cell(60, 5, 'CONTACT NO.', 0, 0, 'L');
+$pdf->Cell(60, 5, 'EMAIL', 0, 1, 'L');
+
+$pdf->SetX(15);
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetTextColor(15, 23, 42);
+$pdf->Cell(60, 8, $name, 0, 0, 'L');
+$pdf->Cell(60, 8, $phone, 0, 0, 'L');
+$pdf->SetFont('Arial', '', 10);
+$pdf->Cell(60, 8, $email, 0, 1, 'L');
+
+$pdf->Ln(8);
+
+// ---------------------------------------------------------
+// 4. STAY & ITINERARY DETAILS
+// ---------------------------------------------------------
 
 // Row 1: Duration & No. of Travellers
 $pdf->SetFont('Arial', 'B', 8);
@@ -200,7 +215,7 @@ $pdf->Cell(95, 6, "{$nights} Nights / {$days} Days", 0, 0, 'L');
 $pdf->Cell(95, 6, "{$adults} Travellers", 0, 1, 'R');
 $pdf->Ln(4);
 
-// Row 2: Date Card Box
+// Row 2: Date Card Box (Keep unique package style but align colors)
 $y = $pdf->GetY();
 $pdf->SetDrawColor(197, 160, 89); // Brand Gold
 $pdf->SetFillColor(248, 250, 252); // Light gray card fill
@@ -237,7 +252,7 @@ $pdf->Cell(40, 6, $end_date_formatted, 0, 1, 'R');
 
 // Manually reset cursor
 $pdf->SetY($y + 28);
-$pdf->SetDrawColor(230, 230, 230);
+$pdf->SetDrawColor(226, 232, 240);
 $pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
 $pdf->Ln(5);
 
@@ -251,40 +266,20 @@ $pdf->SetFont('Arial', 'B', 11);
 $pdf->SetTextColor(15, 23, 42);
 $pdf->Cell(95, 6, $selected_hotel, 0, 0, 'L');
 $pdf->Cell(95, 6, $selected_cab, 0, 1, 'R');
-$pdf->Ln(4);
-$pdf->SetDrawColor(230, 230, 230);
-$pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
-$pdf->Ln(5);
+$pdf->Ln(8);
 
-// Row 4: Guest & Contact
-$pdf->SetFont('Arial', 'B', 8);
-$pdf->SetTextColor(100, 116, 139);
-$pdf->Cell(95, 5, 'GUEST NAME', 0, 0, 'L');
-$pdf->Cell(95, 5, 'CONTACT INFO', 0, 1, 'R');
+// ---------------------------------------------------------
+// 5. IMPORTANT INFORMATION (Matches Hotel Slip)
+// ---------------------------------------------------------
+$pdf->SetFillColor(253, 242, 242); // Very light red/pink for attention
+$pdf->SetTextColor(220, 38, 38); // Dark red
+$pdf->SetDrawColor(252, 165, 165); // Red border
+$pdf->SetFont('Arial', 'B', 10);
+$pdf->Cell(190, 10, '   Note: This is an inquiry only, not a confirmed package booking.', 1, 1, 'L', true);
+$pdf->Ln(5);
 
 $pdf->SetFont('Arial', 'B', 11);
 $pdf->SetTextColor(15, 23, 42);
-$pdf->Cell(95, 6, $name, 0, 0, 'L');
-$pdf->Cell(95, 6, $phone, 0, 1, 'R');
-
-$pdf->SetFont('Arial', '', 9);
-$pdf->SetTextColor(100, 116, 139);
-$pdf->Cell(95, 5, '', 0, 0, 'L');
-$pdf->Cell(95, 5, $email, 0, 1, 'R');
-
-$pdf->Ln(6);
-
-// ---------------------------------------------------------
-// 5. IMPORTANT INFORMATION
-// ---------------------------------------------------------
-$pdf->SetFillColor(250, 240, 240); // Very light red/pink for attention
-$pdf->SetTextColor(192, 57, 43); // Dark red
-$pdf->SetFont('Arial', 'B', 10);
-$pdf->Cell(190, 8, '   Note: This is an inquiry only, not a confirmed package booking.', 0, 1, 'L', true);
-$pdf->Ln(5);
-
-$pdf->SetFont('Arial', 'B', 11);
-$pdf->SetTextColor(0, 0, 0);
 $pdf->Cell(0, 8, 'Next Steps & Important Information', 0, 1, 'L');
 
 $pdf->SetFont('Arial', '', 9);
@@ -302,10 +297,11 @@ foreach ($info as $point) {
     $pdf->MultiCell(185, 5, $point, 0, 'L');
 }
 
-$pdf->Ln(10);
+$pdf->Ln(15);
 // Draw Print Button
 $pdf->SetFillColor(197, 160, 89); // Gold Button
 $pdf->SetTextColor(255, 255, 255);
+$pdf->SetFont('Arial', 'B', 11);
 $pdf->Cell(0, 12, 'Click Here to Print', 0, 1, 'C', true, 'javascript:print(true);');
 
 $pdf->Output('I', 'Package_Inquiry_' . $b['id'] . '.pdf');

@@ -1,5 +1,10 @@
 'use strict';
 
+// data-bg Hydration (Rule 1: no inline style="background-image")
+document.querySelectorAll('[data-bg]').forEach(function(el) {
+    el.style.backgroundImage = 'url(' + el.dataset.bg + ')';
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     // Landing Search Execution
     const submitLandingSearch = () => {

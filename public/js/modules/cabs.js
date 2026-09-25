@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const modal = targetSelector ? document.querySelector(targetSelector) : closeModalBtn.closest('.cabs-modal-overlay');
             if (modal) {
                 modal.classList.remove('is-active');
+                modal.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('scroll-lock');
             }
             return;
@@ -55,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (e.target.classList.contains('cabs-modal-overlay')) {
             e.target.classList.remove('is-active');
+            e.target.setAttribute('aria-hidden', 'true');
             document.body.classList.remove('scroll-lock');
         }
     });
@@ -64,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const modal = getEl('contactModal');
             if (modal) {
                 modal.classList.remove('is-active');
+                modal.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('scroll-lock');
             }
         }
@@ -83,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const formData = new FormData(this);
-            fetch('/api/v1/leads', {
+            fetch('api-submit-lead.php', {
                 method: 'POST',
                 body: formData
             })
@@ -98,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const modal = getEl('contactModal');
                         if (modal) {
                             modal.classList.remove('is-active');
+                            modal.setAttribute('aria-hidden', 'true');
                             document.body.classList.remove('scroll-lock');
                         }
                         finalForm.reset();
@@ -144,6 +148,121 @@ document.addEventListener('DOMContentLoaded', () => {
             itinEnd.min = itinStart.value;
             if (itinEnd.value && itinEnd.value < itinStart.value) {
                 itinEnd.value = itinStart.value;
+            }
+        });
+    }
+
+    // ── 5. Mobile Search Tab Logic ───────────────────────────────────
+    const mTabs = document.querySelectorAll('.m-cab-tab');
+    if (mTabs.length > 0) {
+        const mTypeInput = document.getElementById('mCabSearchType');
+        const mSearchCard = document.getElementById('mCabSearchCard');
+        const mRowDrop = document.getElementById('mCabRowDrop');
+        const mRowDuration = document.getElementById('mCabRowDuration');
+        const mRowReturnDate = document.getElementById('mCabRowReturnDate');
+        const mRowItinerary = document.getElementById('mCabRowItinerary');
+        const mInputDrop = document.getElementById('mCabDrop');
+        const mInputDuration = document.getElementById('mCabDuration');
+        const mInputReturnDate = document.getElementById('mCabReturnDate');
+        const mInputItinerary = document.getElementById('mCabItinerary');
+
+        const applyMType = (type, activeTab) => {
+            if (!type) return;
+
+            mTabs.forEach((t) => {
+                const on = t === activeTab;
+                t.setAttribute('aria-selected', on ? 'true' : 'false');
+                t.tabIndex = on ? 0 : -1;
+            });
+
+            if (mTypeInput) mTypeInput.value = type;
+            if (mSearchCard && activeTab) {
+                mSearchCard.setAttribute('aria-labelledby', activeTab.id);
+            }
+
+            if (mRowDrop) mRowDrop.classList.add('is-hidden');
+            if (mRowDuration) mRowDuration.classList.add('is-hidden');
+            if (mRowReturnDate) mRowReturnDate.classList.add('is-hidden');
+            if (mRowItinerary) mRowItinerary.classList.add('is-hidden');
+
+            if (mInputDrop) { mInputDrop.disabled = true; mInputDrop.required = false; }
+            if (mInputDuration) { mInputDuration.disabled = true; mInputDuration.required = false; }
+            if (mInputReturnDate) { mInputReturnDate.disabled = true; mInputReturnDate.required = false; }
+            if (mInputItinerary) { mInputItinerary.disabled = true; mInputItinerary.required = false; }
+
+            if (type === 'oneway') {
+                if (mRowDrop) mRowDrop.classList.remove('is-hidden');
+                if (mInputDrop) { mInputDrop.disabled = false; mInputDrop.required = true; }
+            } else if (type === 'hourly') {
+                if (mRowDuration) mRowDuration.classList.remove('is-hidden');
+                if (mInputDuration) { mInputDuration.disabled = false; mInputDuration.required = true; }
+            } else if (type === 'itinerary') {
+                if (mRowReturnDate) mRowReturnDate.classList.remove('is-hidden');
+                if (mRowItinerary) mRowItinerary.classList.remove('is-hidden');
+                if (mInputReturnDate) { mInputReturnDate.disabled = false; mInputReturnDate.required = true; }
+                if (mInputItinerary) { mInputItinerary.disabled = false; mInputItinerary.required = true; }
+            }
+        };
+
+        mTabs.forEach((tab, idx) => {
+            tab.addEventListener('click', () => {
+                applyMType(tab.getAttribute('data-type'), tab);
+            });
+
+            tab.addEventListener('keydown', (e) => {
+                let next = null;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    next = mTabs[(idx + 1) % mTabs.length];
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    next = mTabs[(idx - 1 + mTabs.length) % mTabs.length];
+                } else if (e.key === 'Home') {
+                    next = mTabs[0];
+                } else if (e.key === 'End') {
+                    next = mTabs[mTabs.length - 1];
+                }
+                if (next) {
+                    e.preventDefault();
+                    next.focus();
+                    applyMType(next.getAttribute('data-type'), next);
+                }
+            });
+        });
+
+        const initial = document.querySelector('.m-cab-tab[aria-selected="true"]') || mTabs[0];
+        applyMType(initial.getAttribute('data-type'), initial);
+    }
+
+    // ── 6. Mobile Hero Auto-Scroll (cab class images) ────────────────
+    const cabHeroSlider = document.getElementById('mCabsHeroSlider');
+    const cabHeroDots = document.querySelectorAll('.m-cabs-hero-dot');
+    if (cabHeroSlider && cabHeroDots.length > 1) {
+        let cabSlide = 0;
+        const cabTotal = cabHeroDots.length;
+        let cabTimer = setInterval(cabNextSlide, 4000);
+
+        function cabNextSlide() {
+            cabSlide = (cabSlide + 1) % cabTotal;
+            cabHeroSlider.scrollTo({
+                left: cabSlide * cabHeroSlider.clientWidth,
+                behavior: 'smooth'
+            });
+            cabUpdateDots(cabSlide);
+        }
+
+        function cabUpdateDots(index) {
+            cabHeroDots.forEach((dot, idx) => {
+                dot.classList.toggle('is-active', idx === index);
+            });
+        }
+
+        cabHeroSlider.addEventListener('scroll', () => {
+            if (!cabHeroSlider.clientWidth) return;
+            const index = Math.round(cabHeroSlider.scrollLeft / cabHeroSlider.clientWidth);
+            if (index !== cabSlide) {
+                cabSlide = index;
+                cabUpdateDots(cabSlide);
+                clearInterval(cabTimer);
+                cabTimer = setInterval(cabNextSlide, 4000);
             }
         });
     }

@@ -1,21 +1,9 @@
 <?php 
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-    if (empty($_SESSION['csrf_token'])) {
-        try {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        } catch (Exception $e) {
-            $_SESSION['csrf_token'] = bin2hex(openssl_random_pseudo_bytes(32));
-        }
-    }
+    require_once '../includes/functions.php';
+    csrf_stamp_form();
 
     require_once '../config/db.php';
-    require_once '../config/recaptcha.php';
     $page_title = "Contact Our Curators | Leisure Loop Trip";
-    
-    $use_recaptcha = recaptchaIsConfigured();
-    $recaptcha_site_key = recaptchaSiteKey();
 
     // Detect Mobile
     $useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
@@ -75,7 +63,8 @@
             </div>
 
             <div class="premium-contact-form">
-                <form id="contactForm" action="/api/v1/leads" method="POST" class="js-lead-form">
+                <form id="contactForm" action="api-submit-lead.php" method="POST" class="js-lead-form">
+                    <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                     <div class="form-group-float">
                         <input type="text" name="name" id="name" class="form-control-float" placeholder=" " required aria-required="true">
                         <label for="name" class="form-label-float">Your Name</label>
@@ -96,13 +85,7 @@
                         <label for="message" class="form-label-float">Your Requirements / Destinations</label>
                     </div>
                     
-                    <input type="hidden" name="enforce_recaptcha" value="1">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
-                    <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-                    <div class="form-group-float recaptcha-shell">
-                        <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                    </div>
-                    <?php endif; ?>
                     
                     <button type="submit" class="btn-submit-premium">Submit Inquiry</button>
                 </form>

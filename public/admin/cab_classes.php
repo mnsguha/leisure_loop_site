@@ -43,7 +43,6 @@ if (isset($_GET['delete'])) {
                     <tr>
                         <th>Image</th>
                         <th>Class Name</th>
-                        <th>Starting Price</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -59,7 +58,6 @@ if (isset($_GET['delete'])) {
                             <strong><?php echo htmlspecialchars($cls['name']); ?></strong><br>
                             <span class="muted" style="font-size: 0.85rem;"><?php echo htmlspecialchars(substr($cls['description'], 0, 50)) . '...'; ?></span>
                         </td>
-                        <td>&#8377;<?php echo number_format($cls['starting_price']); ?> / day</td>
                         <td>
                             <span class="badge" style="padding: 4px 8px; border-radius: 4px; background: <?php echo $cls['is_active'] ? 'rgba(46, 213, 115, 0.2)' : 'rgba(255, 71, 87, 0.2)'; ?>; color: <?php echo $cls['is_active'] ? '#2ed573' : '#ff4757'; ?>;">
                                 <?php echo $cls['is_active'] ? 'Active' : 'Inactive'; ?>
@@ -75,7 +73,7 @@ if (isset($_GET['delete'])) {
                     <?php endforeach; ?>
                     <?php if (empty($classes)): ?>
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 2rem;">No cab classes found.</td>
+                        <td colspan="4" style="text-align: center; padding: 2rem;">No cab classes found.</td>
                     </tr>
                     <?php endif; ?>
                 </tbody>

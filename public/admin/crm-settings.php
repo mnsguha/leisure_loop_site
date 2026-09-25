@@ -76,6 +76,7 @@ if ($pdo) {
             <?php endif; ?>
 
             <form method="POST" class="card card-section">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="action" value="save_crm">
                 <h3>API Configuration</h3>
                 <div class="form-grid-single">
@@ -98,6 +99,7 @@ if ($pdo) {
             </form>
 
             <form method="POST" class="card card-section">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="action" value="save_meta">
                 <h3>Meta (Facebook/Instagram) Configuration</h3>
                 <div class="form-grid-single">
@@ -106,7 +108,7 @@ if ($pdo) {
                         <label>Meta Webhook URL (For Meta App Dashboard)</label>
                         <?php 
                             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-                            $webhook_url = $protocol . $_SERVER['HTTP_HOST'] . dirname(dirname($_SERVER['PHP_SELF'])) . '/api/meta-webhook.php';
+                            $webhook_url = $protocol . $_SERVER['HTTP_HOST'] . dirname(dirname($_SERVER['PHP_SELF'])) . '/api-meta-webhook.php';
                         ?>
                         <input type="text" value="<?php echo htmlspecialchars($webhook_url); ?>" readonly class="input-readonly">
                         <small class="form-help-text">Paste this URL into your Meta App Webhook configuration.</small>

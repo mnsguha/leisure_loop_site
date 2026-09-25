@@ -1,47 +1,14 @@
 <?php
 require_once '../config/db.php';
-require_once '../config/recaptcha.php';
+require_once '../includes/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: index.php');
     exit;
 }
 
-$enforce_recaptcha = !empty($_POST['enforce_recaptcha']);
-$recaptcha_token = $_POST['g-recaptcha-response'] ?? '';
-
-if ($enforce_recaptcha && recaptchaIsConfigured()) {
-    $is_valid = false;
-    if ($recaptcha_token) {
-        $payload = http_build_query([
-            'secret' => recaptchaSecretKey(),
-            'response' => $recaptcha_token,
-            'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
-        ]);
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'content' => $payload,
-                'timeout' => 10
-            ]
-        ]);
-        $responseBody = @file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
-        if ($responseBody) {
-            $result = json_decode($responseBody, true);
-            if (!empty($result['success'])) {
-                $is_valid = true;
-            }
-        }
-    }
-    
-    if (!$is_valid) {
-        $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php';
-        $redirect .= (strpos($redirect, '?') !== false ? '&' : '?') . 'lead_error=1';
-        header("Location: $redirect");
-        exit;
-    }
-}
+// Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
+lead_guard_redirect($_POST, 'lead_error');
 
 // Sanitize inputs
 $name        = trim(htmlspecialchars($_POST['name'] ?? ''));

@@ -3,7 +3,7 @@
 
     
     .serif-accent {
-        font-family: 'Playfair Display', 'Georgia', serif;
+        font-family: var(--font-serif);
         font-style: italic;
         color: var(--gold);
     }
@@ -402,7 +402,7 @@
     }
     
     .hero-title {
-        font-family: 'Playfair Display', serif;
+        font-family: var(--font-serif);
         font-size: 4.5rem;
         font-weight: 700;
         color: white;
@@ -479,7 +479,7 @@
     }
     
     .section-title {
-        font-family: 'Playfair Display', serif;
+        font-family: var(--font-serif);
         font-size: 2rem;
         font-style: italic;
         color: var(--gold);
@@ -495,7 +495,7 @@
     }
     
     .highlights-title {
-        font-family: 'Playfair Display', serif;
+        font-family: var(--font-serif);
         font-size: 1.6rem;
         font-style: italic;
         color: white;
@@ -593,7 +593,7 @@
         gap: 0.2rem;
     }
     .glass-acc-title {
-        font-family: 'Inter', sans-serif;
+        font-family: var(--font-sans);
         font-size: 1.1rem;
         color: white;
         font-weight: 600;
@@ -762,7 +762,7 @@
 .p-modal-date-col--right { text-align: right; align-items: flex-end; }
 .p-modal-date-label { font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px; font-weight: 600; }
 .p-modal-date-label .material-symbols-outlined { font-size: 13px; color: var(--gold, #c5a059); }
-.p-modal-date-val { font-size: 0.75rem; font-weight: 700; color: #ffffff; font-family: 'Inter', sans-serif; letter-spacing: 0.02em; }
+.p-modal-date-val { font-size: 0.75rem; font-weight: 700; color: #ffffff; font-family: var(--font-sans); letter-spacing: 0.02em; }
 .p-modal-nights-pill { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(197, 160, 89, 0.12); border: 1px solid rgba(197, 160, 89, 0.45); color: var(--gold, #c5a059); font-size: 0.6rem; font-weight: 700; flex-shrink: 0; margin: 0 8px; }
 .p-modal-nights-pill .material-symbols-outlined { font-size: 12px; margin-bottom: -2px; }
 
@@ -772,14 +772,14 @@
 .p-modal-amenity-item .material-symbols-outlined { font-size: 18px; color: var(--gold, #c5a059); }
 .p-modal-amenity-item span:last-child { font-size: 0.62rem; color: rgba(255, 255, 255, 0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
 .p-modal-content { background: #1a2533; width: 90%; max-width: 900px; border-radius: 8px; overflow: hidden; display: flex; max-height: 90vh; border: 1px solid rgba(255,255,255,0.1); }
-.p-modal-left { width: 65%; padding: 30px; overflow-y: auto; background: rgba(255,255,255,0.05);}
-.p-modal-right { width: 35%; padding: 30px; background: rgba(0,0,0,0.2); border-left: 1px solid rgba(255,255,255,0.1); }
+.p-modal-left { width: 65%; min-height: 0; padding: 30px; overflow-y: auto; overscroll-behavior: contain; background: rgba(255,255,255,0.05);}
+.p-modal-right { width: 35%; min-height: 0; padding: 30px; overflow-y: auto; overscroll-behavior: contain; background: rgba(0,0,0,0.2); border-left: 1px solid rgba(255,255,255,0.1); }
 .p-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.p-modal-header h2 { margin: 0; font-size: 1.4rem; color: var(--gold); font-family: 'Playfair Display', serif; }
+.p-modal-header h2 { margin: 0; font-size: 1.4rem; color: var(--gold); font-family: var(--font-serif); }
 .p-close-modal { font-size: 1.5rem; cursor: pointer; color: rgba(255,255,255,0.5); }
 .p-close-modal:hover { color: #fff; }
 .p-form-section { border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; margin-bottom: 20px; background: rgba(0,0,0,0.2); }
-.p-form-section h3 { margin: 0 0 15px; font-size: 1.1rem; color: #fff; font-family: 'Playfair Display', serif; }
+.p-form-section h3 { margin: 0 0 15px; font-size: 1.1rem; color: #fff; font-family: var(--font-serif); }
 .p-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
 .p-form-group { margin-bottom: 15px; }
 .p-form-group label { display: block; font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 5px; }
@@ -788,7 +788,7 @@
 .p-btn-proceed:hover { opacity: 0.9; }
 
 /* Right Summary Styles */
-.p-modal-summary-title { color: var(--gold); margin: 0 0 20px; font-family: 'Playfair Display', serif; font-size: 1.05rem; }
+.p-modal-summary-title { color: var(--gold); margin: 0 0 20px; font-family: var(--font-serif); font-size: 1.05rem; }
 .p-modal-pkg-title { color: #fff; font-size: 0.95rem; margin: 0 0 5px; }
 .p-modal-pkg-code { color: rgba(255,255,255,0.6); font-size: 0.75rem; margin: 0 0 20px; }
 .p-modal-details-box { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -798,7 +798,7 @@
 .p-modal-detail-val { color: #fff; font-weight: 600; font-size: 0.8rem; }
 .p-modal-total-row { display: flex; justify-content: space-between; align-items: baseline; }
 .p-modal-total-label { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
-.p-modal-total-val { color: var(--gold); font-size: 1.25rem; font-weight: bold; font-family: 'Playfair Display', serif; }
+.p-modal-total-val { color: var(--gold); font-size: 1.25rem; font-weight: bold; font-family: var(--font-serif); }
 .p-modal-note { text-align: right; margin-top: 5px; color: rgba(255,255,255,0.5); font-size: 0.75rem; }
 
 
@@ -814,10 +814,10 @@
 :root { --gold: #e9c176; }
 .search-bar-container { background: #131a28; padding: 15px 40px; display: flex; justify-content: center; position: sticky; top: 0; margin-top: 0; z-index: 1060; border-bottom: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
 .search-bar { display: flex; gap: 10px; background: transparent; width: 100%; max-width: 1200px; align-items: center; }
-.search-input-group { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 10px 15px; flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.7); font-family: 'Inter', sans-serif;}
-.search-input-group .label-text { font-size: 12.8px; color: rgba(255,255,255,0.5); line-height: 1.2; font-family: 'Inter', sans-serif; font-weight: 400; }
+.search-input-group { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 10px 15px; flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.7); font-family: var(--font-sans);}
+.search-input-group .label-text { font-size: 12.8px; color: rgba(255,255,255,0.5); line-height: 1.2; font-family: var(--font-sans); font-weight: 400; }
 .search-input-group input { border: none; outline: none; width: 100%; font-weight: 600; color: #fff; background: transparent; cursor: pointer; margin-top: 5px; font-size: 13.3333px; font-family: Arial, Helvetica, sans-serif; padding: 0; line-height: normal; height: 16px;}
-.btn-search { background: var(--gold); color: #000; border: none; border-radius: 4px; padding: 12px 30px; font-weight: 700; font-size: 16px; font-family: 'Inter', sans-serif; cursor: pointer; transition: 0.3s; align-self: stretch; line-height: normal;}
+.btn-search { background: var(--gold); color: #000; border: none; border-radius: 4px; padding: 12px 30px; font-weight: 700; font-size: 16px; font-family: var(--font-sans); cursor: pointer; transition: 0.3s; align-self: stretch; line-height: normal;}
 .btn-search:hover { filter: brightness(1.1); }
 
 .detail-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
@@ -910,7 +910,7 @@
 .price-widget::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
 .package-header-card { margin-bottom: 30px; }
-.detail-title { font-size: 2.5rem; font-family: 'Playfair Display', serif; color: #fff; margin: 0 0 10px 0; font-weight: 700; line-height: 1.2; }
+.detail-title { font-size: 2.5rem; font-family: var(--font-serif); color: #fff; margin: 0 0 10px 0; font-weight: 700; line-height: 1.2; }
 .detail-meta { font-size: 1.1rem; color: rgba(255,255,255,0.7); margin-bottom: 15px; }
 .rating-badges { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
 .rating-badge { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.2); padding: 5px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
@@ -1223,7 +1223,7 @@
     font-size: 2.8rem;
     margin: 0.5rem 0 0 0;
     font-weight: 500;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
 }
 
 .related-nav {
@@ -1360,7 +1360,7 @@
 
 .related-heading {
     font-size: 1.25rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     color: white;
     margin: 0;
     line-height: 1.4;
@@ -1391,7 +1391,7 @@
 .related-price-val {
     font-size: 1.15rem;
     color: white;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 700;
     margin-left: 0.4rem;
 }
@@ -1462,7 +1462,7 @@
 .tc-gold-highlight {
     color: var(--gold, #c5a059);
     font-weight: 600;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.02em;
 }
 .tc-fade-overlay {
@@ -1488,7 +1488,7 @@
     gap: 0.5rem;
     margin-top: 1.5rem;
     padding: 0.5rem 0;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     width: fit-content;
@@ -1831,7 +1831,7 @@
     letter-spacing: 0.1em; color: rgba(197,160,89,0.90); margin-bottom: 0.5rem;
 }
 .detail-card__name {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: clamp(1.375rem,2.5vw,1.875rem); font-weight: 700;
     color: #fff; margin-bottom: 1rem; line-height: 1.2;
 }

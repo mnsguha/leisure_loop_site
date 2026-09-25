@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once '../config/db.php';
 require_once '../includes/functions.php';
+csrf_stamp_form();
 
 // Device / View Detection
 $useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
@@ -124,10 +125,10 @@ if ($pdo) {
         foreach ($theme_rows as $tr) {
             $slug = strtolower(str_replace([' ', '&', '/'], '-', trim($tr['name'])));
             $curated_pkg_themes[] = [
-                'title' => $tr['name'],
+                'title' => htmlspecialchars($tr['name'], ENT_QUOTES, 'UTF-8'),
                 'slug'  => $slug,
                 'img'   => !empty($tr['image_url']) ? $tr['image_url'] : 'assets/img/pkg.jpg',
-                'sub'   => !empty($tr['tagline']) ? $tr['tagline'] : 'Explore Now',
+                'sub'   => !empty($tr['tagline']) ? htmlspecialchars($tr['tagline'], ENT_QUOTES, 'UTF-8') : 'Explore Now',
             ];
         }
     } catch (Exception $e) { $curated_pkg_themes = []; }

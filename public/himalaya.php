@@ -1,6 +1,8 @@
 <?php
-    require_once '../config/db.php';
-    $page_title = "Sikkim Circuit | Elevation Scroll | Leisure Loop Trip";
+require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
+$page_title = "Sikkim Circuit | Elevation Scroll | Leisure Loop Trip";
     $meta_desc  = "An immersive 3D parallax journey from Gangtok's subtropical valleys to the sacred shores of Gurudongmar Lake. Sikkim Circuit by Leisure Loop Trip.";
 ?>
 <!DOCTYPE html>

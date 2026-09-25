@@ -1,3 +1,8 @@
+/* Global admin select dropdown dark theme */
+.admin-layout select option,
+.admin-container select option,
+.main-content select option { background: #0b0f19; color: #fff; }
+
 /* Extracted from cab-rates.php */
 .admin-layout { display: flex; min-height: 100vh; background-color: var(--admin-bg); color: var(--admin-text); font-family: 'Inter', sans-serif; }
         .main-content { flex: 1; padding: 2rem; overflow-x: auto; }
@@ -195,3 +200,33 @@
 /* Extracted from vehicle-form.php */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: 1 / -1; }
+
+/* ── Cab Bulk Update Modal ── */
+.cab-bulk-modal-header { padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+.cab-bulk-modal-body { padding: 30px; }
+.cab-bulk-modal-footer { padding: 20px 30px; border-top: 1px solid rgba(255,255,255,0.1); text-align: right; background: rgba(0,0,0,0.2); }
+.cab-bulk-date-row { display: flex; gap: 20px; margin-bottom: 30px; }
+.cab-bulk-date-row .form-group { flex: 1; }
+.cab-bulk-date-row .form-group.days-group { flex: 2; }
+.cab-bulk-day-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.cab-bulk-day-chip { background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; }
+.cab-bulk-radio { margin-right: 6px; }
+.cab-bulk-toggle-row { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
+.cab-bulk-toggle-label { cursor: pointer; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.05); color: #fff; font-size: 0.9rem; display: inline-flex; align-items: center; }
+.cab-bulk-toggle-label.is-active { background: rgba(197,160,89,0.2); color: var(--gold); }
+.cab-bulk-select-row { margin-bottom: 20px; display: none; }
+.cab-bulk-select-row.is-active { display: block; }
+.cab-bulk-input-card { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+.cab-bulk-input-card .card-label { color: #fff; font-weight: 600; min-width: 180px; }
+.cab-bulk-input-card .inv-input { flex: 1; min-width: 0; }
+.cab-bulk-empty-msg { color: var(--text-muted); font-size: 0.9rem; padding: 20px; text-align: center; }
+.cab-bulk-hidden { display: none; }
+.admin-modal-inner { background: #0b0f19; width: 800px; max-height: 90vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.cab-bulk-modal-header h2 { margin: 0; font-family: 'Playfair Display', serif; color: #fff; }
+.cab-bulk-modal-header h2 span { color: var(--gold); }
+.cab-bulk-modal-close { background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+.cab-bulk-date-row .inv-input { width: 100%; }
+.cab-bulk-day-chip input { margin-right: 5px; }
+.cab-bulk-select-row .inv-input { width: 100%; text-align: left; }
+.cab-bulk-select-row .inv-input option { background: #0b0f19; color: #fff; }
+.cab-bulk-rates-container { display: flex; gap: 20px; flex-wrap: wrap; }

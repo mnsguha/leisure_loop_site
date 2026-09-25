@@ -82,7 +82,7 @@
 }
 
 .splash-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 2.6rem;
     color: #ffffff;
     margin: 0 0 0.8rem;
@@ -159,7 +159,7 @@
 }
 
 .splash-form-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 1.8rem;
     color: #ffffff;
     margin: 0 0 0.3rem;

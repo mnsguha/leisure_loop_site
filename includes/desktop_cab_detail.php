@@ -107,10 +107,11 @@ include "../includes/header.php";
                         <span class="material-symbols-outlined">timelapse</span>
                         <select id="desktop-hourly-duration" class="search-input" name="duration" required>
                             <option value="" disabled <?php echo empty($s_duration) ? 'selected' : ''; ?>>Select duration</option>
-                            <option value="4 Hrs / 40 Kms" <?php echo $s_duration === '4 Hrs / 40 Kms' ? 'selected' : ''; ?>>4 Hrs / 40 Kms</option>
-                            <option value="8 Hrs / 80 Kms" <?php echo $s_duration === '8 Hrs / 80 Kms' ? 'selected' : ''; ?>>8 Hrs / 80 Kms</option>
-                            <option value="12 Hrs / 120 Kms" <?php echo $s_duration === '12 Hrs / 120 Kms' ? 'selected' : ''; ?>>12 Hrs / 120 Kms</option>
-                            <option value="24 Hrs (Full Day)" <?php echo $s_duration === '24 Hrs (Full Day)' ? 'selected' : ''; ?>>24 Hrs (Full Day)</option>
+                            <?php if (!empty($cab_durations)): ?>
+                                <?php foreach ($cab_durations as $d): ?>
+                                    <option value="<?php echo (int)$d['hours']; ?>" <?php echo ($s_duration === (string)$d['hours']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['label']); ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                 </div>
@@ -199,19 +200,24 @@ include "../includes/header.php";
             <p class="detail-desc"><?php echo nl2br(htmlspecialchars($cab_class['description'])); ?></p>
             <?php $hero_img = preg_match('/^https?:\/\//i', $cab_class['image']) ? $cab_class['image'] : ltrim($cab_class['image'], '/'); ?>
             <img src="<?php echo htmlspecialchars($hero_img); ?>" alt="Hero" class="cab-hero-img">
-            <div style="color: var(--gold); font-size: 1.2rem; font-weight: 600;">
-                Starting from &#8377;<?php echo number_format($cab_class['starting_price']); ?> / day
+            <div class="cab-price-label">
+                <?php if ($class_min_rate): ?>
+                Starting from &#8377;<?php echo number_format($class_min_rate); ?> / day
+                <?php else: ?>
+                Contact for pricing
+                <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>
 
         <!-- Vehicles List -->
         <?php if (empty($vehicles)): ?>
-            <p style="color: rgba(255,255,255,0.6);">No specific vehicles listed under this class yet.</p>
+            <p class="text-muted-empty">No specific vehicles listed under this class yet.</p>
         <?php endif; ?>
 
         <?php foreach ($vehicles as $v): ?>
-        <div class="room-category" data-vid="<?php echo $v['id']; ?>" data-baseprice="<?php echo $v['price_per_day']; ?>" id="desktop-vehicle-card-<?php echo $v['id']; ?>">
+        <?php $display_rate = $v['display_rate'] ?? null; ?>
+        <div class="room-category" data-vid="<?php echo $v['id']; ?>" data-baseprice="<?php echo $display_rate !== null ? htmlspecialchars((string)$display_rate) : 0; ?>" id="desktop-vehicle-card-<?php echo $v['id']; ?>">
             <!-- Left: Image & Features -->
             <div class="room-gallery-left">
                 <?php $v_img = preg_match('/^https?:\/\//i', $v['image']) ? $v['image'] : ltrim($v['image'], '/'); ?>
@@ -220,6 +226,13 @@ include "../includes/header.php";
                     <span>&#128101; <?php echo (int)$v['pax_capacity']; ?> Seats</span>
                     <span>&#128092; <?php echo (int)$v['luggage_capacity']; ?> Bags</span>
                     <span>&#10052; <?php echo htmlspecialchars($v['ac_type']); ?></span>
+                </div>
+                <div class="cab-info-item cab-info-item--left">
+                    <span class="material-symbols-outlined cab-info-icon" aria-hidden="true">event_busy</span>
+                    <span class="cab-info-text">
+                        <span class="cab-info-title">Cancellation Policy</span>
+                        <span class="cab-info-desc"><?php echo htmlspecialchars($v['cancellation_policy'] ?? 'Free before 6 hours from journey'); ?></span>
+                    </span>
                 </div>
             </div>
             
@@ -230,32 +243,56 @@ include "../includes/header.php";
                         <h4><?php echo htmlspecialchars($v['name']); ?></h4>
                         <div class="plan-occupancy">Perfect for local city tours, outstation trips, and airport transfers.</div>
                         
-                        <div class="emt-fields">
-                            <div class="emt-field">
-                                <strong>Fuel Type:</strong>
-                                <span><?php echo htmlspecialchars($v['fuel_type'] ?? 'Petrol'); ?></span>
+                        <div class="cab-info-grid">
+                            <div class="cab-info-item">
+                                <span class="material-symbols-outlined cab-info-icon" aria-hidden="true">local_gas_station</span>
+                                <span class="cab-info-text">
+                                    <span class="cab-info-title">Fuel Type</span>
+                                    <span class="cab-info-desc"><?php echo htmlspecialchars(($v['fuel_type'] ?? '') !== '' ? $v['fuel_type'] : 'Petrol, Diesel, CNG'); ?></span>
+                                </span>
                             </div>
-                            <div class="emt-field">
-                                <strong>Service Options:</strong>
-                                <span>Disposal, Point to Point</span>
+                            <div class="cab-info-item">
+                                <span class="material-symbols-outlined cab-info-icon" aria-hidden="true">commute</span>
+                                <span class="cab-info-text">
+                                    <span class="cab-info-title">Service Options</span>
+                                    <span class="cab-info-desc"><?php echo htmlspecialchars($display_service_options); ?></span>
+                                </span>
                             </div>
-                            <div class="emt-field">
-                                <strong>Cancellation Policy:</strong>
-                                <span><?php echo htmlspecialchars($v['cancellation_policy'] ?? 'Free before 6 hours from journey'); ?></span>
+                            <div class="cab-info-item">
+                                <span class="material-symbols-outlined cab-info-icon" aria-hidden="true">account_balance_wallet</span>
+                                <span class="cab-info-text">
+                                    <span class="cab-info-title">Part Payment</span>
+                                    <span class="cab-info-desc"><?php echo htmlspecialchars($v['part_payment'] ?? 'Pay 25% now and rest to driver'); ?></span>
+                                </span>
                             </div>
-                            <div class="emt-field">
-                                <strong>Part Payment:</strong>
-                                <span><?php echo htmlspecialchars($v['part_payment'] ?? 'Pay 25% now and rest to driver'); ?></span>
+                            <?php if ($s_type === 'hourly' && !empty($v['km_charges_text'])): ?>
+                            <div class="cab-info-item cab-info-item--success">
+                                <span class="material-symbols-outlined cab-info-icon" aria-hidden="true">speed</span>
+                                <span class="cab-info-text">
+                                    <span class="cab-info-title">Kilometer Charges</span>
+                                    <span class="cab-info-desc cab-info-desc--success"><?php echo htmlspecialchars($v['km_charges_text']); ?></span>
+                                </span>
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="plan-pricing">
-                        <div class="price-final">&#8377;<?php echo number_format($v['price_per_day']); ?> <span style="font-size:0.9rem;color:rgba(255,255,255,0.5);">/ day</span></div>
-                        <button type="button" class="btn-select vehicle-action-btn" data-action="select-vehicle" data-id="<?php echo $v['id']; ?>" data-name="<?php echo htmlspecialchars($v['name'], ENT_QUOTES); ?>" data-price="<?php echo $v['price_per_day']; ?>">
+                        <?php if ($display_rate): ?>
+                        <div class="price-final">&#8377;<?php echo number_format($display_rate); ?></div>
+                        <?php else: ?>
+                        <div class="price-final"><span class="price-unit">N/A</span></div>
+                        <?php endif; ?>
+                        <button type="button" class="btn-select vehicle-action-btn" data-action="select-vehicle" data-id="<?php echo $v['id']; ?>" data-name="<?php echo htmlspecialchars($v['name'], ENT_QUOTES); ?>" data-price="<?php echo $display_rate ?? 0; ?>" data-image="<?php echo htmlspecialchars($v_img, ENT_QUOTES); ?>" data-km="<?php echo htmlspecialchars($v['km_charges_text'] ?? '', ENT_QUOTES); ?>" data-seats="<?php echo (int)$v['pax_capacity']; ?>" data-bags="<?php echo (int)$v['luggage_capacity']; ?>" data-ac="<?php echo htmlspecialchars($v['ac_type'] ?? '', ENT_QUOTES); ?>" data-fuel="<?php echo htmlspecialchars(($v['fuel_type'] ?? '') !== '' ? $v['fuel_type'] : 'Petrol, Diesel, CNG', ENT_QUOTES); ?>">
                             <?php echo $is_search ? 'SELECT' : 'ENQUIRY'; ?>
                         </button>
                     </div>
                 </div>
+            </div>
+            <div class="cab-info-footer">
+                <span class="cab-info-footer-item"><span class="material-symbols-outlined cab-info-footer-icon" aria-hidden="true">support_agent</span> 24/7 customer helpline</span>
+                <?php if ($footer_duration_text !== ''): ?>
+                <span class="cab-info-footer-item"><span class="material-symbols-outlined cab-info-footer-icon" aria-hidden="true">directions_car</span> <?php echo htmlspecialchars($footer_duration_text); ?></span>
+                <?php endif; ?>
             </div>
         </div>
         <?php endforeach; ?>
@@ -273,8 +310,8 @@ include "../includes/header.php";
 </div>
 
 <!-- Single Clean Checkout Modal -->
-<div id="desktop-checkoutModal" class="modal-overlay">
-    <div class="modal-content">
+<div id="desktop-checkoutModal" class="modal-overlay" data-lenis-prevent>
+    <div class="modal-content" data-lenis-prevent>
         <!-- Left: Form -->
         <div class="modal-left">
             <div class="modal-header">
@@ -283,6 +320,7 @@ include "../includes/header.php";
             </div>
             
             <form id="desktop-checkoutForm">
+                <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="vehicle_id" id="desktop-formVehicleId">
                 <input type="hidden" name="vehicle_name" id="desktop-formVehicleName">
@@ -319,9 +357,9 @@ include "../includes/header.php";
                     <div class="form-row">
                         <div class="form-group">
                             <label for="desktop-guest-phone">Mobile number *</label>
-                            <div style="display: flex;">
-                                <input type="text" value="+91" class="form-control" style="width: 60px; border-right: none; border-radius: 4px 0 0 4px; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.5);" readonly>
-                                <input type="tel" id="desktop-guest-phone" name="phone" class="form-control" style="border-radius: 0 4px 4px 0;" required>
+                            <div class="phone-input-row">
+                                <input type="text" value="+91" class="form-control phone-prefix-input" readonly>
+                                <input type="tel" id="desktop-guest-phone" name="phone" class="form-control phone-suffix-input" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -340,34 +378,75 @@ include "../includes/header.php";
         
         <!-- Right: Summary -->
         <div class="modal-right">
-            <h3 style="margin-top: 0; color: var(--gold);">Enquiry Summary</h3>
-            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-                <div id="desktop-modalSummaryVehicle" style="font-weight: 700; color: #fff; margin-bottom: 5px;"></div>
-                <div id="desktop-modalSummaryService" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 20px;"></div>
-                
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px; color: rgba(255,255,255,0.8);">
-                    <span id="desktop-modalLabelPickup">From:</span>
-                    <strong style="color: #fff; text-align: right; max-width: 70%;" id="desktop-modalPickup"></strong>
+            <h3 class="modal-summary-title">Enquiry Summary</h3>
+            <div class="summary-vehicle-head">
+                    <img id="desktop-modalVehicleImg" class="summary-vehicle-img" alt="" hidden>
+                    <div class="summary-vehicle-text">
+                        <div id="desktop-modalSummaryVehicle" class="summary-vehicle-name"></div>
+                        <div id="desktop-modalSummaryService" class="summary-service-type"></div>
+                    </div>
                 </div>
-                <div id="desktop-modalDropContainer" style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px; color: rgba(255,255,255,0.8);">
-                    <span id="desktop-modalLabelDrop">To:</span>
-                    <strong style="color: #fff; text-align: right; max-width: 70%;" id="desktop-modalDrop"></strong>
+
+                <div class="summary-route-card">
+                    <div class="summary-route-col">
+                        <span class="summary-route-label" id="desktop-modalLabelPickup">Pick-up
+                            <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
+                        </span>
+                        <span class="summary-route-val" id="desktop-modalPickup"></span>
+                    </div>
+                    <div class="summary-route-pill" id="desktop-modalRoutePill" aria-hidden="true">
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </div>
+                    <div class="summary-route-col summary-route-col--right">
+                        <span class="summary-route-label" id="desktop-modalLabelDrop">Drop-off
+                            <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
+                        </span>
+                        <span class="summary-route-val" id="desktop-modalDrop"></span>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 20px; color: rgba(255,255,255,0.8);">
+
+                <div class="summary-row">
                     <span>Date:</span>
-                    <strong style="color: #fff;" id="desktop-modalDate"></strong>
+                    <strong class="summary-value" id="desktop-modalDate"></strong>
                 </div>
-                
-                <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; color: #fff;">
+                <div class="summary-row--bordered">
+                    <span>Time:</span>
+                    <strong class="summary-value" id="desktop-modalTime"></strong>
+                </div>
+
+                <div class="summary-total-row">
                     <span>Total Estimated:</span>
-                    <span id="desktop-modalSummaryTotal" style="color: var(--gold);"></span>
+                    <span id="desktop-modalSummaryTotal" class="summary-total-value"></span>
                 </div>
-            </div>
+
+                <div class="summary-meta-strip">
+                    <div class="summary-meta-item" id="desktop-modalMetaSeats" hidden>
+                        <span class="material-symbols-outlined" aria-hidden="true">group</span>
+                        <span class="summary-meta-val" id="desktop-modalSeats"></span>
+                    </div>
+                    <div class="summary-meta-item" id="desktop-modalMetaBags" hidden>
+                        <span class="material-symbols-outlined" aria-hidden="true">luggage</span>
+                        <span class="summary-meta-val" id="desktop-modalBags"></span>
+                    </div>
+                    <div class="summary-meta-item" id="desktop-modalMetaAc" hidden>
+                        <span class="material-symbols-outlined" aria-hidden="true">ac_unit</span>
+                        <span class="summary-meta-val" id="desktop-modalAc"></span>
+                    </div>
+                    <div class="summary-meta-item" id="desktop-modalMetaFuel" hidden>
+                        <span class="material-symbols-outlined" aria-hidden="true">local_gas_station</span>
+                        <span class="summary-meta-val" id="desktop-modalFuel"></span>
+                    </div>
+                    <div class="summary-meta-item" id="desktop-modalMetaKm" hidden>
+                        <span class="material-symbols-outlined" aria-hidden="true">speed</span>
+                        <span class="summary-meta-label">KM Charges</span>
+                        <span class="summary-meta-val" id="desktop-modalKmCharges"></span>
+                    </div>
+                </div>
         </div>
     </div>
 </div>
 
-<script src="js/modules/cabs.js" defer></script>
-<script src="js/modules/cab-detail.js" defer></script>
+<script src="js/modules/cabs.js?v=<?php echo time(); ?>" defer></script>
+<script src="js/modules/cab-detail.js?v=<?php echo time(); ?>" defer></script>
 
 <?php include "../includes/footer.php"; ?>

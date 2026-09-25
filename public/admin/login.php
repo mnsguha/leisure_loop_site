@@ -4,16 +4,21 @@ require_once '../../includes/functions.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    // Simple hardcoded check - change this for production!
-    if ($username === 'admin' && $password === 'LeisureLoop2026') {
-        $_SESSION['admin_logged_in'] = true;
-        header('Location: index.php');
-        exit;
+    $token = isset($_POST['csrf_token']) ? (string) $_POST['csrf_token'] : '';
+    if ($token === '' || !hash_equals((string) ($_SESSION['csrf_token'] ?? ''), $token)) {
+        $error = 'Session expired. Please try again.';
     } else {
-        $error = 'Invalid credentials.';
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        // Simple hardcoded check - change this for production!
+        if ($username === 'admin' && $password === 'LeisureLoop2026') {
+            $_SESSION['admin_logged_in'] = true;
+            header('Location: index.php');
+            exit;
+        } else {
+            $error = 'Invalid credentials.';
+        }
     }
 }
 ?>

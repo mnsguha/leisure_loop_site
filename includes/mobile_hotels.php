@@ -31,7 +31,6 @@ $detail_query_string = http_build_query($query_params);
     <?php
     $mobile_header_title = 'Hotels & Homestays';
     $mobile_active_nav   = 'hotels';
-    $back_url            = 'index.php?view=mobile';
     include __DIR__ . '/mobile_header.php';
     ?>
 
@@ -85,7 +84,7 @@ $detail_query_string = http_build_query($query_params);
                 <span class="material-symbols-outlined m-search-icon">location_on</span>
                 <div class="m-search-field-content">
                     <label for="mSearchCity" class="m-search-kicker">CITY, LOCATION OR PROPERTY</label>
-                    <input type="text" name="q" id="mSearchCity" class="m-search-input" placeholder="e.g. Darjeeling, Gangtok, Pelling" value="<?php echo htmlspecialchars($search_query); ?>">
+                    <input type="text" name="q" id="mSearchCity" class="m-search-input" placeholder="" value="<?php echo htmlspecialchars($search_query); ?>">
                 </div>
             </div>
 
@@ -94,7 +93,7 @@ $detail_query_string = http_build_query($query_params);
                 <div class="m-search-date-col">
                     <label class="m-search-kicker">CHECK-IN</label>
                     <div class="m-search-date-display">
-                        <span class="m-date-day" id="mDisplayCheckInDay"><?php echo date('d M', $check_in_ts); ?></span>
+                        <span class="m-date-day" id="mDisplayCheckInDay"><?php echo date('jS M', $check_in_ts); ?></span>
                         <span class="m-date-sub" id="mDisplayCheckInYear">'<?php echo date('y, D', $check_in_ts); ?></span>
                     </div>
                     <input type="hidden" name="check_in" id="mCheckInDate" value="<?php echo htmlspecialchars($check_in); ?>">
@@ -108,7 +107,7 @@ $detail_query_string = http_build_query($query_params);
                 <div class="m-search-date-col m-search-date-col--right">
                     <label class="m-search-kicker">CHECK-OUT</label>
                     <div class="m-search-date-display">
-                        <span class="m-date-day" id="mDisplayCheckOutDay"><?php echo date('d M', $check_out_ts); ?></span>
+                        <span class="m-date-day" id="mDisplayCheckOutDay"><?php echo date('jS M', $check_out_ts); ?></span>
                         <span class="m-date-sub" id="mDisplayCheckOutYear">'<?php echo date('y, D', $check_out_ts); ?></span>
                     </div>
                     <input type="hidden" name="check_out" id="mCheckOutDate" value="<?php echo htmlspecialchars($check_out); ?>">
@@ -172,7 +171,7 @@ $detail_query_string = http_build_query($query_params);
                     
                     <!-- Top Badges -->
                     <div class="m-hotel-badges-top">
-                        <span class="m-hotel-star-badge"><?php echo htmlspecialchars($hotel['star_category'] ?? '4'); ?> Star</span>
+                        <span class="m-hotel-star-badge"><?php echo str_repeat('★', (int)($hotel['star_category'] ?? 4)); ?></span>
                         <?php if (!empty($hotel['google_rating'])): ?>
                         <span class="m-hotel-rating-badge">
                             <span class="material-symbols-outlined star-icon">star</span>

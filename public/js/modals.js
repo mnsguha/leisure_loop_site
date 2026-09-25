@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const focusableSelector = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Tab') return;
-        const activeModal = document.querySelector('.modal-overlay.is-active, .enquiry-modal-overlay.is-active');
+        const activeModal = document.querySelector('.modal-overlay.is-active, .enquiry-modal-overlay.is-active, .cabs-modal-overlay.is-active, .info-modal.is-active');
         if (!activeModal) return;
         const focusable = activeModal.querySelectorAll(focusableSelector);
         if (focusable.length === 0) return;
@@ -123,6 +123,135 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!input.value) input.type = 'text';
         });
     });
+
+    // ─── DRAGGABLE FLOATING DOCK HUB (both pills as one unit) ───
+    const DRAG_THRESHOLD_PX = 6;
+    const DOCK_EDGE_PAD = 8;
+
+    const dockHub = document.querySelector('[data-drag-hub]');
+    if (dockHub) {
+        // Always start from CSS default on load/refresh (no sticky positions)
+        try {
+            localStorage.removeItem('llt_dock_pills');
+        } catch (err) {
+            /* storage unavailable */
+        }
+        dockHub.classList.remove('is-dock-float', 'is-dragging');
+        dockHub.style.removeProperty('--dock-x');
+        dockHub.style.removeProperty('--dock-y');
+
+        const clampHubPos = (x, y) => {
+            const w = dockHub.offsetWidth || 256;
+            const h = dockHub.offsetHeight || 120;
+            const maxX = Math.max(DOCK_EDGE_PAD, window.innerWidth - w - DOCK_EDGE_PAD);
+            const maxY = Math.max(DOCK_EDGE_PAD, window.innerHeight - h - DOCK_EDGE_PAD);
+            return {
+                x: Math.min(Math.max(DOCK_EDGE_PAD, x), maxX),
+                y: Math.min(Math.max(DOCK_EDGE_PAD, y), maxY)
+            };
+        };
+
+        const applyHubPos = (x, y) => {
+            const pos = clampHubPos(x, y);
+            dockHub.classList.add('is-dock-float');
+            dockHub.style.setProperty('--dock-x', pos.x + 'px');
+            dockHub.style.setProperty('--dock-y', pos.y + 'px');
+            return pos;
+        };
+
+        let pointerId = null;
+        let startX = 0;
+        let startY = 0;
+        let origX = 0;
+        let origY = 0;
+        let dragging = false;
+        let moved = false;
+
+        dockHub.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+        });
+
+        dockHub.addEventListener('pointerdown', (e) => {
+            if (e.button !== undefined && e.button !== 0) return;
+            // Drag from either pill (or any descendant of a pill)
+            if (!e.target.closest || !e.target.closest('.emt-dock-pill')) return;
+
+            pointerId = e.pointerId;
+            startX = e.clientX;
+            startY = e.clientY;
+            dragging = false;
+            moved = false;
+
+            const rect = dockHub.getBoundingClientRect();
+            origX = rect.left;
+            origY = rect.top;
+
+            try {
+                dockHub.setPointerCapture(pointerId);
+            } catch (err) {
+                /* capture optional */
+            }
+        });
+
+        dockHub.addEventListener('pointermove', (e) => {
+            if (pointerId === null || e.pointerId !== pointerId) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            if (!dragging) {
+                if (Math.abs(dx) < DRAG_THRESHOLD_PX && Math.abs(dy) < DRAG_THRESHOLD_PX) {
+                    return;
+                }
+                dragging = true;
+                moved = true;
+                dockHub.classList.add('is-dragging');
+            }
+
+            e.preventDefault();
+            applyHubPos(origX + dx, origY + dy);
+        });
+
+        const endPointer = (e) => {
+            if (pointerId === null || (e && e.pointerId !== undefined && e.pointerId !== pointerId)) return;
+
+            if (dragging) {
+                dockHub.classList.remove('is-dragging');
+                const styles = getComputedStyle(dockHub);
+                const x = parseFloat(styles.getPropertyValue('--dock-x')) || 0;
+                const y = parseFloat(styles.getPropertyValue('--dock-y')) || 0;
+                applyHubPos(x, y);
+            }
+
+            try {
+                if (pointerId !== null) dockHub.releasePointerCapture(pointerId);
+            } catch (err) {
+                /* already released */
+            }
+            pointerId = null;
+            dragging = false;
+        };
+
+        dockHub.addEventListener('pointerup', endPointer);
+        dockHub.addEventListener('pointercancel', endPointer);
+
+        dockHub.addEventListener('click', (e) => {
+            if (moved) {
+                e.preventDefault();
+                e.stopPropagation();
+                moved = false;
+            }
+        }, true);
+
+        window.addEventListener('resize', () => {
+            if (!dockHub.classList.contains('is-dock-float')) return;
+            const styles = getComputedStyle(dockHub);
+            const x = parseFloat(styles.getPropertyValue('--dock-x'));
+            const y = parseFloat(styles.getPropertyValue('--dock-y'));
+            if (Number.isNaN(x) || Number.isNaN(y)) return;
+            applyHubPos(x, y);
+        });
+    }
 
     // ─── INITIALIZE GSAP DRAG ───
     const dragTracks = document.querySelectorAll('[data-gsap-drag="true"]');

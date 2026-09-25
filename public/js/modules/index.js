@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const formData = new FormData(signupForm);
                 const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-                const leadEndpoint = basePath ? `${basePath}/api/v1/leads` : '/api/v1/leads';
+                const leadEndpoint = basePath ? `${basePath}/api-submit-lead.php` : 'api-submit-lead.php';
 
                 fetch(leadEndpoint, {
                     method: 'POST',

@@ -9,6 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
+lead_guard_json($_POST);
+
 function cleanInput($key) {
     return isset($_POST[$key]) ? trim((string) $_POST[$key]) : '';
 }
@@ -86,6 +89,7 @@ if ($pdo) {
         }
 
         $local_id = $pdo->lastInsertId();
+        pdf_grant_access('package', (string) $local_id);
     } catch (Throwable $e) {
         echo json_encode(['success' => false, 'message' => 'Database error occurred.']);
         exit;

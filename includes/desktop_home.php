@@ -52,7 +52,7 @@
                     <source src="<?php echo htmlspecialchars($slideUrl); ?>" type="video/mp4">
                 </video>
             <?php else: ?>
-                <div class="hero-slide-img hero-bg-poster" style="background-image: url('<?php echo htmlspecialchars($slideUrl); ?>');"></div>
+                <div class="hero-slide-img hero-bg-poster" data-bg="<?php echo htmlspecialchars($slideUrl); ?>"></div>
             <?php endif; ?>
         </div>
 
@@ -122,7 +122,8 @@
 
                         <!-- STEP 2: Contact fields (hidden until Step 1 submitted) -->
                         <div class="hero-step2-reveal hidden" id="desktop-heroStep2">
-                            <form id="heroLeadForm" action="/api/v1/leads" method="POST" class="js-lead-form">
+                            <form id="heroLeadForm" action="api-submit-lead.php" method="POST" class="js-lead-form">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                                 <input type="hidden" name="destination" id="desktop-hiddenDest">
@@ -232,7 +233,7 @@
                 <?php foreach ($featured_packages as $pkg): ?>
                 <div class="package-card responsive-package-card">
                     <div class="pkg-img pkg-card-img">
-                        <div class="pkg-img-bg pkg-card-img-bg" style="background-image: url('<?php echo htmlspecialchars($pkg['image_url'] ?: 'assets/images/placeholder.jpg'); ?>');"></div>
+                        <div class="pkg-img-bg pkg-card-img-bg" data-bg="<?php echo htmlspecialchars($pkg['image_url'] ?: 'assets/images/placeholder.jpg'); ?>"></div>
                         <div class="pkg-badge pkg-card-badge">
                             <?php 
                             if (!empty($pkg['nights']) && !empty($pkg['days'])) {
@@ -288,7 +289,7 @@
             <div class="ticker-content">
                 <?php foreach ($marquee_items as $item): ?>
                 <div class="ticker-frame">
-                    <div class="film-img" style="background-image: url('<?php echo htmlspecialchars($item['image_url']); ?>');"></div>
+                    <div class="film-img" data-bg="<?php echo htmlspecialchars($item['image_url']); ?>"></div>
                     <div class="ticker-item"><?php echo htmlspecialchars($item['label']); ?></div>
                 </div>
                 <span class="ticker-sep">◆</span>
@@ -297,7 +298,7 @@
             <div class="ticker-content">
                 <?php foreach ($marquee_items as $item): ?>
                 <div class="ticker-frame">
-                    <div class="film-img" style="background-image: url('<?php echo htmlspecialchars($item['image_url']); ?>');"></div>
+                    <div class="film-img" data-bg="<?php echo htmlspecialchars($item['image_url']); ?>"></div>
                     <div class="ticker-item"><?php echo htmlspecialchars($item['label']); ?></div>
                 </div>
                 <span class="ticker-sep">◆</span>
@@ -351,7 +352,7 @@
                 <div class="destinations-carousel">
                     <?php foreach ($destinations_list as $dest): ?>
                     <div class="dest-card <?php echo strtolower($dest['category']) === 'international' ? 'hidden' : ''; ?>" data-category="<?php echo strtolower(htmlspecialchars($dest['category'] ?? 'domestic')); ?>" data-url="destination-details.php?slug=<?php echo urlencode($dest['slug']); ?>">
-                        <div class="dest-img" style="background-image: url('<?php echo htmlspecialchars(!empty($dest['card_image']) ? $dest['card_image'] : (!empty($dest['cover_image']) ? $dest['cover_image'] : 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800')); ?>');">
+                        <div class="dest-img" data-bg="<?php echo htmlspecialchars(!empty($dest['card_image']) ? $dest['card_image'] : (!empty($dest['cover_image']) ? $dest['cover_image'] : 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800')); ?>">
                             <div class="dest-badge"><?php echo strtoupper(htmlspecialchars($dest['category'] ?? 'DOMESTIC')); ?></div>
                             <div class="dest-overlay-content">
                                 <div class="dest-main-info">
@@ -388,7 +389,7 @@
             <div id="ge-stardust">
                 
                 <?php for($i=0; $i<50; $i++): ?>
-                    <div class="stardust-particle" style="width: <?php echo rand(1,3); ?>px; height: <?php echo rand(1,3); ?>px; top: <?php echo rand(0,100); ?>%; left: <?php echo rand(0,100); ?>%;"></div>
+                    <div class="stardust-particle" data-sz="<?=rand(1,3)?>" data-top="<?=rand(0,100)?>" data-left="<?=rand(0,100)?>"></div>
                 <?php endfor; ?>
             </div>
             
@@ -456,7 +457,7 @@
                 <?php foreach ($international_packages as $pkg): ?>
                 <div class="package-card responsive-package-card">
                     <div class="pkg-img pkg-card-img">
-                        <div class="pkg-img-bg pkg-card-img-bg" style="background-image: url('<?php echo htmlspecialchars($pkg['image_url'] ?: 'assets/images/placeholder.jpg'); ?>');"></div>
+                        <div class="pkg-img-bg pkg-card-img-bg" data-bg="<?php echo htmlspecialchars($pkg['image_url'] ?: 'assets/images/placeholder.jpg'); ?>"></div>
                         <div class="pkg-badge pkg-card-badge">
                             <?php 
                             if (!empty($pkg['nights']) && !empty($pkg['days'])) {
@@ -549,9 +550,9 @@
                     $img = strpos($img, 'http') === 0 ? $img : $img;
                     $delay = ($i - 1) * 0.1;
                 ?>
-                <div class="process-card process-card-item" style="transition-delay: <?php echo $delay; ?>s;">
+                <div class="process-card process-card-item" data-delay="<?php echo $delay; ?>">
                     <div class="process-img-wrapper">
-                        <div class="process-img-canvas" style="background-image: url('<?php echo htmlspecialchars($img); ?>');"></div>
+                        <div class="process-img-canvas" data-bg="<?php echo htmlspecialchars($img); ?>"></div>
                     </div>
                     <div class="process-content">
                         <div class="process-icon">
@@ -576,7 +577,7 @@
     ?>
     <section class="ad-banner-section">
         <div class="container">
-            <div class="ad-banner" style="background: url('<?php echo $ad_bg; ?>') no-repeat center center;">
+            <div class="ad-banner" data-bg="<?php echo $ad_bg; ?>">
                 <div class="ad-overlay"></div>
                 <div class="ad-content">
                     <?php if (file_exists(__DIR__ . '/assets/img/leisure.png')): ?>
@@ -742,7 +743,7 @@
                     <?php foreach ($row1_display as $item): ?>
                     <a href="packages.php?theme=<?php echo urlencode($item['name']); ?>" class="theme-circle-card-item">
                         <div class="circle-card-photo">
-                            <div class="t-circle-bg" style="background-image: url('<?php echo htmlspecialchars($item['bg']); ?>');"></div>
+                            <div class="t-circle-bg" data-bg="<?php echo htmlspecialchars($item['bg']); ?>"></div>
                             <div class="circle-overlay"></div>
                         </div>
                         <div class="circle-card-info">
@@ -759,7 +760,7 @@
                     <?php foreach ($row2_display as $item): ?>
                     <a href="packages.php?theme=<?php echo urlencode($item['name']); ?>" class="theme-circle-card-item">
                         <div class="circle-card-photo">
-                            <div class="t-circle-bg" style="background-image: url('<?php echo htmlspecialchars($item['bg']); ?>');"></div>
+                            <div class="t-circle-bg" data-bg="<?php echo htmlspecialchars($item['bg']); ?>"></div>
                             <div class="circle-overlay"></div>
                         </div>
                         <div class="circle-card-info">
@@ -971,7 +972,7 @@
     ?>
     <section class="ad-banner-section ad-banner-section--alt">
         <div class="container">
-            <div class="ad-banner" style="background: url('<?php echo $ad2_bg; ?>') no-repeat center center;">
+            <div class="ad-banner" data-bg="<?php echo $ad2_bg; ?>">
                 <div class="ad-overlay"></div>
                 <div class="ad-content">
                     <?php if (file_exists(__DIR__ . '/assets/img/leisure.png')): ?>
@@ -1087,7 +1088,8 @@
             <h2 class="newsletter-title">Curated travel insights, <br>delivered exclusively to you.</h2>
             <p class="newsletter-desc">Be the first to access our private journey invitations, seasonal curations, and extraordinary stories from around the globe.</p>
             
-            <form id="subscribe-form" action="/api/v1/subscriptions" method="POST" class="newsletter-form">
+            <form id="subscribe-form" action="api-subscribe.php" method="POST" class="newsletter-form">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                 <div class="newsletter-flex">
@@ -1163,12 +1165,12 @@
                         <div class="smiles-marquee track-left">
                             <div class="smiles-marquee-content">
                                 <?php foreach($top_track as $img): $url = htmlspecialchars(strpos($img['image_url'], 'http') === 0 ? $img['image_url'] : $img['image_url']); ?>
-                                <div class="smile-card"><div class="smile-img" style="background-image: url('<?php echo $url; ?>');"></div></div>
+                                <div class="smile-card"><div class="smile-img" data-bg="<?php echo $url; ?>"></div></div>
                                 <?php endforeach; ?>
                             </div>
                             <div class="smiles-marquee-content" aria-hidden="true">
                                 <?php foreach($top_track as $img): $url = htmlspecialchars(strpos($img['image_url'], 'http') === 0 ? $img['image_url'] : $img['image_url']); ?>
-                                <div class="smile-card"><div class="smile-img" style="background-image: url('<?php echo $url; ?>');"></div></div>
+                                <div class="smile-card"><div class="smile-img" data-bg="<?php echo $url; ?>"></div></div>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -1179,12 +1181,12 @@
                         <div class="smiles-marquee track-right">
                             <div class="smiles-marquee-content">
                                 <?php foreach($bottom_track as $img): $url = htmlspecialchars(strpos($img['image_url'], 'http') === 0 ? $img['image_url'] : $img['image_url']); ?>
-                                <div class="smile-card"><div class="smile-img" style="background-image: url('<?php echo $url; ?>');"></div></div>
+                                <div class="smile-card"><div class="smile-img" data-bg="<?php echo $url; ?>"></div></div>
                                 <?php endforeach; ?>
                             </div>
                             <div class="smiles-marquee-content" aria-hidden="true">
                                 <?php foreach($bottom_track as $img): $url = htmlspecialchars(strpos($img['image_url'], 'http') === 0 ? $img['image_url'] : $img['image_url']); ?>
-                                <div class="smile-card"><div class="smile-img" style="background-image: url('<?php echo $url; ?>');"></div></div>
+                                <div class="smile-card"><div class="smile-img" data-bg="<?php echo $url; ?>"></div></div>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -1253,8 +1255,8 @@
                 ?>
                 <div class="fd-card">
                     <div class="fd-img-wrap">
-                        <div class="fd-img" style="background-image: url('<?php echo htmlspecialchars($img); ?>');"></div>
-                        <div class="fd-badge" style="background: <?php echo $status_bg; ?>; color: <?php echo $status_color; ?>; border: 1px solid <?php echo $status_color; ?>;">
+                        <div class="fd-img" data-bg="<?php echo htmlspecialchars($img); ?>"></div>
+                        <div class="fd-badge" data-badge-bg="<?php echo $status_bg; ?>" data-badge-color="<?php echo $status_color; ?>">
                             <?php echo htmlspecialchars($status); ?> 
                             <?php if ($status != 'Sold Out') echo "- " . $seats_left . " Seats Left"; ?>
                         </div>
@@ -1368,7 +1370,7 @@
     <!-- PRE-FAQ BANNER -->
     <section class="pre-faq-banner">
         <div class="container">
-            <div class="pre-faq-card" style="background-image: linear-gradient(to right, rgba(5,10,20,0.95) 0%, rgba(5,10,20,0.7) 40%, rgba(5,10,20,0.2) 100%), url('<?php echo $ad_bg; ?>');">
+            <div class="pre-faq-card pre-faq-card--gradient" data-bg="<?php echo $ad_bg; ?>">
                 <div class="pre-faq-content">
                     <?php if (file_exists(__DIR__ . '/assets/img/leisure.png')): ?>
                         <div class="pre-faq-logo">
@@ -1417,7 +1419,7 @@
                 <div class="marquee-track">
                     <?php foreach ($testimonials as $t): ?>
                     <div class="marquee-item">
-                        <img src="<?php echo htmlspecialchars($t['image_url']); ?>" alt="<?php echo htmlspecialchars($t['tour_name']); ?>" class="marquee-photo" style="transform: rotate(<?php echo (int)$t['rotation_angle']; ?>deg);" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <img src="<?php echo htmlspecialchars($t['image_url']); ?>" alt="<?php echo htmlspecialchars($t['tour_name']); ?>" class="marquee-photo" data-rotation="<?php echo (int)$t['rotation_angle']; ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
                         <div class="marquee-quote">
                             <div class="marquee-quote-mark">"</div>
                             <p class="marquee-quote-text">
@@ -1436,7 +1438,7 @@
                 <div class="marquee-track">
                     <?php foreach ($testimonials as $t): ?>
                     <div class="marquee-item">
-                        <img src="<?php echo htmlspecialchars($t['image_url']); ?>" alt="<?php echo htmlspecialchars($t['tour_name']); ?>" class="marquee-photo" style="transform: rotate(<?php echo (int)$t['rotation_angle']; ?>deg);" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
+                        <img src="<?php echo htmlspecialchars($t['image_url']); ?>" alt="<?php echo htmlspecialchars($t['tour_name']); ?>" class="marquee-photo" data-rotation="<?php echo (int)$t['rotation_angle']; ?>" onerror="this.onerror=null; this.src='assets/img/pkg.jpg';">
                         <div class="marquee-quote">
                             <div class="marquee-quote-mark">"</div>
                             <p class="marquee-quote-text">
@@ -1585,7 +1587,8 @@
                 <h2 class="section-title">Where to <br><span class="serif serif--amber">Next?</span></h2>
             </div>
             <div class="glass-card glass-card--contact">
-                <form action="/api/v1/leads" method="POST" class="js-lead-form">
+                <form action="api-submit-lead.php" method="POST" class="js-lead-form">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                     <button type="submit" class="btn-card btn-card--full">Begin Your Journey &nbsp; &rarr;</button>
@@ -1603,7 +1606,8 @@
                 <p>Please provide your contact details so our curators can reach you.</p>
             </div>
             <div class="planner-body">
-                <form id="desktop-heroFinalSubmitForm" action="/api/v1/leads" method="POST" class="js-lead-form">
+                <form id="desktop-heroFinalSubmitForm" action="api-submit-lead.php" method="POST" class="js-lead-form">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                     <input type="hidden" name="destination" id="hiddenHeroDest">

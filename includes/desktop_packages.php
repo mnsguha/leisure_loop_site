@@ -265,7 +265,7 @@ include '../includes/header.php';
                 ?>
                 <a href="<?php echo htmlspecialchars($link); ?>" class="emt-theme-card <?php echo $is_active ? 'active' : ''; ?>">
                     <div class="emt-circle-photo">
-                        <div class="emt-circle-bg" style="background-image: url('<?php echo htmlspecialchars($th['img']); ?>');"></div>
+                        <div class="emt-circle-bg" data-bg="<?php echo htmlspecialchars($th['img']); ?>"></div>
                         <div class="emt-circle-overlay"></div>
                     </div>
                     <h3 class="emt-circle-title"><?php echo htmlspecialchars($th['title']); ?></h3>

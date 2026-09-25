@@ -2,6 +2,23 @@
     if (document.body.dataset.mobileViewsInit) return;
     document.body.dataset.mobileViewsInit = 'true';
 
+    // --- 0. data-bg Hydration (Rule 1: no inline style="background-image") ---
+    document.querySelectorAll('[data-bg]').forEach(function(el) {
+        el.style.backgroundImage = 'url(' + el.dataset.bg + ')';
+    });
+    document.querySelectorAll('[data-sz]').forEach(function(el) {
+        el.style.setProperty('--sz', el.dataset.sz + 'px');
+        el.style.setProperty('--top', el.dataset.top + '%');
+        el.style.setProperty('--left', el.dataset.left + '%');
+    });
+    document.querySelectorAll('[data-badge-bg]').forEach(function(el) {
+        el.style.setProperty('--badge-bg', el.dataset.badgeBg);
+        el.style.setProperty('--badge-color', el.dataset.badgeColor);
+    });
+    document.querySelectorAll('[data-rotation]').forEach(function(el) {
+        el.style.setProperty('--rotation', el.dataset.rotation + 'deg');
+    });
+
     // --- 1. Centralized Event Delegation & Hardware Back Sync ---
     const activeModals = [];
 
@@ -272,11 +289,13 @@
 
         const mNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        const getOrd = (n) => { const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); };
 
-        inDay.innerText = `${String(dIn.getDate()).padStart(2, '0')} ${mNames[dIn.getMonth()]}`;
+        inDay.innerText = `${getOrd(dIn.getDate())} ${mNames[dIn.getMonth()]}`;
         if (inYr) inYr.innerText = `'${String(dIn.getFullYear()).slice(2)}, ${dayNames[dIn.getDay()]}`;
 
-        outDay.innerText = `${String(dOut.getDate()).padStart(2, '0')} ${mNames[dOut.getMonth()]}`;
+        outDay.innerText = `${getOrd(dOut.getDate())} ${mNames[dOut.getMonth()]}`;
         if (outYr) outYr.innerText = `'${String(dOut.getFullYear()).slice(2)}, ${dayNames[dOut.getDay()]}`;
 
         const diff = Math.round((dOut - dIn) / 86400000);
@@ -294,4 +313,129 @@
             e.target.type = e.target.getAttribute('data-focus');
         }
     });
+
+    // --- Hero Slider Logic ---
+    const heroSlider = document.querySelector('.m-hotel-hero-slider');
+    const heroDots = document.querySelectorAll('.m-hotel-hero-dot');
+    if (heroSlider && heroDots.length > 1) {
+        let currentSlide = 0;
+        const totalSlides = heroDots.length;
+        
+        let autoPlayInterval = setInterval(nextSlide, 4000);
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            heroSlider.scrollTo({
+                left: currentSlide * heroSlider.clientWidth,
+                behavior: 'smooth'
+            });
+            updateDots(currentSlide);
+        }
+        
+        function updateDots(index) {
+            heroDots.forEach((dot, idx) => {
+                dot.classList.toggle('is-active', idx === index);
+            });
+        }
+        
+        heroSlider.addEventListener('scroll', () => {
+            const index = Math.round(heroSlider.scrollLeft / heroSlider.clientWidth);
+            if (index !== currentSlide) {
+                currentSlide = index;
+                updateDots(index);
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = setInterval(nextSlide, 4000);
+            }
+        });
+    }
+
+    // --- Lead Form AJAX Submit (mobile: main.js is not loaded in mobile views) ---
+    const showMobileToast = (message, isError) => {
+        const container = document.getElementById('mob-toastContainer');
+        if (!container) return;
+        const msg = document.createElement('div');
+        msg.className = isError ? 'toast-msg toast-msg--error' : 'toast-msg';
+        msg.textContent = message;
+        container.appendChild(msg);
+        setTimeout(() => msg.remove(), 4000);
+    };
+
+    document.querySelectorAll('.js-lead-form').forEach((form) => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (form.dataset.leadBusy === '1') return;
+            form.dataset.leadBusy = '1';
+            const btn = form.querySelector('button[type="submit"]');
+            const btnText = btn ? btn.textContent : '';
+            if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+            try {
+                const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+                const data = await res.json();
+                if (data.success) {
+                    form.reset();
+                    const modal = form.closest('.enquiry-modal-overlay, .modal-overlay');
+                    if (modal) {
+                        modal.classList.remove('is-active', 'active');
+                        modal.classList.add('is-hidden');
+                        modal.setAttribute('aria-hidden', 'true');
+                        document.body.classList.remove('scroll-lock');
+                    }
+                    showMobileToast(data.message || 'Thank you! Our curators will reach out to you soon.', false);
+                } else {
+                    showMobileToast(data.message || 'Something went wrong. Please try again.', true);
+                    if (window.grecaptcha && typeof window.grecaptcha.reset === 'function') {
+                        try { window.grecaptcha.reset(); } catch (err) { /* widget optional */ }
+                    }
+                }
+            } catch (err) {
+                showMobileToast('Connection issue. Please try again.', true);
+            } finally {
+                form.dataset.leadBusy = '0';
+                if (btn) { btn.disabled = false; btn.textContent = btnText; }
+            }
+        });
+    });
+    // --- Destination Hero Auto-Slider (mobile; hotel-detail parity) ---
+    const destHeroSlider = document.getElementById('mobDestHeroSlider');
+    if (destHeroSlider) {
+        const destHeroDots = destHeroSlider.parentElement
+            ? destHeroSlider.parentElement.querySelectorAll('.mob-dest__hero-dot')
+            : [];
+        let destHeroTimer = null;
+
+        const destHeroStop = () => {
+            if (destHeroTimer) {
+                clearInterval(destHeroTimer);
+                destHeroTimer = null;
+            }
+        };
+
+        const destHeroStart = () => {
+            destHeroStop();
+            destHeroTimer = setInterval(() => {
+                const slideWidth = destHeroSlider.offsetWidth;
+                if (!slideWidth) return;
+                let nextScroll = destHeroSlider.scrollLeft + slideWidth;
+                if (nextScroll >= destHeroSlider.scrollWidth - 10) {
+                    nextScroll = 0;
+                }
+                destHeroSlider.scrollTo({ left: nextScroll, behavior: 'smooth' });
+            }, 4000);
+        };
+
+        if (destHeroDots.length > 1) {
+            destHeroSlider.addEventListener('scroll', () => {
+                const slideWidth = destHeroSlider.offsetWidth;
+                if (!slideWidth) return;
+                const activeIndex = Math.round(destHeroSlider.scrollLeft / slideWidth);
+                destHeroDots.forEach((dot, idx) => {
+                    dot.classList.toggle('is-active', idx === activeIndex);
+                });
+            }, { passive: true });
+        }
+
+        destHeroStart();
+        destHeroSlider.addEventListener('touchstart', destHeroStop, { passive: true });
+        destHeroSlider.addEventListener('touchend', destHeroStart, { passive: true });
+    }
 })();

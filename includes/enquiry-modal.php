@@ -13,7 +13,8 @@
                     <h2 class="serif">Where do you want to go?</h2>
                 </div>
                 
-                <form id="<?= $pfx ?>enquiryPopupForm" action="/api/v1/leads" method="POST" class="js-lead-form">
+                <form id="<?= $pfx ?>enquiryPopupForm" action="api-submit-lead.php" method="POST" class="js-lead-form">
+                    <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
                     
                     <div class="grid-2-cols enq-grid-row">
@@ -88,14 +89,7 @@
                         <label for="<?= $pfx ?>enq_message" class="form-label-float">Message Here</label>
                     </div>
                     
-                    <input type="hidden" name="enforce_recaptcha" value="1">
                     <input type="hidden" name="source" value="Header Enquiry Popup">
-
-                    <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-                    <div class="form-group-float recaptcha-shell enq-field-row">
-                        <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                    </div>
-                    <?php endif; ?>
                     
                     <button type="submit" class="btn-gold enq-submit-btn">
                         GET A QUOTE

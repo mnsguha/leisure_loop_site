@@ -85,7 +85,7 @@ if ($pdo) {
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="../api/download-hotel-voucher.php?id=<?php echo urlencode($b['booking_id']); ?>" class="btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" target="_blank">PDF Voucher</a>
+                            <a href="../api-download-hotel-voucher.php?id=<?php echo urlencode($b['booking_id']); ?>" class="btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" target="_blank">PDF Voucher</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

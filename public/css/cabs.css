@@ -3,8 +3,6 @@
    ========================================================================== */
 
 :root {
-    --gold: #c5a059;
-    --gold-hover: #d1ad69;
     --bg-dark: #050a14;
     --card-bg: rgba(13, 26, 41, 0.85);
     --border-color: rgba(255, 255, 255, 0.08);
@@ -13,7 +11,7 @@
 body {
     background-color: var(--bg-dark);
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
 }
 
 /* --- Hero Section --- */
@@ -25,7 +23,7 @@ body {
 }
 
 .cabs-hero h1 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: clamp(2.4rem, 5vw, 3.5rem);
     color: #ffffff;
     margin: 0 0 15px 0;
@@ -125,6 +123,7 @@ body {
     border-radius: 8px;
     padding: 0 15px;
     width: 100%;
+    height: 48px;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
 }
@@ -144,11 +143,13 @@ body {
 /* --- Input and Autofill Reset (Prevents white background on filled inputs) --- */
 .search-input {
     width: 100%;
-    padding: 12px 0;
+    height: 100%;
+    padding: 0;
+    margin: 0;
     border: none;
     outline: none;
     font-size: 1rem;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     color: #ffffff !important;
     background-color: transparent !important;
     background: transparent !important;
@@ -157,6 +158,7 @@ body {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    line-height: 1;
 }
 
 .search-input::placeholder {
@@ -179,11 +181,22 @@ body {
 
 select.search-input {
     cursor: pointer;
+    padding: 0;
+    padding-right: 15px;
+    height: 100%;
+    min-height: 0;
 }
 
 select.search-input option {
     color: #000000;
     background: #ffffff;
+}
+
+input[type="date"].search-input,
+input[type="time"].search-input {
+    padding: 0;
+    height: 100%;
+    min-height: 0;
 }
 
 .btn-search {
@@ -292,7 +305,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .section-title h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.5rem;
     color: #ffffff;
     margin: 0 0 10px 0;
@@ -352,7 +365,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
     font-size: 1.35rem;
     margin: 0 0 6px 0;
     color: #ffffff;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
 }
 
 .fleet-info .meta {
@@ -434,7 +447,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 .dest-overlay h4 {
     margin: 0;
     font-size: 1.15rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
 }
 
 /* --- Benefits Section --- */
@@ -492,7 +505,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 9999;
     padding: 20px;
 }
 
@@ -527,7 +540,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .modal-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.6rem;
     margin: 0 0 6px 0;
     color: #ffffff;

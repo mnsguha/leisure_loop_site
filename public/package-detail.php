@@ -1,9 +1,8 @@
 <?php
-    require_once '../config/db.php';
-    require_once '../config/recaptcha.php';
-    require_once '../includes/functions.php';
-    $use_recaptcha = recaptchaIsConfigured();
-    $recaptcha_site_key = recaptchaSiteKey();
+declare(strict_types=1);
+require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
 
 
     $check_in = isset($_GET['check_in']) ? trim($_GET['check_in']) : date('Y-m-d');
@@ -17,29 +16,39 @@
     $pkg = null;
 
     if ($pdo && $slug) {
-        $stmt = $pdo->prepare("SELECT p.*, d.terms_conditions as dest_terms FROM packages p LEFT JOIN destinations d ON p.destination = d.name WHERE p.slug = ? AND p.is_active = 1");
-        $stmt->execute([$slug]);
-        $pkg = $stmt->fetch();
-
-        // Intelligent fallback: match prefixes, substrings, or normalized titles if historical/shortened slug is passed
-        if (!$pkg) {
-            $clean_slug = preg_replace('/-[0-9]+$/', '', $slug);
-            $stmt = $pdo->prepare("SELECT p.*, d.terms_conditions as dest_terms FROM packages p LEFT JOIN destinations d ON p.destination = d.name WHERE (p.slug LIKE ? OR ? LIKE CONCAT(p.slug, '%') OR p.slug = ? OR REPLACE(LOWER(p.title), ' ', '-') LIKE ?) AND p.is_active = 1 LIMIT 1");
-            $stmt->execute([
-                $clean_slug . '%', 
-                $slug, 
-                $clean_slug,
-                '%' . str_replace('-', '%', $clean_slug) . '%'
-            ]);
+        try {
+            $stmt = $pdo->prepare("SELECT p.*, d.terms_conditions as dest_terms FROM packages p LEFT JOIN destinations d ON p.destination = d.name WHERE p.slug = ? AND p.is_active = 1");
+            $stmt->execute([$slug]);
             $pkg = $stmt->fetch();
+
+            // Intelligent fallback: match prefixes, substrings, or normalized titles if historical/shortened slug is passed
+            if (!$pkg) {
+                $clean_slug = preg_replace('/-[0-9]+$/', '', $slug);
+                $stmt = $pdo->prepare("SELECT p.*, d.terms_conditions as dest_terms FROM packages p LEFT JOIN destinations d ON p.destination = d.name WHERE (p.slug LIKE ? OR ? LIKE CONCAT(p.slug, '%') OR p.slug = ? OR REPLACE(LOWER(p.title), ' ', '-') LIKE ?) AND p.is_active = 1 LIMIT 1");
+                $stmt->execute([
+                    $clean_slug . '%', 
+                    $slug, 
+                    $clean_slug,
+                    '%' . str_replace('-', '%', $clean_slug) . '%'
+                ]);
+                $pkg = $stmt->fetch();
+            }
+        } catch (PDOException $e) {
+            error_log("package-detail.php query failed: " . $e->getMessage());
+            $pkg = null;
         }
     }
 
     $package_departures = [];
     if ($pkg && ($pkg['package_type'] ?? '') === 'fixed' && $pdo) {
-        $stmt = $pdo->prepare("SELECT * FROM fixed_departures WHERE package_id = ? AND is_active = 1 AND start_date >= CURDATE() ORDER BY start_date ASC");
-        $stmt->execute([$pkg['id']]);
-        $package_departures = $stmt->fetchAll();
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM fixed_departures WHERE package_id = ? AND is_active = 1 AND start_date >= CURDATE() ORDER BY start_date ASC");
+            $stmt->execute([$pkg['id']]);
+            $package_departures = $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("package-detail.php departures query failed: " . $e->getMessage());
+            $package_departures = [];
+        }
     }
 
     if (!$pkg) {
@@ -51,14 +60,14 @@
 
     // Meta attributes
     $page_title = $pkg['title'] . " | Leisure Loop Trip";
-    $meta_desc = "Explore " . $pkg['title'] . ". Starting at INR " . number_format($pkg['price']) . ". Bespoke " . count($itinerary) . "-day cinematic journey curated by Leisure Loop.";
-    $meta_image = $pkg['image_url'];
+    $meta_desc = "Explore " . $pkg['title'] . ". Starting at INR " . number_format((float)$pkg['price']) . ". Bespoke " . count($itinerary) . "-day cinematic journey curated by Leisure Loop.";
+    $meta_image = $pkg['image_url'] ?? 'images/placeholder.jpg';
     $meta_keywords = $pkg['title'] . ", luxury tour, bespoke travel, " . count($itinerary) . " day itinerary";
 
     // Dynamic Variables & Fallbacks
     $rating_score = !empty($pkg['rating_score']) ? (float)$pkg['rating_score'] : 4.8;
     $rating_count = !empty($pkg['rating_count']) ? (int)$pkg['rating_count'] : 150;
-    $tour_code = !empty($pkg['tour_code']) ? htmlspecialchars($pkg['tour_code']) : 'VD-' . str_pad($pkg['id'], 4, '0', STR_PAD_LEFT);
+    $tour_code = !empty($pkg['tour_code']) ? htmlspecialchars($pkg['tour_code']) : 'VD-' . str_pad((string)$pkg['id'], 4, '0', STR_PAD_LEFT);
     $tour_type = !empty($pkg['tour_type']) ? htmlspecialchars($pkg['tour_type']) : 'Honeymoon, Hill station, Wild Life Tour';
     $original_price = !empty($pkg['original_price']) ? (float)$pkg['original_price'] : null;
     
@@ -180,9 +189,14 @@
     // Fetch Other Tours (Same Destination)
     $other_tours = [];
     if ($pdo && $pkg) {
-        $stmt = $pdo->prepare("SELECT title, slug, price, image_url, nights, days FROM packages WHERE destination = ? AND id != ? AND is_active = 1 LIMIT 6");
-        $stmt->execute([$pkg['destination'], $pkg['id']]);
-        $other_tours = $stmt->fetchAll();
+        try {
+            $stmt = $pdo->prepare("SELECT title, slug, price, image_url, nights, days FROM packages WHERE destination = ? AND id != ? AND is_active = 1 LIMIT 6");
+            $stmt->execute([$pkg['destination'], $pkg['id']]);
+            $other_tours = $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("package-detail.php other tours query failed: " . $e->getMessage());
+            $other_tours = [];
+        }
     }
 
     // Detect Mobile

@@ -17,7 +17,7 @@ $page_title = "Our Story | Leisure Loop";
 <!-- Top App Bar -->
 <header class="mob-topbar" id="topAppBar">
     <a href="index.php" class="mob-topbar__back" aria-label="Back">
-        <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
+        <span class="material-symbols-outlined icon-20">arrow_back</span>
     </a>
     <span class="mob-topbar__title">Our Story</span>
     <div class="mob-topbar__spacer"></div>
@@ -126,18 +126,18 @@ $page_title = "Our Story | Leisure Loop";
     <div class="modal-header">
         <div>
             <span class="section-label">BESPOKE TRAVEL</span>
-            <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #fff; margin: 0; font-style: italic;">Plan Your Elite Journey</h2>
+            <h2 class="modal-title-serif">Plan Your Elite Journey</h2>
         </div>
         <button aria-label="Close" class="modal-close" data-action="close-modal">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
     </div>
     <div class="modal-body">
-        <form action="/api/v1/leads" method="POST">
+            <form action="api-submit-lead.php" method="POST">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="destination" value="About Us Page Enquiry">
             <input type="hidden" name="source" value="mobile_about">
-            <input type="hidden" name="enforce_recaptcha" value="1">
             <div class="form-group">
                 <span class="material-symbols-outlined form-icon">person</span>
 <label for="input_70172fac" class="sr-only">Your Full Name</label>
@@ -168,15 +168,8 @@ $page_title = "Our Story | Leisure Loop";
                     <option>5+ Guests</option>
                 </select>
             </div>
-            <?php 
-            global $use_recaptcha, $recaptcha_site_key;
-            if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-            <div class="form-group" style="margin-top:1rem;">
-                <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-            </div>
-            <?php endif; ?>
-            <button type="submit" class="btn-primary" style="width:100%;display:block;margin-top:8px;">SUBMIT ENQUIRY</button>
-            <p class="section-label" style="text-align:center;margin-top:1rem;color:rgba(255,255,255,0.4);">A travel specialist will contact you within 24 hours</p>
+            <button type="submit" class="btn-primary btn-primary--full">SUBMIT ENQUIRY</button>
+            <p class="section-label form-footnote">A travel specialist will contact you within 24 hours</p>
         </form>
     </div>
 </div>
@@ -188,7 +181,7 @@ $page_title = "Our Story | Leisure Loop";
 <div class="fixed top-0 left-0 w-full z-50 bg-obsidian/80 backdrop-blur-lg border-b border-white/5 transition-all duration-300" id="topAppBar">
     <div class="flex items-center justify-between px-4 h-16">
         <a href="index.php" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container active:scale-95 transition-transform">
-            <span class="material-symbols-outlined text-white" style="font-size:20px;">arrow_back</span>
+            <span class="material-symbols-outlined text-white icon-20">arrow_back</span>
         </a>
         <h1 class="font-serif italic text-white text-lg absolute left-1/2 -translate-x-1/2">Our Story</h1>
         <div class="w-10"></div>
@@ -305,20 +298,20 @@ $page_title = "Our Story | Leisure Loop";
     <div class="modal-content" id="enquiryModal">
         <div class="modal-header">
             <div>
-                <span style="font-size: 0.6rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; display: block; margin-bottom: 4px;">BESPOKE TRAVEL</span>
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #fff; margin: 0; font-style: italic;">Plan Your Elite Journey</h2>
+                <span class="modal-kicker">BESPOKE TRAVEL</span>
+                <h2 class="modal-title-serif">Plan Your Elite Journey</h2>
             </div>
             <button aria-label="Close" class="modal-close" data-action="close-modal">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
         <div class="modal-body">
-            <form action="/api/v1/leads" method="POST">
+        <form action="api-submit-lead.php" method="POST">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                 <input type="hidden" name="destination" value="About Us Page Enquiry">
                 <input type="hidden" name="source" value="mobile_about">
-                <input type="hidden" name="enforce_recaptcha" value="1">
                 
                 <div class="form-group">
                     <span class="material-symbols-outlined form-icon">person</span>
@@ -359,17 +352,8 @@ $page_title = "Our Story | Leisure Loop";
                     </select>
                 </div>
                 
-                <?php 
-                global $use_recaptcha, $recaptcha_site_key;
-                if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): 
-                ?>
-                <div class="form-group" style="margin-top:1rem;">
-                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                </div>
-                <?php endif; ?>
-                
-                <button type="submit" class="btn-primary" style="width: 100%; display: block; margin-top: 8px;">SUBMIT ENQUIRY</button>
-                <p style="text-align: center; margin-top: 16px; color: rgba(255,255,255,0.4); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">A travel specialist will contact you within 24 hours</p>
+                <button type="submit" class="btn-primary btn-primary--full">SUBMIT ENQUIRY</button>
+                <p class="form-footnote">A travel specialist will contact you within 24 hours</p>
             </form>
         </div>
     </div>

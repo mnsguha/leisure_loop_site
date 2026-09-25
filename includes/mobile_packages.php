@@ -13,7 +13,6 @@
     <?php
     $mobile_header_title = 'Tour Packages';
     $mobile_active_nav   = 'packages';
-    $back_url            = 'index.php?view=mobile';
     include __DIR__ . '/mobile_header.php';
     ?>
 

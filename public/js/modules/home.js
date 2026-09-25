@@ -1,5 +1,22 @@
 'use strict';
 
+// 0. data-bg Hydration (Rule 1: no inline style="background-image")
+document.querySelectorAll('[data-bg]').forEach(function(el) {
+    el.style.backgroundImage = 'url(' + el.dataset.bg + ')';
+});
+document.querySelectorAll('[data-sz]').forEach(function(el) {
+    el.style.setProperty('--sz', el.dataset.sz + 'px');
+    el.style.setProperty('--top', el.dataset.top + '%');
+    el.style.setProperty('--left', el.dataset.left + '%');
+});
+document.querySelectorAll('[data-badge-bg]').forEach(function(el) {
+    el.style.setProperty('--badge-bg', el.dataset.badgeBg);
+    el.style.setProperty('--badge-color', el.dataset.badgeColor);
+});
+document.querySelectorAll('[data-rotation]').forEach(function(el) {
+    el.style.setProperty('--rotation', el.dataset.rotation + 'deg');
+});
+
 // 1. Carousel Scroll Helper
 function scrollCarousel(carouselId, direction) {
     const carousel = document.getElementById(carouselId);

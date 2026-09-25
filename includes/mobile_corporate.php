@@ -14,9 +14,6 @@ $page_title = "Corporate Tours & MICE | Leisure Loop Trip";
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
-    <?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <?php endif; ?>
     <link rel="stylesheet" href="css/mobile-views.css">
 </head>
 <body>
@@ -24,7 +21,7 @@ $page_title = "Corporate Tours & MICE | Leisure Loop Trip";
     <!-- Top App Bar -->
     <header class="mob-topbar">
         <a href="index.php" class="mob-topbar__back" aria-label="Back">
-            <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
+            <span class="material-symbols-outlined icon-20">arrow_back</span>
         </a>
         <span class="mob-topbar__title">Corporate</span>
         <div class="mob-topbar__spacer"></div>
@@ -39,7 +36,7 @@ $page_title = "Corporate Tours & MICE | Leisure Loop Trip";
         <div class="z-10">
             <div class="section-label">Premium Business Travel</div>
             <h1>Elevate Your<br><span class="text-gold italic">Corporate Retreats.</span></h1>
-            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.6; margin: 0;">At Leisure Loop Trip, we understand that corporate travel is an investment in your people. From high-stakes board meetings in serene Himalayan estates to thrilling team-building expeditions, we architect flawless, bespoke MICE experiences.</p>
+            <p class="hero-subtitle">At Leisure Loop Trip, we understand that corporate travel is an investment in your people. From high-stakes board meetings in serene Himalayan estates to thrilling team-building expeditions, we architect flawless, bespoke MICE experiences.</p>
         </div>
     </section>
 
@@ -90,15 +87,16 @@ $page_title = "Corporate Tours & MICE | Leisure Loop Trip";
     <div class="modal-content" id="enquiryModal">
         <div class="modal-header">
             <div>
-                <span style="font-size: 0.6rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; display: block; margin-bottom: 4px;">CORPORATE ENQUIRY</span>
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #fff; margin: 0; font-style: italic;">Plan Your Retreat</h2>
+                <span class="modal-kicker">CORPORATE ENQUIRY</span>
+                <h2 class="modal-title-serif">Plan Your Retreat</h2>
             </div>
             <button aria-label="Close" class="modal-close" data-action="close-modal">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
         <div class="modal-body">
-            <form action="/api/v1/leads" method="POST">
+            <form action="api-submit-lead.php" method="POST">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                 
@@ -141,22 +139,12 @@ $page_title = "Corporate Tours & MICE | Leisure Loop Trip";
                     <span class="material-symbols-outlined form-icon">description</span>
                     
 <label for="input_60601ee3" class="sr-only">Brief requirements...</label>
-<textarea id="input_60601ee3" name="requirements" class="form-input" rows="3" placeholder="Brief requirements..." style="padding-left: 48px;" required></textarea>
+<textarea id="input_60601ee3" name="requirements" class="form-input textarea--icon" rows="3" placeholder="Brief requirements..." required></textarea>
                 </div>
 
                 <input type="hidden" name="source" value="mobile_corporate">
-                <input type="hidden" name="enforce_recaptcha" value="1">
-                
-                <?php 
-                global $use_recaptcha, $recaptcha_site_key;
-                if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): 
-                ?>
-                <div class="form-group" style="margin-top:1rem;">
-                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-                </div>
-                <?php endif; ?>
 
-                <button type="submit" class="btn-primary" style="width: 100%; display: block; margin-top: 8px;">SUBMIT ENQUIRY</button>
+                <button type="submit" class="btn-primary btn-primary--full">SUBMIT ENQUIRY</button>
             </form>
         </div>
     </div>

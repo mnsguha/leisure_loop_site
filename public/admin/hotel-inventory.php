@@ -199,16 +199,7 @@ if (!empty($plan_ids)) {
 </head>
 <body>
     <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo" style="margin-bottom: 40px; text-align: center;">
-                <img src="../assets/images/logo.png" alt="Leisure Loop" style="max-width: 150px;">
-            </div>
-            <nav style="display: flex; flex-direction: column; gap: 10px;">
-                <a href="dashboard.php" style="color: var(--text-muted); text-decoration: none; padding: 10px; border-radius: 6px;">Dashboard</a>
-                <a href="hotels.php" style="color: var(--gold); text-decoration: none; padding: 10px; border-radius: 6px; background: rgba(197,160,89,0.1);">Manage Hotels</a>
-            </nav>
-        </div>
+        <?php include 'sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="main-content">

@@ -1,6 +1,8 @@
 <?php
 $page_title = "Hotel Details | Leisure Loop";
 require_once "../config/db.php";
+require_once '../includes/functions.php';
+csrf_stamp_form();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if (!$id || !$pdo) { header("Location: hotels.php"); exit; }
@@ -45,9 +47,30 @@ foreach ($db_rooms as $room) {
     foreach ($plans as &$plan) {
         $dr_stmt = $pdo->prepare("SELECT * FROM hotel_room_rates WHERE plan_id = ? ORDER BY rate_date ASC");
         $dr_stmt->execute([$plan['id']]);
-        $plan['date_rates'] = $dr_stmt->fetchAll();
+        $date_rates = $dr_stmt->fetchAll();
+        $plan['date_rates'] = $date_rates;
+
+        $matched_rate = null;
+        foreach ($date_rates as $dr) {
+            if ($dr['rate_date'] === $check_date) {
+                $matched_rate = $dr;
+                break;
+            }
+        }
+        
+        if (!$matched_rate && count($date_rates) > 0) {
+            $matched_rate = $date_rates[0];
+        }
+
+        $plan['current_rate'] = $matched_rate;
     }
     unset($plan);
+
+    usort($plans, function($a, $b) {
+        $rateA = !empty($a['current_rate']) ? (float)$a['current_rate']['base_rate_2_pax'] : 0;
+        $rateB = !empty($b['current_rate']) ? (float)$b['current_rate']['base_rate_2_pax'] : 0;
+        return $rateA <=> $rateB;
+    });
 
     $room['plans'] = $plans;
     $rooms_with_plans[] = $room;

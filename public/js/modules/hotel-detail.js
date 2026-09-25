@@ -26,6 +26,25 @@ document.addEventListener('DOMContentLoaded', () => {
         infants: parseInt(infantsInput ? infantsInput.value : 0) || 0
     };
 
+    if (checkInInput && checkOutInput) {
+        checkInInput.addEventListener('change', () => {
+            let startD = new Date(checkInInput.value);
+            if (!isNaN(startD.getTime())) {
+                startD.setDate(startD.getDate() + 1);
+                let nextDay = startD.toISOString().split('T')[0];
+                checkOutInput.min = nextDay;
+                if (checkOutInput.value < nextDay) {
+                    checkOutInput.value = nextDay;
+                    searchState.dates.end = nextDay;
+                }
+                searchState.dates.start = checkInInput.value;
+            }
+        });
+        checkOutInput.addEventListener('change', () => {
+            searchState.dates.end = checkOutInput.value;
+        });
+    }
+
     let currentSelectedPlan = null;
     let currentSelectedRoom = null;
 
@@ -227,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let p of (r.plans || [])) {
                 let priceData = calculatePlanPrice(p.id);
                 let finalEl = document.getElementById('desktop-final-' + p.id) || document.getElementById('final-' + p.id);
+                let taxEl = document.getElementById('desktop-tax-' + p.id);
                 let strikeEl = document.getElementById('desktop-strike-' + p.id) || document.getElementById('strike-' + p.id);
                 let eaInc = document.getElementById('desktop-ea-inc-' + p.id) || document.getElementById('ea-inc-' + p.id);
                 let ecInc = document.getElementById('desktop-ec-inc-' + p.id) || document.getElementById('ec-inc-' + p.id);
@@ -234,8 +254,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (eaInc) eaInc.classList.toggle('is-hidden', extraAdults === 0);
                 if (ecInc) ecInc.classList.toggle('is-hidden', extraChildren === 0);
 
-                if (finalEl && priceData.avgFinal > 0) {
-                    finalEl.innerText = '₹' + Math.round(priceData.avgFinal).toLocaleString('en-IN');
+                if (finalEl && priceData.avgBase > 0) {
+                    finalEl.innerText = '₹' + Math.round(priceData.avgBase).toLocaleString('en-IN');
+                }
+                if (taxEl && priceData.avgFinal > 0) {
+                    let taxAmt = priceData.avgFinal - priceData.avgBase;
+                    taxEl.innerText = '+ ₹' + Math.round(taxAmt).toLocaleString('en-IN') + ' Taxes & fees';
                 }
                 if (strikeEl) {
                     strikeEl.classList.toggle('is-hidden', priceData.avgBase <= priceData.avgFinal);
@@ -255,10 +279,30 @@ document.addEventListener('DOMContentLoaded', () => {
             dispTaxes.innerText = priceData.totalTax > 0 ? '+ ₹' + priceData.totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2 }) + ' Taxes' : 'Taxes Included';
         }
         
+        setTxt('sidebarNetRate', '₹' + Math.round(priceData.totalBase).toLocaleString('en-IN'));
         setTxt('sidebarTotalFinal', '₹' + Math.round(priceData.totalFinal).toLocaleString('en-IN'));
-
+        const sidebarTotalTax = getEl('sidebarTotalTax');
+        if (sidebarTotalTax) {
+            let taxAmt = priceData.totalFinal - priceData.totalBase;
+            sidebarTotalTax.innerText = taxAmt > 0 ? '+ ₹' + Math.round(taxAmt).toLocaleString('en-IN') + ' Taxes & fees' : 'Taxes Included';
+        }
         const priceInput = getEl('formFinalPrice');
         if (priceInput) priceInput.value = priceData.totalFinal;
+        
+        const dispPlan = getEl('dispPlanName');
+        if (dispPlan && currentSelectedPlan) {
+            const adults = parseInt(searchState.adults || 2, 10);
+            const children = parseInt(searchState.children || 0, 10);
+            const rooms = parseInt(searchState.rooms || 1, 10);
+            
+            let paxStrFull = `${adults} Adult${adults > 1 ? 's' : ''}`;
+            if (children > 0) {
+                paxStrFull += `, ${children} Child${children > 1 ? 'ren' : ''}`;
+            }
+            const roomStr = `${rooms} Room${rooms > 1 ? 's' : ''}`;
+            
+            dispPlan.innerText = `${paxStrFull} | ${roomStr} | ${currentSelectedPlan.name}`;
+        }
     }
 
     updateAllPlanPricesUI();
@@ -273,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const roomId = selectBtn.getAttribute('data-room-id');
             const roomName = selectBtn.getAttribute('data-room-name');
             const planName = selectBtn.getAttribute('data-plan-name');
+            const roomImage = selectBtn.getAttribute('data-room-image') || '';
 
             document.querySelectorAll('[data-action="select-plan"]').forEach(b => {
                 b.className = 'btn-add-cart';
@@ -283,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectBtn.innerText = 'SELECTED';
 
             currentSelectedPlan = { id: planId, name: planName };
-            currentSelectedRoom = { id: roomId, name: roomName };
+            currentSelectedRoom = { id: roomId, name: roomName, image: roomImage };
 
             const cartEmpty = getEl('cartEmpty');
             const cartFull = getEl('cartFull');
@@ -294,9 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnProceed) btnProceed.disabled = false;
 
             const dispRoom = getEl('dispRoomName');
-            const dispPlan = getEl('dispPlanName');
             if (dispRoom) dispRoom.innerText = roomName;
-            if (dispPlan) dispPlan.innerText = planName;
 
             const roomInput = getEl('formRoomId');
             const planInput = getEl('formPlanId');
@@ -340,7 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const modal = getEl('checkoutModal');
             if (modal) {
-                const summaryRoom = getEl('modalSummaryRoomPlan');
+                const modalRoomName = getEl('modalRoomName');
+                const modalPlanName = getEl('modalPlanName');
                 const summaryTotal = getEl('modalSummaryTotal');
                 const sidebarTotal = getEl('sidebarTotalFinal');
                 const modalCheckIn = getEl('modalCheckIn');
@@ -348,8 +392,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalNightsVal = getEl('modalNightsVal');
                 const modalBasePrice = getEl('modalBasePrice');
 
-                if (summaryRoom && currentSelectedRoom && currentSelectedPlan) {
-                    summaryRoom.innerText = `Room: ${currentSelectedRoom.name} - ${currentSelectedPlan.name}`;
+                if (modalRoomName && currentSelectedRoom) {
+                    modalRoomName.innerText = currentSelectedRoom.name;
+                }
+                const modalRoomImg = getEl('modalRoomImg');
+                if (modalRoomImg) {
+                    if (currentSelectedRoom && currentSelectedRoom.image) {
+                        modalRoomImg.src = currentSelectedRoom.image;
+                        modalRoomImg.alt = currentSelectedRoom.name;
+                        modalRoomImg.hidden = false;
+                    } else {
+                        modalRoomImg.removeAttribute('src');
+                        modalRoomImg.alt = '';
+                        modalRoomImg.hidden = true;
+                    }
+                }
+                if (modalPlanName && currentSelectedPlan) {
+                    const inputAdultsEl = getEl('inputAdults');
+                    const inputRoomsEl = getEl('inputRooms');
+                    const pax = inputAdultsEl ? (parseInt(inputAdultsEl.value, 10) || 2) : 2;
+                    const rCnt = inputRoomsEl ? (parseInt(inputRoomsEl.value, 10) || 1) : 1;
+                    const paxStr = pax > 1 ? `${pax} Adults` : `${pax} Adult`;
+                    const rStr = rCnt > 1 ? `${rCnt} Rooms` : `${rCnt} Room`;
+                    modalPlanName.innerText = `${paxStr} | ${rStr} | ${currentSelectedPlan.name}`;
                 }
                 if (summaryTotal && sidebarTotal) {
                     summaryTotal.innerText = sidebarTotal.innerText;
@@ -371,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     const modalTaxes = getEl('modalTaxes');
                     if (modalTaxes) {
-                        modalTaxes.innerText = priceData.totalTax > 0 ? '+ ₹' + priceData.totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : 'Included';
+                        modalTaxes.innerText = priceData.totalTax > 0 ? '+ ₹' + priceData.totalTax.toLocaleString('en-IN') + ' Taxes & fees' : 'Included';
                     }
                 }
 
@@ -431,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const lastName = formData.get('guest_last_name') || '';
             formData.set('guest_name', `${firstName} ${lastName}`.trim());
 
-            fetch('api/submit-hotel-booking.php', {
+            fetch('api-submit-hotel-booking.php', {
                 method: 'POST',
                 body: formData
             })

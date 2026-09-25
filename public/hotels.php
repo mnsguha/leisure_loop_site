@@ -1,6 +1,8 @@
 <?php
 $page_title = "Exclusive Stays & Luxury Retreats | Leisure Loop";
 require_once "../config/db.php";
+require_once '../includes/functions.php';
+csrf_stamp_form();
 
 $signature = [];
 $luxury = [];
@@ -14,26 +16,31 @@ $children = isset($_GET['children']) ? (int)$_GET['children'] : 0;
 $infants = isset($_GET['infants']) ? (int)$_GET['infants'] : 0;
 
 if (isset($pdo)) {
-    $sql_sig = "SELECT h.*, (SELECT MIN(rr.base_rate_2_pax) FROM hotel_room_rates rr JOIN hotel_room_plans rp ON rr.plan_id = rp.id JOIN hotel_rooms r ON rp.room_id = r.id WHERE r.hotel_id = h.id AND rr.base_rate_2_pax > 0) as dynamic_starting_tariff, (SELECT image_url FROM hotel_images WHERE hotel_id = h.id ORDER BY created_at ASC LIMIT 1) as main_image FROM hotels h WHERE h.type='signature' AND h.is_active=1";
-    $sql_lux = "SELECT h.*, (SELECT MIN(rr.base_rate_2_pax) FROM hotel_room_rates rr JOIN hotel_room_plans rp ON rr.plan_id = rp.id JOIN hotel_rooms r ON rp.room_id = r.id WHERE r.hotel_id = h.id AND rr.base_rate_2_pax > 0) as dynamic_starting_tariff, (SELECT image_url FROM hotel_images WHERE hotel_id = h.id ORDER BY created_at ASC LIMIT 1) as main_image FROM hotels h WHERE h.type='luxury' AND h.is_active=1";
-    $params = [];
+    $sql_sig = "SELECT h.*, COALESCE((SELECT MIN(rr.base_rate_2_pax) FROM hotel_room_rates rr JOIN hotel_room_plans rp ON rr.plan_id = rp.id JOIN hotel_rooms r ON rp.room_id = r.id WHERE r.hotel_id = h.id AND rr.rate_date = ? AND rr.base_rate_2_pax > 0), (SELECT MIN(rr.base_rate_2_pax) FROM hotel_room_rates rr JOIN hotel_room_plans rp ON rr.plan_id = rp.id JOIN hotel_rooms r ON rp.room_id = r.id WHERE r.hotel_id = h.id AND rr.base_rate_2_pax > 0)) as dynamic_starting_tariff, (SELECT image_url FROM hotel_images WHERE hotel_id = h.id ORDER BY created_at ASC LIMIT 1) as main_image FROM hotels h WHERE h.type='signature' AND h.is_active=1";
+    $sql_lux = "SELECT h.*, COALESCE((SELECT MIN(rr.base_rate_2_pax) FROM hotel_room_rates rr JOIN hotel_room_plans rp ON rr.plan_id = rp.id JOIN hotel_rooms r ON rp.room_id = r.id WHERE r.hotel_id = h.id AND rr.rate_date = ? AND rr.base_rate_2_pax > 0), (SELECT MIN(rr.base_rate_2_pax) FROM hotel_room_rates rr JOIN hotel_room_plans rp ON rr.plan_id = rp.id JOIN hotel_rooms r ON rp.room_id = r.id WHERE r.hotel_id = h.id AND rr.base_rate_2_pax > 0)) as dynamic_starting_tariff, (SELECT image_url FROM hotel_images WHERE hotel_id = h.id ORDER BY created_at ASC LIMIT 1) as main_image FROM hotels h WHERE h.type='luxury' AND h.is_active=1";
+    
+    $params_sig = [$check_in];
+    $params_lux = [$check_in];
     
     if ($search_query !== '') {
         $sql_sig .= " AND (name LIKE ? OR place LIKE ?)";
         $sql_lux .= " AND (name LIKE ? OR place LIKE ?)";
         $search_param = "%{$search_query}%";
-        $params = [$search_param, $search_param];
+        $params_sig[] = $search_param;
+        $params_sig[] = $search_param;
+        $params_lux[] = $search_param;
+        $params_lux[] = $search_param;
     }
     
     $sql_sig .= " ORDER BY created_at DESC";
     $sql_lux .= " ORDER BY created_at DESC";
 
     $stmt_sig = $pdo->prepare($sql_sig);
-    $stmt_sig->execute($params);
+    $stmt_sig->execute($params_sig);
     $signature = $stmt_sig->fetchAll();
 
     $stmt_lux = $pdo->prepare($sql_lux);
-    $stmt_lux->execute($params);
+    $stmt_lux->execute($params_lux);
     $luxury = $stmt_lux->fetchAll();
 }
 

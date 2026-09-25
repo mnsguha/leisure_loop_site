@@ -1,9 +1,7 @@
 <?php
 require_once '../config/db.php';
-require_once '../config/recaptcha.php';
-
-$use_recaptcha = recaptchaIsConfigured();
-$recaptcha_site_key = recaptchaSiteKey();
+require_once '../includes/functions.php';
+csrf_stamp_form();
 
 $slug = $_GET['slug'] ?? '';
 if (empty($slug)) {

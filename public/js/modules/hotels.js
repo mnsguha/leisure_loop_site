@@ -23,6 +23,25 @@ document.addEventListener('DOMContentLoaded', () => {
         infants: parseInt(infantsInput ? infantsInput.value : 0) || 0
     };
 
+    if (checkInInput && checkOutInput) {
+        checkInInput.addEventListener('change', () => {
+            let startD = new Date(checkInInput.value);
+            if (!isNaN(startD.getTime())) {
+                startD.setDate(startD.getDate() + 1);
+                let nextDay = startD.toISOString().split('T')[0];
+                checkOutInput.min = nextDay;
+                if (checkOutInput.value < nextDay) {
+                    checkOutInput.value = nextDay;
+                    searchState.dates.end = nextDay;
+                }
+                searchState.dates.start = checkInInput.value;
+            }
+        });
+        checkOutInput.addEventListener('change', () => {
+            searchState.dates.end = checkOutInput.value;
+        });
+    }
+
     // ── 2. Flatpickr Date Picker ─────────────────────────────────────
     const displayDates = getEl('displayDates');
     if (displayDates && typeof flatpickr !== 'undefined') {
@@ -172,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (bodyEl) bodyEl.innerHTML = contentEl.innerHTML || '';
 
                 modal.classList.add('is-active', 'active');
+                modal.setAttribute('aria-hidden', 'false');
                 document.body.classList.add('scroll-lock');
             }
             return;
@@ -183,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const modal = getEl('infoModal');
             if (modal) {
                 modal.classList.remove('is-active', 'active');
+                modal.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('scroll-lock');
             }
             return;
@@ -191,7 +212,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = getEl('infoModal');
         if (e.target === modal) {
             modal.classList.remove('is-active', 'active');
+            modal.setAttribute('aria-hidden', 'true');
             document.body.classList.remove('scroll-lock');
+        }
+    });
+
+    // Close info modal on ESC (Rule 10)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const modal = getEl('infoModal');
+            if (modal && (modal.classList.contains('is-active') || modal.classList.contains('active'))) {
+                modal.classList.remove('is-active', 'active');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
+            }
         }
     });
 });

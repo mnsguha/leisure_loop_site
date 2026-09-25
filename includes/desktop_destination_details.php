@@ -3,9 +3,6 @@ $page_title = htmlspecialchars($destination['name']) . " | Elite Travel Experien
 include "../includes/header.php";
 ?>
 <link rel="stylesheet" href="css/destination-details.css">
-<?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<?php endif; ?>
 <script src="js/modules/destination-details.js" defer></script>
 
 <div class="destination-page">
@@ -232,9 +229,9 @@ include "../includes/header.php";
 <h2 class="enquiry-title">Plan Your Elite Journey</h2>
 </div>
 
-<form class="enquiry-form" action="/api/v1/leads" method="POST">
+<form class="enquiry-form" action="api-submit-lead.php" method="POST">
+<input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-<input type="hidden" name="enforce_recaptcha" value="1">
 <div class="form-group">
 <span class="material-symbols-outlined form-icon">person</span>
 <label for="input_adec1cb7" class="sr-only">Your Full Name</label>
@@ -272,12 +269,6 @@ include "../includes/header.php";
 </select>
 </div>
 </div>
-
-<?php if (!empty($use_recaptcha) && !empty($recaptcha_site_key)): ?>
-<div class="recaptcha-wrap">
-    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptcha_site_key); ?>" data-theme="dark"></div>
-</div>
-<?php endif; ?>
 
 <button class="form-submit-btn uppercase tracking-widest" type="submit">Submit Enquiry</button>
 </form>

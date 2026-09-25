@@ -17,10 +17,6 @@ if ($type === 'domestic' || $type === 'international') {
     $hero_subtitle = "Discover the world's most exquisite luxury experiences handpicked for you.";
 }
 
-require_once '../config/recaptcha.php';
-$use_recaptcha      = recaptchaIsConfigured();
-$recaptcha_site_key = recaptchaSiteKey();
-
 include '../includes/header.php';
 ?>
 <link rel="stylesheet" href="css/destinations.css">

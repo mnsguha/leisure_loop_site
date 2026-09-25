@@ -13,7 +13,6 @@
     <?php
     $mobile_header_title = 'Destinations';
     $mobile_active_nav   = 'destinations';
-    $back_url            = 'index.php?view=mobile';
     include __DIR__ . '/mobile_header.php';
     ?>
 

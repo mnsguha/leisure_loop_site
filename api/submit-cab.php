@@ -3,6 +3,7 @@
  * Cab Booking API Endpoint
  */
 require_once '../config/db.php';
+require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -10,6 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
     exit;
 }
+
+// Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
+lead_guard_json($_POST);
 
 function cleanInput($key) {
     return isset($_POST[$key]) ? trim((string) $_POST[$key]) : '';

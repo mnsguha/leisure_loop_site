@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         signupForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const formData = new FormData(signupForm);
-            fetch('/api/v1/leads', {
+            fetch('api-submit-lead.php', {
                 method: 'POST',
                 body: formData
             }).finally(() => {

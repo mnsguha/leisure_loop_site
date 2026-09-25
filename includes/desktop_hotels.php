@@ -34,7 +34,7 @@ include "../includes/header.php";
                 <label class="group-label" for="desktop-inputCheckIn">Check-In</label>
                 <div class="input-with-icon">
                     <span class="material-symbols-outlined">calendar_month</span>
-                    <input type="date" name="check_in" id="desktop-inputCheckIn" value="<?php echo htmlspecialchars($check_in); ?>" class="pointer-input">
+                    <input type="date" name="check_in" id="desktop-inputCheckIn" value="<?php echo htmlspecialchars($check_in); ?>" min="<?php echo date('Y-m-d'); ?>" class="pointer-input">
                 </div>
             </div>
 
@@ -42,7 +42,7 @@ include "../includes/header.php";
                 <label class="group-label" for="desktop-inputCheckOut">Check-Out</label>
                 <div class="input-with-icon">
                     <span class="material-symbols-outlined">calendar_month</span>
-                    <input type="date" name="check_out" id="desktop-inputCheckOut" value="<?php echo htmlspecialchars($check_out); ?>" class="pointer-input">
+                    <input type="date" name="check_out" id="desktop-inputCheckOut" value="<?php echo htmlspecialchars($check_out); ?>" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" class="pointer-input">
                 </div>
             </div>
 
@@ -116,7 +116,7 @@ include "../includes/header.php";
         <a href="hotel-detail.php?id=<?php echo $hotel['id']; ?>&<?php echo $query_string; ?>" class="hotel-card" data-category="<?php echo $hotel['type']; ?>">
             <div class="hotel-gallery-col">
                 <div class="main-img-wrap">
-                    <img src="<?php echo htmlspecialchars($main_img); ?>" alt="<?php echo htmlspecialchars($hotel['name']); ?>">
+                    <img src="<?php echo htmlspecialchars($main_img); ?>" alt="<?php echo htmlspecialchars($hotel['name']); ?>" onerror="if(!this.dataset.fallbackDone){this.dataset.fallbackDone='1';this.src='assets/img/pkg.jpg';}">
                     <div class="hotel-badge"><?php echo $hotel['star_category']; ?> Star</div>
                 </div>
                 <?php if (!empty($thumbs)): ?>
@@ -125,7 +125,7 @@ include "../includes/header.php";
                         $th_src = preg_match('/^https?:\/\//i', $th['image_url']) ? $th['image_url'] : $th['image_url'];
                     ?>
                     <div class="thumb-wrap">
-                        <img src="<?php echo htmlspecialchars($th_src); ?>" alt="Thumb">
+                        <img src="<?php echo htmlspecialchars($th_src); ?>" alt="Thumb" onerror="if(!this.dataset.fallbackDone){this.dataset.fallbackDone='1';this.src='assets/img/pkg.jpg';}">
                         <?php if($index == 2): ?>
                         <div class="thumb-overlay">More</div>
                         <?php endif; ?>
@@ -209,7 +209,7 @@ include "../includes/header.php";
 <script src="js/modules/hotels.js" defer></script>
 
 <!-- Info Modal -->
-<div id="desktop-infoModal" class="info-modal" data-action="close-info-modal-if-self">
+<div id="desktop-infoModal" class="info-modal" data-action="close-info-modal-if-self" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="info-modal-content">
         <div class="info-modal-close" data-action="close-info-modal">&times;</div>
         <h2 id="desktop-infoModalTitle" class="info-modal-title">Hotel Name</h2>

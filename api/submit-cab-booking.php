@@ -1,5 +1,6 @@
 <?php
 require_once '../config/db.php';
+require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -7,6 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
     exit;
 }
+
+// Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
+lead_guard_json($_POST);
 
 function cleanInput($key) {
     return isset($_POST[$key]) ? trim((string) $_POST[$key]) : '';
@@ -65,7 +69,8 @@ if ($pdo) {
         ]);
         
         $booking_id = $pdo->lastInsertId();
-        
+        pdf_grant_access('cab', (string) $booking_id);
+
         echo json_encode([
             'success' => true,
             'booking_id' => $booking_id,

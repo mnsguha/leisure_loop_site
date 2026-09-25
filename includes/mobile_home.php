@@ -137,7 +137,7 @@ if (!empty($hero_slides)) {
             <div class="mobile-pkg-carousel">
                 <?php foreach ($featured_packages as $pkg): ?>
                 <a href="package-detail.php?slug=<?= urlencode($pkg['slug']) ?>" class="app-pkg-card">
-                    <div class="app-pkg-img" style="background-image: url('<?= htmlspecialchars($pkg['image_url'] ?: 'assets/img/pkg.jpg'); ?>');">
+                    <div class="app-pkg-img" data-bg="<?= htmlspecialchars($pkg['image_url'] ?: 'assets/img/pkg.jpg'); ?>">
                         <div class="app-pkg-badge">
                             <?php 
                             if (!empty($pkg['nights']) && !empty($pkg['days'])) {
@@ -189,7 +189,7 @@ if (!empty($hero_slides)) {
                 <div class="dest-mini-carousel">
                     <?php foreach ($domestic as $dest): ?>
                     <a href="destination-details.php?slug=<?= urlencode($dest['slug']) ?>" class="dest-mini-card">
-                        <div class="dest-mini-img" style="background-image: url('<?= htmlspecialchars(!empty($dest['card_image']) ? $dest['card_image'] : (!empty($dest['cover_image']) ? $dest['cover_image'] : 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800')); ?>');"></div>
+                        <div class="dest-mini-img" data-bg="<?= htmlspecialchars(!empty($dest['card_image']) ? $dest['card_image'] : (!empty($dest['cover_image']) ? $dest['cover_image'] : 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800')); ?>"></div>
                         <div class="dest-mini-info">
                             <h4 class="dest-mini-name"><?= htmlspecialchars($dest['name']); ?></h4>
                             <span class="dest-mini-count"><?= (int)$dest['tour_count']; ?> Tours</span>
@@ -206,7 +206,7 @@ if (!empty($hero_slides)) {
                 <div class="dest-mini-carousel">
                     <?php foreach ($international as $dest): ?>
                     <a href="destination-details.php?slug=<?= urlencode($dest['slug']) ?>" class="dest-mini-card">
-                        <div class="dest-mini-img" style="background-image: url('<?= htmlspecialchars(!empty($dest['card_image']) ? $dest['card_image'] : (!empty($dest['cover_image']) ? $dest['cover_image'] : 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800')); ?>');"></div>
+                        <div class="dest-mini-img" data-bg="<?= htmlspecialchars(!empty($dest['card_image']) ? $dest['card_image'] : (!empty($dest['cover_image']) ? $dest['cover_image'] : 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800')); ?>"></div>
                         <div class="dest-mini-info">
                             <h4 class="dest-mini-name"><?= htmlspecialchars($dest['name']); ?></h4>
                             <span class="dest-mini-count"><?= (int)$dest['tour_count']; ?> Tours</span>
@@ -240,7 +240,7 @@ if (!empty($hero_slides)) {
             <div class="mobile-pkg-carousel">
                 <?php foreach ($global_packages as $pkg): ?>
                 <a href="package-detail.php?slug=<?= urlencode($pkg['slug']) ?>" class="app-pkg-card">
-                    <div class="app-pkg-img" style="background-image: url('<?= htmlspecialchars($pkg['image_url'] ?: 'assets/img/pkg.jpg'); ?>');">
+                    <div class="app-pkg-img" data-bg="<?= htmlspecialchars($pkg['image_url'] ?: 'assets/img/pkg.jpg'); ?>">
                         <div class="app-pkg-badge">
                             <?php 
                             if (!empty($pkg['nights']) && !empty($pkg['days'])) {
@@ -278,7 +278,7 @@ if (!empty($hero_slides)) {
                     $bg_img = !empty($promo['image_url']) ? htmlspecialchars($promo['image_url']) : 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=1000';
                 ?>
                 <div class="promo-card">
-                    <div class="promo-card-bg" style="background-image: url('<?= $bg_img; ?>');"></div>
+                    <div class="promo-card-bg" data-bg="<?= $bg_img; ?>"></div>
                     <div class="promo-card-overlay"></div>
                     <div class="promo-card-body">
                         <div class="promo-badge">
@@ -363,7 +363,7 @@ if (!empty($hero_slides)) {
                 ?>
                 <a href="packages.php?theme=<?= urlencode($name); ?>" class="mobile-theme-card">
                     <div class="mobile-theme-card-image">
-                        <div class="mobile-theme-card-image-fill" style="background-image: url('<?= htmlspecialchars($meta['bg']); ?>');"></div>
+                        <div class="mobile-theme-card-image-fill" data-bg="<?= htmlspecialchars($meta['bg']); ?>"></div>
                     </div>
                     <span class="mobile-theme-card-name"><?= htmlspecialchars($name); ?></span>
                 </a>
@@ -403,12 +403,12 @@ if (!empty($hero_slides)) {
                 <div class="mobile-gallery-marquee m-track-left">
                     <div class="mobile-gallery-content">
                         <?php foreach($top_track as $img): ?>
-                        <div class="m-smile-card"><div class="m-smile-img" style="background-image: url('<?= htmlspecialchars($img['image_url']); ?>');"></div></div>
+                        <div class="m-smile-card"><div class="m-smile-img" data-bg="<?= htmlspecialchars($img['image_url']); ?>"></div></div>
                         <?php endforeach; ?>
                     </div>
                     <div class="mobile-gallery-content" aria-hidden="true">
                         <?php foreach($top_track as $img): ?>
-                        <div class="m-smile-card"><div class="m-smile-img" style="background-image: url('<?= htmlspecialchars($img['image_url']); ?>');"></div></div>
+                        <div class="m-smile-card"><div class="m-smile-img" data-bg="<?= htmlspecialchars($img['image_url']); ?>"></div></div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -419,12 +419,12 @@ if (!empty($hero_slides)) {
                 <div class="mobile-gallery-marquee m-track-right">
                     <div class="mobile-gallery-content">
                         <?php foreach($bottom_track as $img): ?>
-                        <div class="m-smile-card"><div class="m-smile-img" style="background-image: url('<?= htmlspecialchars($img['image_url']); ?>');"></div></div>
+                        <div class="m-smile-card"><div class="m-smile-img" data-bg="<?= htmlspecialchars($img['image_url']); ?>"></div></div>
                         <?php endforeach; ?>
                     </div>
                     <div class="mobile-gallery-content" aria-hidden="true">
                         <?php foreach($bottom_track as $img): ?>
-                        <div class="m-smile-card"><div class="m-smile-img" style="background-image: url('<?= htmlspecialchars($img['image_url']); ?>');"></div></div>
+                        <div class="m-smile-card"><div class="m-smile-img" data-bg="<?= htmlspecialchars($img['image_url']); ?>"></div></div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -450,7 +450,7 @@ if (!empty($hero_slides)) {
                     ?>
                     <a href="package-detail.php?slug=<?= htmlspecialchars($fd['package_slug']); ?>&fd=<?= (int)$fd['id']; ?>" class="fixed-dep-item">
                         <div class="fixed-dep-img-wrap">
-                            <div class="fixed-dep-img" style="background-image: url('<?= htmlspecialchars($img); ?>');"></div>
+                            <div class="fixed-dep-img" data-bg="<?= htmlspecialchars($img); ?>"></div>
                             <div class="fixed-dep-status <?= $status === 'Sold Out' ? 'status-sold-out' : ''; ?>">
                                 <?= htmlspecialchars($status); ?>
                             </div>
@@ -503,7 +503,8 @@ if (!empty($hero_slides)) {
             </button>
         </div>
         <div class="modal-sheet-body">
-            <form action="/api/v1/leads" method="POST" class="modal-sheet-form">
+            <form action="api-submit-lead.php" method="POST" class="modal-sheet-form">
+                <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="source" value="mobile_home_search">
                 

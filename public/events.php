@@ -1,8 +1,9 @@
 <?php 
-    require_once '../config/db.php';
-    require_once '../includes/functions.php';
-    
-    $page_title = "Signature Occasions & Events | Leisure Loop Trip";
+require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
+
+$page_title = "Signature Occasions & Events | Leisure Loop Trip";
     include '../includes/header.php';
 ?>
 <link rel="stylesheet" href="css/events.css">
@@ -189,6 +190,7 @@
         <p id="eventModalSubtitle" class="modal-subtitle">Bespoke event planning & luxury accommodations</p>
         
         <form id="eventsQuoteForm">
+            <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="event_type" id="eventInputType" value="Signature Occasion">
             <input type="hidden" name="venue_name" id="eventInputVenue" value="">

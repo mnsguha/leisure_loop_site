@@ -107,7 +107,7 @@
 }
 
 .mobile-splash__title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.6rem;
     color: #ffffff;
     margin: 0 0 12px;
@@ -175,7 +175,7 @@
 }
 
 .mobile-splash__form-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.8rem;
     color: #ffffff;
     margin: 0 0 4px;
@@ -393,7 +393,7 @@
 }
 
 .mobile-section-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.45rem;
     color: #ffffff;
     margin: 0;
@@ -478,7 +478,7 @@
 }
 
 .app-pkg-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.15rem;
     color: #ffffff;
     margin: 0 0 8px;
@@ -635,7 +635,7 @@
 }
 
 .mobile-search-sheet__title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.3rem;
     color: #ffffff;
     margin: 0;

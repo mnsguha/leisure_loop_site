@@ -1,6 +1,8 @@
 <?php 
-    $page_title = "Refund Policy | Leisure Loop Trip";
-    include '../includes/header.php'; 
+$page_title = "Refund Policy | Leisure Loop Trip";
+require_once '../includes/functions.php';
+csrf_stamp_form();
+include '../includes/header.php';
 ?>
 
     <section class="section" style="padding-top: 12rem;">

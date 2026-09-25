@@ -1,5 +1,7 @@
-<?php 
-    require_once '../config/db.php';
+<?php
+require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
     
     // Detect Mobile
     $useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';

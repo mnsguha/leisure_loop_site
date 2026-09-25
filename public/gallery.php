@@ -1,5 +1,7 @@
 <?php
 require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
 $page_title = "Guest Gallery | Leisure Loop Trip";
 $page_desc = "Real smiles, real experiences. Browse moments captured by our guests on their bespoke journeys.";
 

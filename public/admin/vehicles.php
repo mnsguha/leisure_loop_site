@@ -51,7 +51,6 @@ if (isset($_GET['delete'])) {
                         <th>Vehicle Name</th>
                         <th>Cab Class</th>
                         <th>Capacity / AC</th>
-                        <th>Price/Day</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -75,7 +74,6 @@ if (isset($_GET['delete'])) {
                             <?php echo (int)$v['pax_capacity']; ?> Pax, <?php echo (int)$v['luggage_capacity']; ?> Bags<br>
                             <?php echo htmlspecialchars($v['ac_type']); ?>
                         </td>
-                        <td>&#8377;<?php echo number_format($v['price_per_day']); ?></td>
                         <td>
                             <span class="badge" style="padding: 4px 8px; border-radius: 4px; background: <?php echo $v['is_active'] ? 'rgba(46, 213, 115, 0.2)' : 'rgba(255, 71, 87, 0.2)'; ?>; color: <?php echo $v['is_active'] ? '#2ed573' : '#ff4757'; ?>;">
                                 <?php echo $v['is_active'] ? 'Active' : 'Inactive'; ?>
@@ -91,7 +89,7 @@ if (isset($_GET['delete'])) {
                     <?php endforeach; ?>
                     <?php if (empty($vehicles)): ?>
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem;">No vehicles found.</td>
+                        <td colspan="6" style="text-align: center; padding: 2rem;">No vehicles found.</td>
                     </tr>
                     <?php endif; ?>
                 </tbody>

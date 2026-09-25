@@ -173,6 +173,9 @@
         }
 
         function closeSheet() {
+            if (document.activeElement && sheet.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
             isOpen = false;
             sheet.classList.add('is-hidden');
             sheet.setAttribute('aria-hidden', 'true');

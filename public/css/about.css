@@ -48,7 +48,7 @@
 }
 
 .essay-dropcap::first-letter {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     float: left;
     font-size: 5rem;
     line-height: 0.8;
@@ -63,7 +63,7 @@
     line-height: 1.8;
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 2rem;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 300;
 }
 
@@ -76,7 +76,7 @@
 }
 
 .essay-quote p {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 2.5rem;
     font-style: italic;
     color: #fff;
@@ -101,7 +101,7 @@
 
 .founder-signature p {
     color: var(--gold);
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 1.4rem;
     font-style: italic;
     margin-top: 0.5rem;
@@ -130,7 +130,7 @@
 }
 
 .philosophy-num {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-size: 3.5rem;
     color: var(--gold);
     opacity: 0.2;

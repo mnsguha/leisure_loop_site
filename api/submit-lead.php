@@ -6,7 +6,6 @@
 
 require_once '../config/db.php';
 require_once '../includes/functions.php';
-require_once '../config/recaptcha.php';
 
 header('Content-Type: application/json');
 
@@ -15,55 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
+lead_guard_json($_POST);
+
 function cleanInput($key) {
     return isset($_POST[$key]) ? trim((string) $_POST[$key]) : '';
-}
-
-function verifyRecaptchaResponse($token) {
-    if (!recaptchaIsConfigured()) {
-        return true;
-    }
-
-    if (!$token) {
-        return false;
-    }
-
-    $payload = http_build_query([
-        'secret' => recaptchaSecretKey(),
-        'response' => $token,
-        'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
-    ]);
-
-    $responseBody = false;
-
-    if (function_exists('curl_init')) {
-        $ch = curl_init('https://www.google.com/recaptcha/api/siteverify');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        $responseBody = curl_exec($ch);
-        curl_close($ch);
-    }
-
-    if ($responseBody === false) {
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'content' => $payload,
-                'timeout' => 10
-            ]
-        ]);
-        $responseBody = @file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
-    }
-
-    if ($responseBody === false) {
-        return false;
-    }
-
-    $decoded = json_decode($responseBody, true);
-    return !empty($decoded['success']);
 }
 
 $name = cleanInput('name');
@@ -75,8 +30,6 @@ $travel_date = cleanInput('date');
 $adults = cleanInput('adults');
 $children = cleanInput('children');
 $package_id = (int) cleanInput('package_id');
-$enforce_recaptcha = cleanInput('enforce_recaptcha') === '1';
-$recaptcha_token = cleanInput('g-recaptcha-response');
 
 $company = cleanInput('company');
 $size = cleanInput('size');
@@ -99,11 +52,6 @@ if ($message === '' && $destination !== '') {
 
 if (!$name || !$phone) {
     echo json_encode(['success' => false, 'message' => 'Name and phone are required.']);
-    exit;
-}
-
-if ($enforce_recaptcha && !verifyRecaptchaResponse($recaptcha_token)) {
-    echo json_encode(['success' => false, 'message' => 'Please confirm that you are not a robot.']);
     exit;
 }
 

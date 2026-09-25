@@ -129,6 +129,22 @@ document.addEventListener('DOMContentLoaded', function() {
             touchMultiplier: 2,
             infinite: false,
         });
+        window.__lenis = lenis;
+
+        // Top-layer modals: stop root smooth-scroll while body is scroll-locked
+        // so wheel events reach the modal's own overflow panes only.
+        const syncLenisLock = () => {
+            if (document.body.classList.contains('scroll-lock')) {
+                lenis.stop();
+            } else {
+                lenis.start();
+            }
+        };
+        syncLenisLock();
+        new MutationObserver(syncLenisLock).observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
 
         // Get scroll value
         if (typeof ScrollTrigger !== 'undefined') {
@@ -511,6 +527,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Map fields for backend
             const payload = new FormData();
+            payload.append('csrf_token', formData.get('csrf_token') || '');
+            payload.append('fax_office', formData.get('fax_office') || '');
             payload.append('name', formData.get('name') || '');
             payload.append('email', formData.get('email') || '');
             payload.append('phone', formData.get('phone') || '');

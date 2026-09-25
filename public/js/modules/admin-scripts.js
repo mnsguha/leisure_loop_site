@@ -216,23 +216,41 @@
             event.preventDefault();
             if (bulkDropdown) bulkDropdown.classList.remove("is-active");
             const modalType = actionEl.getAttribute('data-modal');
+            let modal = null;
             if (modalType === 'inventory') {
-                const modal = document.getElementById('bulkInventoryModal');
-                if (modal) modal.classList.add('is-active');
+                modal = document.getElementById('bulkInventoryModal');
             } else if (modalType === 'rates') {
-                const modal = document.getElementById('bulkRatesModal');
-                if (modal) modal.classList.add('is-active');
+                modal = document.getElementById('bulkRatesModal');
+            } else if (modalType === 'cab-bulk') {
+                modal = document.getElementById('cabBulkRatesModal');
+            }
+            if (modal) {
+                modal.classList.add('is-active');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('scroll-lock');
+                var firstInput = modal.querySelector('input:not([type="hidden"]), select, button:not([data-action="close-modal"])');
+                if (firstInput) setTimeout(function() { firstInput.focus(); }, 100);
             }
         }
         else if (action === 'close-modal') {
             const targetId = actionEl.getAttribute('data-target');
             const modal = document.getElementById(targetId);
-            if (modal) modal.classList.remove("is-active");
+            if (modal) {
+                modal.classList.remove("is-active");
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-lock');
+            }
         }
         else if (action === 'open-modal') {
             const targetId = actionEl.getAttribute('data-target');
             const modal = document.getElementById(targetId);
-            if (modal) modal.classList.add("is-active");
+            if (modal) {
+                modal.classList.add("is-active");
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('scroll-lock');
+                var firstInput = modal.querySelector('input:not([type="hidden"]), select, button:not([data-action="close-modal"])');
+                if (firstInput) setTimeout(function() { firstInput.focus(); }, 100);
+            }
         }
         else if (action === 'toggle-plan') {
             const planId = actionEl.getAttribute('data-plan-id');
@@ -331,6 +349,20 @@
         }
     });
 
+    // Close Modals on ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var activeModals = document.querySelectorAll('.admin-modal.is-active');
+            activeModals.forEach(function(m) {
+                m.classList.remove('is-active');
+                m.setAttribute('aria-hidden', 'true');
+            });
+            if (activeModals.length > 0) {
+                document.body.classList.remove('scroll-lock');
+            }
+        }
+    });
+
     // --- CRM Sync Logic ---
     function syncCRM(type, btn) {
         if (btn.disabled) return;
@@ -338,9 +370,13 @@
         btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 12l-4-4-4 4"></path></svg> Syncing...`;
         btn.disabled = true;
 
-        fetch('../api/sync-crm.php', {
+        var csrfTokenEl = document.querySelector('input[name="csrf_token"]');
+        fetch('../api-sync-crm.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfTokenEl ? csrfTokenEl.value : ''
+            },
             body: JSON.stringify({ type: type })
         })
         .then(r => r.json())
@@ -369,4 +405,69 @@
     const btnSyncLeadCRM = document.getElementById('btnSyncLeadCRM');
     if (btnSyncLeadCRM) {
         btnSyncLeadCRM.addEventListener('click', () => syncCRM('lead', btnSyncLeadCRM));
+    }
+
+    // --- Cab Rates Bulk Update Modal Logic ---
+    const cabBulkModal = document.getElementById('cabBulkRatesModal');
+    if (cabBulkModal) {
+        const toggles = cabBulkModal.querySelectorAll('.cab-bulk-toggle-label');
+        const classRow = document.getElementById('cab-bulk-class-select-row');
+        const vehicleRow = document.getElementById('cab-bulk-vehicle-select-row');
+        const classSelect = document.getElementById('cab-bulk-class-select');
+        const vehicleSelect = document.getElementById('cab-bulk-vehicle-select');
+        const ratesContainer = document.getElementById('cab-bulk-rates-container');
+        const templateStore = document.getElementById('cab-bulk-template-store');
+
+        function updateCabBulkRatesUI() {
+            if (!ratesContainer || !templateStore) return;
+            
+            // Clear current inputs
+            ratesContainer.innerHTML = '';
+            
+            const checkedRadio = cabBulkModal.querySelector('input[name="bulk_mode"]:checked');
+            const mode = checkedRadio ? checkedRadio.value : 'class';
+            
+            if (mode === 'class') {
+                classRow.classList.add('is-active');
+                vehicleRow.classList.remove('is-active');
+                const classId = classSelect.value;
+                if (classId) {
+                    const cards = templateStore.querySelectorAll('.cab-bulk-input-card[data-class-id="'+classId+'"]');
+                    if (cards.length > 0) {
+                        cards.forEach(card => {
+                            const clone = card.cloneNode(true);
+                            ratesContainer.appendChild(clone);
+                            clone.querySelectorAll('[disabled]').forEach(el => el.removeAttribute('disabled'));
+                        });
+                    } else {
+                        ratesContainer.innerHTML = '<div class="cab-bulk-empty-msg">No vehicles found in this class.</div>';
+                    }
+                }
+            } else {
+                vehicleRow.classList.add('is-active');
+                classRow.classList.remove('is-active');
+                const vehicleId = vehicleSelect.value;
+                if (vehicleId) {
+                    const card = templateStore.querySelector('.cab-bulk-input-card[data-vehicle-id="'+vehicleId+'"]');
+                    if (card) {
+                        const clone = card.cloneNode(true);
+                        ratesContainer.appendChild(clone);
+                        clone.querySelectorAll('[disabled]').forEach(el => el.removeAttribute('disabled'));
+                    }
+                }
+            }
+        }
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                toggles.forEach(t => t.classList.remove('is-active'));
+                this.classList.add('is-active');
+                setTimeout(updateCabBulkRatesUI, 10);
+            });
+        });
+
+        if (classSelect) classSelect.addEventListener('change', updateCabBulkRatesUI);
+        if (vehicleSelect) vehicleSelect.addEventListener('change', updateCabBulkRatesUI);
+
+        updateCabBulkRatesUI();
     }

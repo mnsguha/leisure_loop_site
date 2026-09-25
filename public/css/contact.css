@@ -114,7 +114,7 @@
 }
 
 .contact-title .serif {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--gold);
     font-weight: 400;

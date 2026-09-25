@@ -1,10 +1,11 @@
 <?php
     declare(strict_types=1);
 
-    require_once '../config/db.php';
-    require_once '../includes/functions.php';
+require_once '../config/db.php';
+require_once '../includes/functions.php';
+csrf_stamp_form();
 
-    function catalogCsvParam(string $key): array
+function catalogCsvParam(string $key): array
     {
         $raw = isset($_GET[$key]) ? trim((string)$_GET[$key]) : '';
         if ($raw === '') {

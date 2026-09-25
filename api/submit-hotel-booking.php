@@ -1,5 +1,6 @@
 <?php
 require_once '../config/db.php';
+require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -8,15 +9,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$hotel_id = (int)$_POST['hotel_id'];
-$type = $_POST['type'];
-$guest_name = trim($_POST['guest_name']);
-$phone = trim($_POST['phone']);
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-$check_in = $_POST['check_in'];
-$check_out = $_POST['check_out'];
-$rooms = (int)$_POST['rooms'];
-$adults = (int)$_POST['adults'];
+// Anti-bot guard: honeypot -> CSRF -> time-trap -> rate limits.
+lead_guard_json($_POST);
+
+$hotel_id = (int)($_POST['hotel_id'] ?? 0);
+$type = $_POST['type'] ?? '';
+$guest_name = trim($_POST['guest_name'] ?? '');
+$phone = trim($_POST['phone'] ?? '');
+$email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
+$check_in = $_POST['check_in'] ?? '';
+$check_out = $_POST['check_out'] ?? '';
+$rooms = (int)($_POST['rooms'] ?? 1);
+$adults = (int)($_POST['adults'] ?? 1);
 
 // Signature specific
 $room_id = isset($_POST['room_id']) && $_POST['room_id'] ? (int)$_POST['room_id'] : null;
@@ -89,6 +93,7 @@ if ($pdo) {
 
         $stmt = $pdo->prepare("INSERT INTO hotel_bookings (booking_id, hotel_id, room_id, plan_id, guest_name, phone, email, check_in, check_out, rooms, adults, total_amount, payment_status, booking_status, special_request) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pay_later', 'confirmed', ?)");
         $stmt->execute([$booking_id, $hotel_id, $room_id, $plan_id, $guest_name, $phone, $email, $check_in, $check_out, $rooms, $adults, $total_amount, $special_request]);
+        pdf_grant_access('hotel', (string) $booking_id);
         
         // Fetch Hotel Name for Email
         $hStmt = $pdo->prepare("SELECT name FROM hotels WHERE id = ?");

@@ -1,7 +1,7 @@
 <!-- EaseMyTrip-Inspired Floating Concierge Dock Hub -->
-<div class="emt-floating-dock-hub">
+<div class="emt-floating-dock-hub" data-drag-hub>
     <!-- Top Pill: Plan Your Trip (Enquiry Modal Trigger) -->
-    <a href="#inquiry-form" class="emt-dock-pill emt-pill-orange btn-enquiry-nav" aria-label="Plan Your Trip">
+    <a href="#inquiry-form" class="emt-dock-pill emt-pill-orange btn-enquiry-nav" aria-label="Plan Your Trip" draggable="false">
         <div class="emt-pill-border-glow"></div>
         <div class="emt-pill-content">
             <span class="emt-pill-icon">

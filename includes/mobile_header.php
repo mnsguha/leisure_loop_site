@@ -2,23 +2,10 @@
 // Shared Mobile Header Partial - Used on Catalog & Landing Pages Only
 $header_title = $mobile_header_title ?? 'Leisure Loop';
 $active_tab   = $mobile_active_nav ?? '';
-$back_target  = $back_url ?? 'index.php?view=mobile';
 ?>
 
-<!-- Top App Header -->
-<header class="app-header" id="appHeader">
-    <a href="<?= htmlspecialchars($back_target) ?>" class="header-btn" aria-label="Go Back">
-        <span class="material-symbols-outlined">arrow_back</span>
-    </a>
-
-    <h1 class="m-header-title"><?= htmlspecialchars($header_title) ?></h1>
-
-    <button type="button" class="header-btn" data-action="open-enquiry-modal" aria-label="Concierge Support">
-        <span class="material-symbols-outlined">support_agent</span>
-    </button>
-</header>
-
 <!-- Horizontal Service Navigation Bar -->
+<?php if (!isset($hide_mobile_services_nav) || !$hide_mobile_services_nav): ?>
 <nav class="m-services-nav">
     <?php
     $services = [
@@ -38,3 +25,6 @@ $back_target  = $back_url ?? 'index.php?view=mobile';
     </a>
     <?php endforeach; ?>
 </nav>
+<?php endif; ?>
+
+<h1 class="sr-only"><?= htmlspecialchars($header_title) ?></h1>

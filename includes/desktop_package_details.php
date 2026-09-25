@@ -740,8 +740,8 @@ foreach ($photos_arr as $p) {
 </div>
 
 <!-- Package Checkout Modal -->
-<div id="packageCheckoutModal" data-nights="<?php echo (int)($pkg['nights'] ?? 1); ?>" data-days="<?php echo (int)($pkg['days'] ?? 2); ?>">
-    <div class="p-modal-content">
+<div id="packageCheckoutModal" data-lenis-prevent data-nights="<?php echo (int)($pkg['nights'] ?? 1); ?>" data-days="<?php echo (int)($pkg['days'] ?? 2); ?>">
+    <div class="p-modal-content" data-lenis-prevent>
         <!-- Left: Form -->
         <div class="p-modal-left">
             <div class="p-modal-header">
@@ -750,6 +750,7 @@ foreach ($photos_arr as $p) {
             </div>
             
             <form id="packageCheckoutForm">
+                <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="package_id" value="<?php echo $pkg['id']; ?>">
                 <input type="hidden" name="package_title" value="<?php echo htmlspecialchars($pkg['title']); ?>">

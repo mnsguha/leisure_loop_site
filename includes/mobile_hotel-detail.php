@@ -90,7 +90,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTIT
         </button>
 
         <!-- Scroll-snap Slider -->
-        <div class="mhd-hero-slider" id="mHdHeroSlider">
+        <div class="mhd-hero-slider" id="mHdHeroSlider" role="button" aria-label="Open photo gallery" tabindex="0">
             <?php foreach ($hero_images as $idx => $img_url): ?>
             <div class="mhd-hero-slide">
                 <img
@@ -115,12 +115,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTIT
             <?php endforeach; ?>
         </div>
 
-        <!-- Photo Count Pill -->
-        <a href="#mHdAmenitiesSection" class="mhd-hero-photo-pill" aria-label="View all <?= $photo_count ?> photos">
-            <span class="material-symbols-outlined">photo_library</span>
-            <?= $photo_count ?> Photo<?= $photo_count !== 1 ? 's' : '' ?> &amp; Videos
-            <span class="mhd-photo-arrow">→</span>
-        </a>
+
     </section>
 
     <!-- ── Overlapping Content Card ──────────────────────────────────── -->
@@ -275,10 +270,22 @@ $csrf = htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTIT
                 <?php foreach($rooms_with_plans as $index => $room): ?>
                 <div class="mhd-room-card">
                     <div class="mhd-room-header">
-                        <?php $main_img = !empty($room['room_image']) ? $room['room_image'] : '../assets/images/placeholder.jpg'; ?>
-                        <div class="mhd-room-img-wrap">
-                            <img src="<?= htmlspecialchars($main_img) ?>" alt="Room Image" class="mhd-room-img">
-                        </div>
+                        <?php 
+                        $main_img = !empty($room['room_image']) ? $room['room_image'] : '../assets/images/placeholder.jpg'; 
+                        $room_images = [$main_img];
+                        if (!empty($room['additional_images'])) {
+                            $add_imgs = json_decode($room['additional_images'], true);
+                            if (is_array($add_imgs)) {
+                                $room_images = array_merge($room_images, $add_imgs);
+                            }
+                        }
+                        ?>
+                        <button type="button" class="mhd-room-img-wrap" 
+                                data-images="<?= htmlspecialchars(json_encode($room_images), ENT_QUOTES) ?>" 
+                                data-room-name="<?= htmlspecialchars($room['room_type_name'], ENT_QUOTES) ?>"
+                                aria-label="View photos of <?= htmlspecialchars($room['room_type_name'], ENT_QUOTES) ?>">
+                            <img src="<?= htmlspecialchars($main_img) ?>" alt="Room Image" class="mhd-room-img" loading="lazy">
+                        </button>
                         <div class="mhd-room-info">
                             <h3 class="mhd-room-name"><?= htmlspecialchars($room['room_type_name']) ?></h3>
                             <ul class="mhd-room-features">
@@ -300,7 +307,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTIT
                     
                     <div class="mhd-room-plans">
                         <?php foreach($room['plans'] as $p_idx => $plan): 
-                            $default_rate = !empty($plan['date_rates']) ? $plan['date_rates'][0]['base_rate_2_pax'] : 0;
+                            $default_rate = !empty($plan['current_rate']) ? $plan['current_rate']['base_rate_2_pax'] : 0;
                             $tax_est = 0;
                             if ($default_rate <= 1000) {
                                 $tax_est = 0;
@@ -348,45 +355,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTIT
             </div>
         </section>
 
-        <!-- ── Reservation / Booking Section ────────────────────────── -->
-        <section class="mhd-section" id="mHdBookingSection" aria-labelledby="mHdBookingHeading">
-            <h2 class="mhd-section-title" id="mHdBookingHeading">Request Reservation</h2>
 
-            <form id="mobileHotelDetailForm"
-                  class="mhd-form"
-                  method="POST"
-                  action="/api/v1/leads"
-                  novalidate>
-                <!-- CSRF Hardening (Frontend Rule #9 / Backend Rule #9) -->
-                <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                <input type="hidden" name="source"     value="Mobile Hotel Detail">
-                <input type="hidden" name="hotel_id"   value="<?= (int)$hotel['id'] ?>">
-                <input type="hidden" name="hotel_name" value="<?= htmlspecialchars($hotel['name'] ?? '') ?>">
-                <input type="hidden" name="check_in"   id="mHdFormCheckIn"  value="<?= htmlspecialchars($check_in) ?>">
-                <input type="hidden" name="check_out"  id="mHdFormCheckOut" value="<?= htmlspecialchars($check_out) ?>">
-                <input type="hidden" name="rooms"      id="mHdFormRooms"    value="<?= (int)$rooms ?>">
-                <input type="hidden" name="adults"     id="mHdFormAdults"   value="<?= (int)$adults ?>">
-
-                <div class="mhd-form-group">
-                    <label for="mHdGuestName" class="mhd-form-label">Full Name</label>
-                    <div class="mhd-input-wrap">
-                        <span class="material-symbols-outlined mhd-form-icon" aria-hidden="true">person</span>
-                        <input type="text" id="mHdGuestName" name="guest_name" class="mhd-input" placeholder="Your full name" required aria-required="true">
-                    </div>
-                </div>
-
-                <div class="mhd-form-group">
-                    <label for="mHdGuestPhone" class="mhd-form-label">Contact Number</label>
-                    <div class="mhd-input-wrap">
-                        <span class="material-symbols-outlined mhd-form-icon" aria-hidden="true">call</span>
-                        <input type="tel" id="mHdGuestPhone" name="guest_phone" class="mhd-input" placeholder="Your mobile number" required aria-required="true">
-                    </div>
-                </div>
-
-                <button type="submit" class="mhd-submit-btn">RESERVE NOW</button>
-                <div id="mHdFormMsg" class="mhd-form-msg" aria-live="polite"></div>
-            </form>
-        </section>
 
         <!-- Bottom padding to clear the fixed bottom bar -->
         <div class="mhd-bottom-spacer" aria-hidden="true"></div>
@@ -410,6 +379,236 @@ $csrf = htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES | ENT_SUBSTIT
             <button type="button" class="mhd-select-room-btn" id="mHdSelectRoomBtn" aria-label="Select a room">
                 SELECT ROOM
             </button>
+        </div>
+    </div>
+
+    <!-- ── Bento Gallery Modal ──────────────────────────────────────── -->
+    <div class="mhd-gallery-modal is-hidden" id="mHdGalleryModal" role="dialog" aria-modal="true" aria-label="Photo Gallery" aria-hidden="true">
+        <div class="mhd-gallery-header">
+            <h3 class="mhd-gallery-title">Photos &amp; Videos</h3>
+            <button type="button" class="mhd-gallery-close" id="mHdGalleryCloseBtn" aria-label="Close gallery">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="mhd-gallery-body no-scrollbar">
+            <div class="mhd-bento-grid">
+                <?php foreach ($hero_images as $idx => $img_url): ?>
+                <button type="button" class="mhd-bento-item" data-index="<?= $idx ?>" aria-label="View photo <?= $idx + 1 ?> fullscreen">
+                    <img src="<?= htmlspecialchars($img_url) ?>" alt="Gallery photo <?= $idx + 1 ?>" loading="lazy">
+                </button>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Fullscreen Lightbox Slider ───────────────────────────────── -->
+    <div class="mhd-lightbox is-hidden" id="mHdLightbox" role="dialog" aria-modal="true" aria-label="Fullscreen photo viewer" aria-hidden="true">
+        <div class="mhd-lightbox-header">
+            <div class="mhd-lightbox-counter" id="mHdLightboxCounter">1 / <?= count($hero_images) ?></div>
+            <button type="button" class="mhd-lightbox-close" id="mHdLightboxCloseBtn" aria-label="Close fullscreen viewer">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="mhd-lightbox-slider" id="mHdLightboxSlider">
+            <?php foreach ($hero_images as $idx => $img_url): ?>
+            <div class="mhd-lightbox-slide">
+                <img src="<?= htmlspecialchars($img_url) ?>" alt="Fullscreen photo <?= $idx + 1 ?>" loading="lazy">
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- ── Room Gallery Modal (Dynamic) ─────────────────────────────── -->
+    <div class="mhd-room-gallery-modal is-hidden" id="mHdRoomGalleryModal" role="dialog" aria-modal="true" aria-label="Room Photo Gallery" aria-hidden="true">
+        <div class="mhd-room-gallery-overlay" id="mHdRoomGalleryOverlay"></div>
+        <div class="mhd-room-gallery-content">
+            <div class="mhd-room-gallery-header">
+                <h3 class="mhd-room-gallery-title" id="mHdRoomGalleryTitle">Room Name</h3>
+                <button type="button" class="mhd-room-gallery-close" id="mHdRoomGalleryCloseBtn" aria-label="Close room gallery">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="mhd-room-gallery-slider-wrap">
+                <div class="mhd-room-gallery-slider" id="mHdRoomGallerySlider">
+                    <!-- Slides injected by JS -->
+                </div>
+                <div class="mhd-room-gallery-counter" id="mHdRoomGalleryCounter">1 / 1</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Review Details Modal (Bottom Sheet) ───────────────────────── -->
+    <div class="mhd-room-gallery-modal mhd-price-details-modal is-hidden" id="mHdPriceDetailsModal" role="dialog" aria-modal="true" aria-label="Review Details" aria-hidden="true">
+        <div class="mhd-room-gallery-overlay" id="mHdPriceDetailsOverlay"></div>
+        <div class="mhd-room-gallery-content">
+            <div class="mhd-room-gallery-header">
+                <h3 class="mhd-room-gallery-title">Review Details</h3>
+                <button type="button" class="mhd-room-gallery-close" id="mHdPriceDetailsCloseBtn" aria-label="Close review details">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
+            </div>
+            <div class="mhd-pd-body">
+                <div class="mhd-pd-hotel-name"><?php echo htmlspecialchars($hotel['name']); ?>, <?php echo htmlspecialchars($hotel['place']); ?></div>
+                
+                <div class="mhd-pd-dates">
+                    <div class="mhd-pd-date-box">
+                        <div class="mhd-pd-date-label">CHECK IN</div>
+                        <div class="mhd-pd-date-val" id="mHdSidebarCheckIn">--</div>
+                    </div>
+                    <div class="mhd-pd-nights">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                        <span class="mhd-pd-nights-val" id="mHdSidebarNights">1N</span>
+                    </div>
+                    <div class="mhd-pd-date-box">
+                        <div class="mhd-pd-date-label">CHECK OUT</div>
+                        <div class="mhd-pd-date-val" id="mHdSidebarCheckOut">--</div>
+                    </div>
+                </div>
+
+                <div class="mhd-pd-room-name" id="mHdDispRoomName">ROOM NAME</div>
+                <div class="mhd-pd-plan-name" id="mHdDispPlanName">Plan Name</div>
+                
+                <div class="mhd-pd-row">
+                    <span class="mhd-pd-row-net">Net Rate :</span>
+                    <span class="mhd-pd-val-net" id="mHdSidebarNetRate">₹0</span>
+                </div>
+                <div class="mhd-pd-row mhd-pd-row-gst">
+                    <span>GST :</span>
+                    <span id="mHdSidebarTotalTax">+ ₹0 Taxes &amp; fees</span>
+                </div>
+                <div class="mhd-pd-divider"></div>
+                <div class="mhd-pd-total">
+                    <span>TOTAL PAYABLE :</span>
+                    <span id="mHdSidebarTotalFinal">₹0</span>
+                </div>
+                
+                <button type="button" class="mhd-pd-proceed" id="mHdBtnProceed">
+                    SUBMIT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Checkout Modal (Fullscreen) ──────────────────────────────── -->
+    <div class="mhd-gallery-modal mhd-checkout-modal is-hidden" id="mHdCheckoutModal" role="dialog" aria-modal="true" aria-label="Guest Information" aria-hidden="true">
+        <div class="mhd-gallery-header mhd-checkout-header">
+            <button type="button" class="mhd-gallery-close" id="mHdCheckoutCloseBtn" aria-label="Close checkout">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h3 class="mhd-gallery-title">Enquiry Summary</h3>
+        </div>
+        <div class="mhd-gallery-body mhd-checkout-body">
+            
+            <div class="mhd-summary-card">
+                <div class="mhd-sc-hotel">
+                    <div class="mhd-sc-hotel-info">
+                        <div class="mhd-sc-hotel-name" id="mHdCheckoutSummaryHotelName"><?php echo htmlspecialchars($hotel['name']); ?></div>
+                        <div class="mhd-sc-hotel-loc"><?php echo htmlspecialchars($hotel['city'] ?? 'Gangtok'); ?></div>
+                    </div>
+                    <div class="mhd-sc-hotel-img">
+                        <?php 
+                        $hero_img = !empty($hotel_images) ? $hotel_images[0]['image_url'] : 'placeholder.jpg';
+                        ?>
+                        <img src="<?php echo htmlspecialchars($hero_img); ?>" alt="Hotel">
+                    </div>
+                </div>
+                
+                <div class="mhd-sc-divider"></div>
+                
+                <div class="mhd-sc-dates">
+                    <div class="mhd-sc-date-col">
+                        <div class="mhd-sc-date-label">CHECK-IN</div>
+                        <div class="mhd-sc-date-val" id="mHdCheckoutSummaryCheckIn">--</div>
+                    </div>
+                    <div class="mhd-sc-nights">
+                        <span id="mHdCheckoutSummaryNights">1N</span>
+                    </div>
+                    <div class="mhd-sc-date-col right">
+                        <div class="mhd-sc-date-label">CHECK-OUT</div>
+                        <div class="mhd-sc-date-val" id="mHdCheckoutSummaryCheckOut">--</div>
+                    </div>
+                </div>
+                
+                <div class="mhd-sc-divider"></div>
+                
+                <div class="mhd-sc-guests">
+                    <div class="mhd-sc-guests-label">Guests & Rooms</div>
+                    <div class="mhd-sc-guests-val" id="mHdCheckoutSummaryGuests">--</div>
+                </div>
+            </div>
+
+            <div class="mhd-summary-card">
+                <div class="mhd-sc-room-name" id="mHdCheckoutSummaryRoomName">--</div>
+                <div class="mhd-sc-plan-name" id="mHdCheckoutSummaryPlanName">--</div>
+                
+                <div class="mhd-sc-divider"></div>
+                
+                <div class="mhd-sc-price-row">
+                    <span>Net Rate :</span>
+                    <span id="mHdCheckoutSummaryBasePrice">--</span>
+                </div>
+                <div class="mhd-sc-price-row">
+                    <span>GST :</span>
+                    <span id="mHdCheckoutSummaryTaxes">Included</span>
+                </div>
+                <div class="mhd-sc-divider"></div>
+                <div class="mhd-sc-total-row">
+                    <span>TOTAL PAYABLE</span>
+                    <span id="mHdCheckoutSummaryTotal">--</span>
+                </div>
+            </div>
+            <form id="mobileHotelDetailForm" action="api-submit-hotel-booking.php">
+                <input type="text" name="fax_office" hidden tabindex="-1" autocomplete="off" aria-hidden="true">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                <input type="hidden" name="hotel_id" value="<?php echo $hotel['id']; ?>">
+                <input type="hidden" name="type" value="<?php echo $hotel['type']; ?>">
+                <input type="hidden" name="room_id" id="mHdFormRoomId">
+                <input type="hidden" name="plan_id" id="mHdFormPlanId">
+                <input type="hidden" name="final_price" id="mHdFormFinalPrice">
+                <input type="hidden" name="selected_room" id="mHdFormSelectedRoom">
+                <input type="hidden" name="selected_plan_name" id="mHdFormSelectedPlanName">
+                
+                <input type="hidden" name="rooms" id="mHdFormRooms" value="1">
+                <input type="hidden" name="adults" id="mHdFormAdults" value="2">
+                <input type="hidden" name="children" id="mHdFormChildren" value="0">
+                <input type="hidden" name="check_in" id="mHdFormCheckIn" value="<?php echo htmlspecialchars($check_in); ?>">
+                <input type="hidden" name="check_out" id="mHdFormCheckOut" value="<?php echo htmlspecialchars($check_out); ?>">
+                
+                <div class="mhd-co-section">
+                    <h4 class="mhd-co-section-title">Guest Information</h4>
+                    
+                    <div class="mhd-co-form-group">
+                        <label for="mHdGuestName" class="mhd-co-label">First Name *</label>
+                        <input type="text" id="mHdGuestName" name="guest_name" required class="mhd-co-input">
+                    </div>
+                    
+                    <div class="mhd-co-form-group">
+                        <label for="mHdGuestLastName" class="mhd-co-label">Last Name *</label>
+                        <input type="text" id="mHdGuestLastName" name="guest_last_name" required class="mhd-co-input">
+                    </div>
+                    
+                    <div class="mhd-co-form-group">
+                        <label for="mHdGuestEmail" class="mhd-co-label">Email Address *</label>
+                        <input type="email" id="mHdGuestEmail" name="email" required class="mhd-co-input">
+                    </div>
+                    
+                    <div class="mhd-co-form-group">
+                        <label for="mHdGuestPhone" class="mhd-co-label">Phone Number *</label>
+                        <input type="tel" id="mHdGuestPhone" name="phone" required class="mhd-co-input">
+                    </div>
+                    
+                    <div class="mhd-co-form-group">
+                        <label for="mHdSpecialRequests" class="mhd-co-label">Special Requests</label>
+                        <textarea id="mHdSpecialRequests" name="special_request" rows="3" class="mhd-co-input textarea--no-resize"></textarea>
+                    </div>
+                </div>
+                
+                <div id="mHdFormMsg" class="mhd-form-feedback form-feedback"></div>
+                
+                <button type="submit" id="mHdCheckoutSubmitBtn" class="mhd-co-submit">
+                    <?php echo $hotel['type'] == 'signature' ? 'CONFIRM BOOKING' : 'SUBMIT INQUIRY'; ?>
+                </button>
+            </form>
         </div>
     </div>
 

@@ -1,7 +1,9 @@
 <?php 
     $page_title = "Careers | Leisure Loop Trip";
-    $meta_desc = "Join our passionate team at Leisure Loop Trip. We are looking for experienced travel curators, luxury itinerary designers, and hospitality professionals.";
-    include '../includes/header.php'; 
+$meta_desc = "Join our passionate team at Leisure Loop Trip. We are looking for experienced travel curators, luxury itinerary designers, and hospitality professionals.";
+require_once '../includes/functions.php';
+csrf_stamp_form();
+include '../includes/header.php';
 ?>
 
     <section class="section" style="padding-top: 12rem; padding-bottom: 8rem;">
