@@ -12,6 +12,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Delete heavy folders to prevent server disk bloat
+        run: rm -rf .git .github scratch public/uploads
+
       - name: Create staging directory on server
         uses: appleboy/ssh-action@master
         with:
