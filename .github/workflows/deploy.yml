@@ -12,6 +12,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Create staging directory on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: mkdir -p /home/ubuntu/leisure_loop_staging
+
       - name: Copy files to staging area via SCP
         uses: appleboy/scp-action@master
         with:
